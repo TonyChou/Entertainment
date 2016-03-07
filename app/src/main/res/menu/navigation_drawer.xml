@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:id="@+id/group1"
+        android:checkableBehavior="single">
+
+        <item android:title="@string/pic_group">
+            <menu>
+                <item
+                    android:id="@+id/pic_local"
+                    android:checked="true"
+                    android:title="@string/pic_local" />
+                <item
+                    android:id="@+id/pic_network"
+                    android:title="@string/pic_network" />
+            </menu>
+
+        </item>
+
+
+    </group>
+
+    <group
+        android:id="@+id/music_group">
+        <item android:title="@string/music_group">
+            <menu android:checkableBehavior="single">
+                <item
+                    android:id="@+id/music_local"
+                    android:title="@string/music_local" />
+                <item
+                    android:id="@+id/music_spotify"
+                    app:actionLayout="@layout/menu_action_layout"
+                    android:title="@string/music_spotify" />
+                <item
+                    android:id="@+id/music_qq"
+                    android:title="@string/music_qq" />
+            </menu>
+        </item>
+
+    </group>
+
+
+</menu>
