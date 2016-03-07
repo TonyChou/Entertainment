@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
+import com.union.entertainment.ui.activity.LocationShowActivity;
 import com.union.entertainment.ui.activity.PhotosViewPagerActivity;
 import com.union.entertainment.utils.DateUtil;
 import com.union.entertainment.utils.UiUtils;
@@ -99,7 +100,8 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.List
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            Intent intent = new Intent(context, PhotosViewPagerActivity.class);
+            //Intent intent = new Intent(context, PhotosViewPagerActivity.class);
+            Intent intent = new Intent(context, LocationShowActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("photos", (Serializable) photoList);
             bundle.putInt("position", position);

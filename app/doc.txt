@@ -1,0 +1,7 @@
+获取SHA1
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+Mac key :4c978d0d2c913d6b9d4c34716f9143d9
+
+
+MAC release key:26a65389352e5eeea4bbf193f637764f
