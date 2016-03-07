@@ -1,9 +1,13 @@
 package com.union.entertainment.module.picture;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by zhouxiaming on 16/3/6.
  */
-public class Photo {
+public class Photo implements Serializable{
     private String name;
     private String path;
     private int width;

@@ -1,6 +1,10 @@
 package com.union.entertainment.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,23 +12,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
+import com.union.entertainment.ui.activity.PhotosViewPagerActivity;
+import com.union.entertainment.utils.DateUtil;
+import com.union.entertainment.utils.UiUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.io.File;
 
 /**
  * Created by lipan on 14/12/26.
  */
 public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.ListHolder>{
-
-
-    String names[] = {"浏览器","输入法","健康","效率","教育","理财","阅读","个性化","购物","资讯","生活","工具","出行","通讯","拍照","社交","影音","安全","休闲","棋牌","益智","射击","体育","儿童","网游","角色","策略","经营","竞速"};
+    private int[] screen;
     Context context;
     private List<Photo> photoList = new ArrayList<Photo>();
-    public PhotoGridAdapter(Context context){
+    public PhotoGridAdapter(Activity context){
         this.context = context;
+        screen = UiUtils.getScreenWidthAndHeight(context);
     }
 
     public void setData(List<Photo> data) {
@@ -57,7 +67,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.List
     }
 
 
-    class ListHolder extends RecyclerView.ViewHolder {
+    class ListHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView icon;
         TextView name;
 
@@ -65,11 +75,36 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.List
             super(itemView);
             icon = (ImageView) itemView.findViewById(R.id.pic);
             name = (TextView) itemView.findViewById(R.id.name);
+            itemView.setOnClickListener(this);
         }
 
         public void setData(int position){
-            icon.setImageDrawable(context.getResources().getDrawable(R.drawable.example));
-            name.setText(names[position % names.length]);
+            Photo photo = photoList.get(position);
+            if (photo != null) {
+                Picasso.with(context).load(new File(photo.getPath())).resize(screen[0] / 2, screen[0] / 2)
+                        .centerCrop().config(Bitmap.Config.ARGB_8888).placeholder(R.drawable.example)
+                        .into(icon);
+                long date = photo.getModifyDate();
+                String dateStr = DateUtil.string2unixTimestamp2(date);
+                name.setText(dateStr);
+            } else {
+                icon.setImageDrawable(context.getResources().getDrawable(R.drawable.example));
+                name.setText("");
+            }
+
+
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            Intent intent = new Intent(context, PhotosViewPagerActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("photos", (Serializable) photoList);
+            bundle.putInt("position", position);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
         }
     }
 }

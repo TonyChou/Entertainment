@@ -42,6 +42,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         initToolBar();
         initNavigationMenuItem();
         initPageView();
+        switchFragment(FragmentFactory.FRAGEMENT_LOCAL_PIC);
     }
 
     private void initDrawer() {

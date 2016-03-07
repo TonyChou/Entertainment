@@ -144,12 +144,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        refreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                refreshLayout.setRefreshing(false);
-            }
-        },3000);
+        getLoaderManager().restartLoader(PhotosQuery._TOKEN, null, GalleryFragment.this);
     }
 
 
@@ -168,7 +163,6 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(loader.getId() == PhotosQuery._TOKEN) {
-            //TODO
             refreshPhotos(data);
         } else {
             data.close();
