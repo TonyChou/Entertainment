@@ -34,11 +34,16 @@ import com.squareup.picasso.Picasso;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.HackyViewPager;
 import com.union.entertainment.module.picture.Photo;
+import com.union.entertainment.utils.UiUtils;
 
 import uk.co.senab.photoview.PhotoView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 
 public class PhotosViewPagerActivity extends Activity {
@@ -49,6 +54,7 @@ public class PhotosViewPagerActivity extends Activity {
 	private MenuItem menuLockItem;
 	private List<Photo> photoList;
 	private int position;
+	private static Queue<PhotoView> photoViews = new LinkedList<PhotoView>();
 	
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,9 +84,11 @@ public class PhotosViewPagerActivity extends Activity {
 	static class SamplePagerAdapter extends PagerAdapter {
 		private Context mContext;
 		private List<Photo> photoList;
-		public SamplePagerAdapter(Context context, List<Photo> photoList) {
+		private int[] screen;
+		public SamplePagerAdapter(Activity context, List<Photo> photoList) {
 			this.mContext = context;
 			this.photoList = photoList;
+			this.screen = UiUtils.getScreenWidthAndHeight(context);
 		}
 
 		@Override
@@ -90,14 +98,22 @@ public class PhotosViewPagerActivity extends Activity {
 
 		@Override
 		public View instantiateItem(ViewGroup container, int position) {
-			PhotoView photoView = new PhotoView(container.getContext());
+			PhotoView photoView = null;
+			if (!photoViews.isEmpty()) {
+				PhotoView cacheView = photoViews.poll();
+				if (cacheView.getParent() == null) {
+					photoView = cacheView;
+				}
+			} else {
+				photoView = new PhotoView(mContext);
+			}
+
 
 			// Now just add PhotoView to ViewPager and return it
 			container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 			Photo photo = photoList.get(position);
 			if (photo != null) {
-				Picasso.with(mContext).load(new File(photo.getPath())).config(Bitmap.Config.ARGB_8888).placeholder(R.drawable.example)
-						.into(photoView);
+				Picasso.with(mContext).load(new File(photo.getPath())).config(Bitmap.Config.ARGB_8888).into(photoView);
 			}
 
 			return photoView;
@@ -107,9 +123,9 @@ public class PhotosViewPagerActivity extends Activity {
 		public void destroyItem(ViewGroup container, int position, Object object) {
 			if (object instanceof PhotoView) {
 				((PhotoView)object).destroyDrawingCache();
+				container.removeView((View) object);
+				photoViews.add((PhotoView) object);
 			}
-			Log.i("veve", "===============");
-			container.removeView((View) object);
 		}
 
 		@Override
@@ -169,5 +185,14 @@ public class PhotosViewPagerActivity extends Activity {
     	}
 		super.onSaveInstanceState(outState);
 	}
-    
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		for (PhotoView photoView : photoViews) {
+			photoView.destroyDrawingCache();
+		}
+
+		photoViews.clear();
+	}
 }
