@@ -2,18 +2,22 @@ package com.union.entertainment.ui.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.CameraUpdate;
+import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
@@ -27,6 +31,7 @@ public class LocationShowActivity extends AppCompatActivity implements LocationS
     private OnLocationChangedListener mListener;
     private AMapLocationClient mlocationClient;
     private AMapLocationClientOption mLocationOption;
+    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +71,29 @@ public class LocationShowActivity extends AppCompatActivity implements LocationS
         aMap.setLocationSource(this);// 设置定位监听
         aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
+        Log.i("veve", "=====  " + aMap.getMaxZoomLevel() + "    " + aMap.getMinZoomLevel());
         // aMap.setMyLocationType()
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        stepZoomTo();
+    }
+
+    private void stepZoomTo() {
+        float max = aMap.getMaxZoomLevel();
+        float min = aMap.getMinZoomLevel();
+        for (float i = min; i < max - 2; i++) {
+            final float zoom = i;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    changeCamera(CameraUpdateFactory.zoomTo(zoom), null);
+                }
+            }, 500);
+
+        }
     }
 
     /**
@@ -106,6 +133,7 @@ public class LocationShowActivity extends AppCompatActivity implements LocationS
         mapView.onDestroy();
     }
 
+
     /**
      * 定位成功后回调函数
      */
@@ -120,6 +148,14 @@ public class LocationShowActivity extends AppCompatActivity implements LocationS
                 Log.e("AmapErr", errText);
             }
         }
+    }
+
+
+    /**
+     * 根据动画按钮状态，调用函数animateCamera或moveCamera来改变可视区域
+     */
+    private void changeCamera(CameraUpdate update, AMap.CancelableCallback callback) {
+        aMap.animateCamera(update, 1000, callback);
     }
 
     /**
