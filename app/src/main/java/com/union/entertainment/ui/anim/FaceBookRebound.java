@@ -1,4 +1,4 @@
-package com.union.entertainment.utils;
+package com.union.entertainment.ui.anim;
 
 import android.util.Log;
 import android.view.MotionEvent;
