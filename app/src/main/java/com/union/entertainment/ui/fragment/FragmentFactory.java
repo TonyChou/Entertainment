@@ -10,11 +10,13 @@ import java.util.Map;
  */
 public class FragmentFactory {
 
-	public static final int FRAGEMENT_LOCAL_PIC = 0;
-	public static final int FRAGEMENT_NETWORK_PIC = 0;
-	public static final int FRAGEMENT_LOCAL_MUSIC = 0;
-	public static final int FRAGEMENT_SPOTIFY = 0;
-	public static final int FRAGEMENT_QQ = 0;
+	public static final int FRAGMENT_LOCAL_PIC = 0;
+	public static final int FRAGMENT_NETWORK_PIC = 1;
+	public static final int FRAGMENT_LOCAL_MUSIC = 2;
+	public static final int FRAGMENT_SPOTIFY = 3;
+	public static final int FRAGMENT_QQ = 4;
+
+	public static final int FRAGMENT_TEST = -1;
 
 
 	private static Map<Integer, Fragment> mFragmentCache = new HashMap<Integer, Fragment>();
@@ -23,10 +25,11 @@ public class FragmentFactory {
 		Fragment fragment = mFragmentCache.get(position);
 		if (fragment == null) {
 			switch (position) {
-				case FRAGEMENT_LOCAL_PIC:
+				case FRAGMENT_LOCAL_PIC:
 					fragment = GalleryFragment.newInstance(null, null);
 					break;
 				default:
+					fragment = TestFragment.newInstance(null, null);
 					break;
 			}
 			mFragmentCache.put(position,fragment);

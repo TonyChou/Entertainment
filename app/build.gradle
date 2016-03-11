@@ -12,9 +12,9 @@ android {
         versionName "1.0"
     }
 
-    signingConfigs{
+    signingConfigs {
         release {
-            storeFile file("/Users/zhouxiaming/work/sengled/keystore/sengled.keystore")
+            storeFile file("D:\\work\\App_version\\sengled.keystore")
             storePassword "sengled1234"
             keyAlias "sengled"
             keyPassword "sengled1234"
@@ -28,19 +28,25 @@ android {
             signingConfig signingConfigs.release
         }
 
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
 
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/AMap_2DMap_V2.8.1_20160202.jar')
+    compile files('libs/AMap_Location_V2.2.0_20151222.jar')
+    compile files('libs/MapApiServices_257.jar')
+    compile files('libs/Volley.jar')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.commit451:PhotoView:1.2.4'
-    compile files('libs/AMap_2DMap_V2.8.1_20160202.jar')
-    compile files('libs/AMap_Location_V2.2.0_20151222.jar')
-    compile files('libs/MapApiServices_257.jar')
-    compile files('libs/Volley.jar')
+    compile 'com.facebook.rebound:rebound:0.3.8'
 }

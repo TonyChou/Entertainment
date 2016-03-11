@@ -19,10 +19,6 @@ import android.widget.TextView;
 import com.union.entertainment.R;
 import com.union.entertainment.ui.fragment.BaseFragment;
 import com.union.entertainment.ui.fragment.FragmentFactory;
-import com.union.entertainment.ui.fragment.GalleryFragment;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -42,7 +38,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         initToolBar();
         initNavigationMenuItem();
         initPageView();
-        switchFragment(FragmentFactory.FRAGEMENT_LOCAL_PIC);
+        switchFragment(FragmentFactory.FRAGMENT_LOCAL_PIC);
     }
 
     private void initDrawer() {
@@ -123,22 +119,22 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
     }
 
     private int getFragmentPosition(int id) {
-        int position = FragmentFactory.FRAGEMENT_LOCAL_PIC;
+        int position = FragmentFactory.FRAGMENT_LOCAL_PIC;
         switch (id) {
             case R.id.pic_local:
-                position = FragmentFactory.FRAGEMENT_LOCAL_PIC;
+                position = FragmentFactory.FRAGMENT_LOCAL_PIC;
                 break;
             case R.id.pic_network:
-                position = FragmentFactory.FRAGEMENT_NETWORK_PIC;
+                position = FragmentFactory.FRAGMENT_NETWORK_PIC;
                 break;
             case R.id.music_local:
-                position = FragmentFactory.FRAGEMENT_LOCAL_MUSIC;
+                position = FragmentFactory.FRAGMENT_LOCAL_MUSIC;
                 break;
             case R.id.music_spotify:
-                position = FragmentFactory.FRAGEMENT_SPOTIFY;
+                position = FragmentFactory.FRAGMENT_SPOTIFY;
                 break;
             case R.id.music_qq:
-                position = FragmentFactory.FRAGEMENT_QQ;
+                position = FragmentFactory.FRAGMENT_QQ;
                 break;
             default:
                 break;

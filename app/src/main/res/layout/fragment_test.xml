@@ -1,0 +1,138 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestFragment">
+
+    <com.union.entertainment.ui.view.ColorPickerView
+        android:id="@+id/color_picker"
+        android:layout_width="fill_parent"
+        android:layout_height="100dip" />
+
+    <RelativeLayout
+        android:id="@+id/color_preview_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/color_picker"
+        android:layout_marginTop="10dip"
+        android:background="@drawable/color_picker_shape"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/color_preview"
+            android:layout_width="35.0dip"
+            android:layout_height="35.0dip"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/light_layout"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle_light_yellow_shape"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/light_btn"
+        android:layout_width="60dip"
+        android:layout_height="60dip"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle_yellow_shape"
+        android:gravity="center"
+        android:text="Rec"
+        android:textColor="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/bottom_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/footer_margin_bottom"
+        android:layout_alignParentBottom="true"
+        android:background="@color/transparent2"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/edit"
+                android:layout_width="50.0dip"
+                android:layout_height="50.0dip"
+                android:background="@drawable/photo_edit_btn_shape"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/write" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/rec"
+                android:layout_width="50.0dip"
+                android:layout_height="50.0dip"
+                android:background="@drawable/photo_rec_btn_shape"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/mic" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/cancel"
+                android:layout_width="50.0dip"
+                android:layout_height="50.0dip"
+                android:background="@drawable/photo_cancel_btn_shape"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/cancel_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/trash" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/footer_button_height"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/send"
+                android:layout_width="50.0dip"
+                android:layout_height="50.0dip"
+                android:background="@drawable/photo_send_btn_shape"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/send_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/send" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>
