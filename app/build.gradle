@@ -14,7 +14,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("D:\\work\\App_version\\sengled.keystore")
+            storeFile file("/Users/zhouxiaming/work/sengled/keystore/sengled.keystore")
             storePassword "sengled1234"
             keyAlias "sengled"
             keyPassword "sengled1234"

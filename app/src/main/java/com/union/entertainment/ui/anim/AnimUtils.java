@@ -16,18 +16,49 @@ public class AnimUtils {
      * @param animId
      * @param callback
      */
-    public static void addClickAnimation(Context context, final View v, int animId, final AnimCallback callback) {
+    public static void addClickAnimation(Context context, final View v, int animId, final IAnimCallback callback) {
+        executeAnimation(context, v, animId, callback);
+    }
+
+    /**
+     * 显示或隐藏Button的时候带上动画效果
+     * @param context
+     * @param show
+     * @param v
+     * @param animId
+     * @param callback
+     */
+    public static void showOrHideButtonWithAnimation(Context context, boolean show, final View v, int animId, final IAnimCallback callback) {
+        if (show) {
+            v.setVisibility(View.VISIBLE);
+        } else {
+            v.setVisibility(View.INVISIBLE);
+        }
+        executeAnimation(context, v, animId, callback);
+    }
+
+
+    /**
+     * 执行动画效果
+     * @param context
+     * @param v
+     * @param animId
+     * @param callback
+     */
+    private static void executeAnimation(Context context, View v, int animId, final IAnimCallback callback) {
         Animation animation = AnimationUtils.loadAnimation(context, animId);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                if (callback != null) {
+                    callback.animationStart();
+                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (callback != null) {
-                    callback.handleClickEvent();
+                    callback.animationEnd();
                 }
             }
 
