@@ -22,7 +22,7 @@ import com.facebook.rebound.SpringSystem;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.entertainment.R;
 import com.union.entertainment.ui.view.ColorPickerView;
-import com.union.entertainment.ui.anim.FaceBookRebound;
+import com.union.commonlib.ui.anim.FaceBookRebound;
 
 import java.util.ArrayList;
 import java.util.List;

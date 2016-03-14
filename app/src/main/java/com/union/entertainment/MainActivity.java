@@ -14,12 +14,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 
 import com.union.entertainment.ui.activity.NavigationActivity;
-import com.union.entertainment.ui.anim.AnimCallbackImp;
-import com.union.entertainment.ui.anim.IAnimCallback;
-import com.union.entertainment.ui.anim.AnimUtils;
+import com.union.commonlib.ui.anim.AnimCallbackImp;
+import com.union.commonlib.ui.anim.AnimUtils;
 
 import java.io.IOException;
 
