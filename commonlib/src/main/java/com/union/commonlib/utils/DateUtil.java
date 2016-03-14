@@ -1,4 +1,4 @@
-package com.union.entertainment.utils;
+package com.union.commonlib.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

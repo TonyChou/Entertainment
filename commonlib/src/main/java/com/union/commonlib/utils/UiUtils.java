@@ -1,4 +1,4 @@
-package com.union.entertainment.utils;
+package com.union.commonlib.utils;
 
 import android.app.Activity;
 import android.content.Context;

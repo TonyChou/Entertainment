@@ -1,4 +1,4 @@
-package com.union.commonlib.view;
+package com.union.commonlib.ui.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
