@@ -87,12 +87,6 @@ public class Song extends BaseObject {
         }
     }
 
-    private String getStringValue(String key, JSONObject jsonObject) throws JSONException {
-        return jsonObject.isNull(key)? null : jsonObject.getString(key);
-    }
-    private int getIntValue(String key, JSONObject jsonObject) throws JSONException {
-        return jsonObject.isNull(key)? null : jsonObject.getInt(key);
-    }
 
 
     public String getAlbum() {

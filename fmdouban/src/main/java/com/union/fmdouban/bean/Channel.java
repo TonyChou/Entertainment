@@ -1,4 +1,10 @@
 package com.union.fmdouban.bean;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zhouxiaming on 16/3/13.
@@ -48,5 +54,21 @@ public class Channel extends BaseObject {
 
     public void setAbbrEn(String abbrEn) {
         this.abbrEn = abbrEn;
+    }
+
+    public static List<Channel> parserJson(JSONObject jsonObject) throws JSONException {
+        List<Channel> channels = new ArrayList<Channel>();
+        JSONArray jsonArray = jsonObject.getJSONArray("channels");
+        for(int i = 0; i < jsonArray.length(); i++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            Channel channel = new Channel();
+            channel.setNameZh(getStringValue("name", object));
+            channel.setSeqId(getIntValue("seq_id", object));
+            channel.setNameEn(getStringValue("name_en", object));
+            channel.setAbbrEn(getStringValue("abbr_en", object));
+            channel.setChannelId(getIntValue("channel_id", object));
+            channels.add(channel);
+        }
+        return channels;
     }
 }

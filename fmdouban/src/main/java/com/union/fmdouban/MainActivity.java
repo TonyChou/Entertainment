@@ -3,6 +3,8 @@ package com.union.fmdouban;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.union.fmdouban.ui.fragment.ChannelFragment;
 
 import org.json.JSONObject;
 
@@ -25,36 +28,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                loadChannel();
-            }
-        });
+        setFragment();
     }
 
-    private void loadChannel() {
-        RequestQueue mQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constant.SONG_URL_DOUBAN, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Log.i("veve", "jsonObject: " + jsonObject);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.i("veve", "volleyError: " + volleyError.getMessage());
-            }
-        });
-        mQueue.add(jsonObjectRequest);
-        mQueue.start();
+    private void setFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment channelFragment = ChannelFragment.newInstance();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, channelFragment).commit();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
