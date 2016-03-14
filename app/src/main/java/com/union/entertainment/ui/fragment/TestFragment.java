@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringSystem;
+import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.entertainment.R;
 import com.union.entertainment.ui.view.ColorPickerView;
 import com.union.entertainment.ui.anim.FaceBookRebound;
@@ -31,11 +32,7 @@ import java.util.List;
  */
 public class TestFragment extends BaseFragment implements View.OnClickListener {
     private String TAG = this.getClass().getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private View editBtn, recBtn, cancelBtn, sendBtn, lightLayout;
-    private String mParam1;
-    private String mParam2;
     private ColorPickerView colorPickerView;
     private View colorPickerReviewBg;
     private ImageView colorPickerReview;
@@ -47,6 +44,11 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     private View mRootView;
 
 
+
+    public TestFragment() {
+        // Required empty public constructor
+    }
+
     public static TestFragment newInstance(String param1, String param2) {
         TestFragment fragment = new TestFragment();
         Bundle args = new Bundle();
@@ -56,17 +58,9 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
         return fragment;
     }
 
-    public TestFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         rootViewAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.send_left_to_right_anim);
         rootViewAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override

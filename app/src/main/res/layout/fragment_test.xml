@@ -54,7 +54,7 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/footer_button_height"
+            android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
 
@@ -74,7 +74,7 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/footer_button_height"
+            android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
 
@@ -94,7 +94,7 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/footer_button_height"
+            android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
 
@@ -115,7 +115,7 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/footer_button_height"
+            android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
 

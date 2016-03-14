@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
 import com.union.entertainment.module.picture.PhotosController;
@@ -29,21 +30,13 @@ import java.util.List;
  * Created by zhouxiaming on 2016/3/4.
  */
 public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<Cursor>{
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    private String mParam1;
-    private String mParam2;
 
     RecyclerView recyclerView;
     SwipeRefreshLayout refreshLayout;
     PhotoGridAdapter adapter;
 
     private OnFragmentInteractionListener mListener;
-
-    public GalleryFragment() {
-        // Required empty public constructor
-    }
 
     public static GalleryFragment newInstance(String param1, String param2) {
         GalleryFragment fragment = new GalleryFragment();
@@ -57,10 +50,6 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override

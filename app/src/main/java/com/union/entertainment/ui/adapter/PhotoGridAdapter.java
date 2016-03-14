@@ -13,18 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.union.commonlib.utils.DateUtil;
+import com.union.commonlib.utils.UiUtils;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
 import com.union.entertainment.ui.activity.LocationShowActivity;
-import com.union.entertainment.ui.activity.PhotosViewPagerActivity;
-import com.union.entertainment.utils.DateUtil;
-import com.union.entertainment.utils.UiUtils;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.io.File;
 
 /**
  * Created by lipan on 14/12/26.
@@ -32,6 +30,7 @@ import java.io.File;
 public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.ListHolder>{
     private int[] screen;
     Context context;
+
     private List<Photo> photoList = new ArrayList<Photo>();
     public PhotoGridAdapter(Activity context){
         this.context = context;

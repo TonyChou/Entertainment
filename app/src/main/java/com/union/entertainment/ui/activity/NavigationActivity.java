@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.union.entertainment.R;
-import com.union.entertainment.ui.fragment.BaseFragment;
+import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.entertainment.ui.fragment.FragmentFactory;
 
 

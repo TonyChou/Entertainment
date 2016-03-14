@@ -22,10 +22,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -34,15 +32,13 @@ import com.squareup.picasso.Picasso;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.HackyViewPager;
 import com.union.entertainment.module.picture.Photo;
-import com.union.entertainment.utils.UiUtils;
+import com.union.commonlib.utils.UiUtils;
 
 import uk.co.senab.photoview.PhotoView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 
