@@ -1,4 +1,4 @@
-package com.union.entertainment.ui.anim;
+package com.union.commonlib.ui.anim;
 
 /**
  * Created by zhouxiaming on 16/3/11.
