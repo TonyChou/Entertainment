@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.union.commonlib.view.TintUtils;
+import com.union.commonlib.ui.view.TintUtils;
 
 
 public class MainActivity extends AppCompatActivity {
