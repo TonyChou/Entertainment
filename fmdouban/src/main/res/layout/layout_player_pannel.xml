@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dip"
-    android:background="@color/text_white"
+    android:background="@color/light_yellow"
     android:orientation="vertical">
 
     <ImageView
@@ -15,65 +15,37 @@
         android:src="@drawable/example"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/pre"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
+            <include layout="@layout/button_player_control" />
 
-            <RelativeLayout
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:background="@drawable/circle_yellow_shape"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hello" />
-            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/play"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
-
-            <RelativeLayout
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:background="@drawable/circle_yellow_shape"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hello" />
-            </RelativeLayout>
+            <include layout="@layout/button_player_control" />
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/next"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
+            <include layout="@layout/button_player_control" />
 
-            <RelativeLayout
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:background="@drawable/circle_yellow_shape"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="hello" />
-            </RelativeLayout>
         </RelativeLayout>
 
     </LinearLayout>

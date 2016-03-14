@@ -25,6 +25,7 @@ import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
 import com.union.fmdouban.bean.Channel;
 import com.union.fmdouban.ui.adapter.ChannelAdapter;
+import com.union.fmdouban.ui.view.PlayerController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener{
     private RecyclerView mRecycleView;
     private ChannelAdapter mAdapter;
     RequestQueue mQueue;
+    private PlayerController mPlayerController;
 
     public static ChannelFragment newInstance() {
         ChannelFragment fragment = new ChannelFragment();
@@ -52,6 +54,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mQueue = Volley.newRequestQueue(this.getActivity());
+        mPlayerController = PlayerController.getInstance();
     }
 
     @Override
@@ -111,6 +114,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener{
 
     private void initView(View rootView) {
         mRecycleView = (RecyclerView)rootView.findViewById(R.id.list_view);
+        mPlayerController.init(this.getActivity(), rootView.findViewById(R.id.player_controller_view));
     }
 
     @Override

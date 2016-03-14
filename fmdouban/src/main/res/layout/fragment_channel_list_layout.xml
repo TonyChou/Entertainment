@@ -2,12 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.union.fmdouban.ui.view.PlayerControllerView
+    <include
         android:id="@+id/player_controller_view"
-        android:layout_centerHorizontal="true"
-        android:layout_width="match_parent"
-        android:background="@color/colorAccent"
-        android:layout_height="wrap_content" />
+        layout="@layout/layout_player_pannel"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_view"
