@@ -87,6 +87,8 @@
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.5.2" level="project" />
+    <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="androidsvg-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="rebound-0.3.8" level="project" />
     <orderEntry type="module" module-name="commonlib" exported="" />
   </component>
