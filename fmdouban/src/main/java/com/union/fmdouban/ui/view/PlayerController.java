@@ -1,10 +1,12 @@
 package com.union.fmdouban.ui.view;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimUtils;
+import com.union.commonlib.ui.view.TintUtils;
 import com.union.commonlib.utils.UiUtils;
 import com.union.fmdouban.R;
 
@@ -16,7 +18,7 @@ public class PlayerController implements View.OnClickListener{
     private View mControlPanelView;
     private static PlayerController instance;
     private View mPreButton, mPlayButton, mNextButton;
-    private View mPreIcon, mPlayIcon, mNextIcon;
+    private AppCompatTextView mPreIcon, mPlayIcon, mNextIcon;
     private Context mContext;
 
     private PlayerController() {
@@ -35,8 +37,17 @@ public class PlayerController implements View.OnClickListener{
         this.mControlPanelView = panelView;
         this.mContext = context;
         mPreButton = mControlPanelView.findViewById(R.id.pre);
+        mPreIcon = (AppCompatTextView)mPreButton.findViewById(R.id.button_icon);
+        mPreIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+        mPreIcon.setRotation(180f);
         mPlayButton = mControlPanelView.findViewById(R.id.play);
+        mPlayIcon = (AppCompatTextView)mPlayButton.findViewById(R.id.button_icon);
         mNextButton = mControlPanelView.findViewById(R.id.next);
+        mNextIcon = (AppCompatTextView)mNextButton.findViewById(R.id.button_icon);
+        mNextIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+
+        TintUtils.setBackgroundTint(this.mContext, R.color.white, mPreIcon, mPlayIcon, mNextIcon);
+
         addListener();
     }
 
