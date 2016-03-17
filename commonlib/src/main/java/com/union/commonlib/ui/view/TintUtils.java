@@ -13,4 +13,10 @@ public class TintUtils {
         ColorStateList csl=(ColorStateList)context.getResources().getColorStateList(color);
         view.setSupportBackgroundTintList(csl);
     }
+
+    public static void setBackgroundTint(Context context, int color, TintableBackgroundView... view) {
+        for(int i = 0; i < view.length; i++) {
+            setBackgroundTint(context, view[i], color);
+        }
+    }
 }
