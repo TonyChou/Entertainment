@@ -102,7 +102,7 @@ public class Player extends Service implements IPlayer {
         mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                LogUtils.i(TAG, "onBufferingUpdate percent: " + percent);
+
             }
         });
 

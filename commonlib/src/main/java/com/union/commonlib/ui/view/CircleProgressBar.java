@@ -71,7 +71,6 @@ public class CircleProgressBar extends LinearLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.i(TAG, "onDraw");
         if (!isInit) {
             init();
         }
