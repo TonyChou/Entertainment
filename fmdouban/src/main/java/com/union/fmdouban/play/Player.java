@@ -1,8 +1,14 @@
 package com.union.fmdouban.play;
 
+import android.app.Service;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.os.Binder;
 
 
 import com.union.commonlib.utils.LogUtils;
@@ -13,20 +19,33 @@ import java.io.IOException;
  * Created by zhouxiaming on 2015/4/16.
  */
 
-public class Player implements IPlayer {
+public class Player extends Service implements IPlayer {
     private String TAG = "Player";
     private static Player instance;
     private PlayerListener playerListener;
     private MediaPlayer mediaPlayer;
-    private Player() {
-        mediaPlayer = new MediaPlayer();
+    private final IBinder mBinder = new LocalBinder();
+    public Player() {
+
     }
-    public synchronized static Player getInstance() {
-        if (instance == null) {
-            instance = new Player();
+
+    public class LocalBinder extends Binder {
+        public Player getPlayerService() {
+            return Player.this;
         }
-        return instance;
     }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        this.release();
+        return super.onUnbind(intent);
+    }
+
 
     /**
      *初始化
@@ -107,6 +126,8 @@ public class Player implements IPlayer {
         playStream(url, AudioManager.STREAM_MUSIC);
     }
 
+
+
     @Override
     public void playStream(String url, int streamType) {
         try {
@@ -127,8 +148,8 @@ public class Player implements IPlayer {
     }
 
     private void resetPlayer() {
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            stop();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
             mediaPlayer = null;
         }
 
@@ -155,12 +176,21 @@ public class Player implements IPlayer {
 
     @Override
     public int getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
+        if (mediaPlayer != null) {
+            return mediaPlayer.getCurrentPosition();
+        } else {
+            return 0;
+        }
+
     }
 
     @Override
     public int getDuration() {
-        return mediaPlayer.getDuration();
+        if (mediaPlayer != null) {
+            return mediaPlayer.getDuration();
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -171,8 +201,8 @@ public class Player implements IPlayer {
 
     @Override
     public void release() {
-//        mediaPlayer.stop();
-//        mediaPlayer.release();
+        mediaPlayer.stop();
+        mediaPlayer.release();
     }
 
     @Override
@@ -186,7 +216,11 @@ public class Player implements IPlayer {
     }
 
     public boolean isPlaying() {
-        return mediaPlayer.isPlaying();
+        if (mediaPlayer == null) {
+            return false;
+        } else {
+            return mediaPlayer.isPlaying();
+        }
     }
 
 }

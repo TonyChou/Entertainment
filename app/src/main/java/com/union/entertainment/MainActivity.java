@@ -103,10 +103,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void runButtonAnim(final View v) {
         AnimUtils.addClickAnimation(this, v, R.anim.click_anim, new AnimCallbackImp() {
             @Override
-            public void animationEnd() {
-                if (v == mSkipButton) {
+            public void animationEnd(View view) {
+                if (view == mSkipButton) {
                     skip();
-                } else if (v == mPlayButton){
+                } else if (view == mPlayButton){
                     //playVideo();
                     replayVideo();
                     showButton(mPlayButton, false);

@@ -189,7 +189,7 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
         for (View view: v) {
             Spring spring = mSpringSystem.createSpring();
             springMap.add(spring);
-            FaceBookRebound.addSpringAnimation(view, spring);
+            FaceBookRebound.addSpringAnimation(view, spring, null);
         }
     }
 

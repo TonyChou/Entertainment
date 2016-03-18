@@ -1,16 +1,18 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="#000000"
+    android:background="@color/light_yellow"
     tools:context="com.union.fmdouban.MainActivity">
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <include
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
             android:id="@+id/player_controller_view"
             layout="@layout/layout_player_pannel"/>
 
@@ -18,16 +20,27 @@
             android:id="@+id/list_view"
             android:layout_below="@+id/player_controller_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:padding="5dp" />
-    </LinearLayout>
+    </FrameLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+
+
+    <RelativeLayout
+
+        android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@color/light_yellow"
-        android:src="@android:drawable/ic_dialog_email" />
-</android.support.design.widget.CoordinatorLayout>
+        android:id="@+id/foot_button"
+        android:layout_width="@dimen/circle_button_height"
+        android:layout_height="@dimen/circle_button_height"
+        android:background="@drawable/circle_light_yellow_shape"
+        android:gravity="center">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/button_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_playlist_add_black_48dp" />
+    </RelativeLayout>
+
+</FrameLayout>

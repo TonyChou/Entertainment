@@ -69,7 +69,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        refreshLayout.setProgressBackgroundColor(R.color.refresh_bg);
+        refreshLayout.setProgressBackgroundColor(R.color.light_blue);
 
     }
 

@@ -45,20 +45,20 @@ public class AnimUtils {
      * @param animId
      * @param callback
      */
-    private static void executeAnimation(Context context, View v, int animId, final IAnimCallback callback) {
+    private static void executeAnimation(Context context, final View v, int animId, final IAnimCallback callback) {
         Animation animation = AnimationUtils.loadAnimation(context, animId);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 if (callback != null) {
-                    callback.animationStart();
+                    callback.animationStart(v);
                 }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (callback != null) {
-                    callback.animationEnd();
+                    callback.animationEnd(v);
                 }
             }
 

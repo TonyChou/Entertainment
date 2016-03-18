@@ -420,15 +420,6 @@
 
 
 
-    <color name="transparent">#00000000</color>
-    <color name="transparent2">#33000000</color>
-    <color name="draw_btn">#ff56de0a</color>
-    <color name="edit_btn">#ff22b0f3</color>
-    <color name="cancel_btn">#fffc500c</color>
-    <color name="send_btn">#ffbd0afa</color>
-    <color name="rec_btn">#fff6b404</color>
-    <color name="refresh_bg">#B3E5FC</color>
-    <color name="yellow">#fff6b404</color>
-    <color name="light_yellow">#55f6b404</color>
+
     <!-- 500 -->
 </resources>

@@ -1,9 +1,13 @@
 package com.union.fmdouban.ui.fragment;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,15 +26,23 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringSystem;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
+import com.union.commonlib.ui.anim.FaceBookRebound;
+import com.union.commonlib.ui.anim.IAnimCallback;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.listener.ItemClickListener;
+import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
 import com.union.fmdouban.bean.Channel;
+import com.union.fmdouban.play.Player;
 import com.union.fmdouban.ui.adapter.ChannelAdapter;
 import com.union.fmdouban.ui.view.PlayerController;
 
@@ -53,8 +64,12 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     RequestQueue mQueue;
     private PlayerController mPlayerController;
     private View mControllerView;
-    FloatingActionButton fab;
+    View mShowHideButton;
     ImageView mCoverImage;
+    private BaseSpringSystem mSpringSystem;
+    private List<Spring> springMap = new ArrayList<Spring>();
+    AnimCallBack mAnimCallback;
+    Player mPlayer;
 
     public static ChannelFragment newInstance() {
         ChannelFragment fragment = new ChannelFragment();
@@ -67,6 +82,9 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         super.onCreate(savedInstanceState);
         mQueue = Volley.newRequestQueue(this.getActivity());
         mPlayerController = PlayerController.getInstance();
+        mSpringSystem = SpringSystem.create();
+        mAnimCallback = new AnimCallBack();
+        bindPlayerService();
     }
 
     @Override
@@ -82,14 +100,11 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mCoverImage = (ImageView) rootView.findViewById(R.id.cover);
         mControllerView = rootView.findViewById(R.id.player_controller_view);
-        mPlayerController.init(this.getActivity(), mControllerView);
-        fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onFloatButtonClick();
-            }
-        });
+        mPlayerController.init(this, mControllerView);
+        mShowHideButton = rootView.findViewById(R.id.foot_button);
+        addOnTouchSpringAnimation(mShowHideButton);
+
+        TintUtils.setBackgroundTint(this.getActivity(), (AppCompatTextView) mShowHideButton.findViewById(R.id.button_icon), R.color.white);
     }
 
     private View initListView() {
@@ -101,12 +116,17 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         mAdapter = new ChannelAdapter(this.getActivity(), new ArrayList<Channel>(), this);
         mRecycleView.setAdapter(mAdapter);
         mRecycleView.setHasFixedSize(true);
-
-        //mRecycleView.setItemAnimator(new SlideInFromLeftItemAnimator(recyclerView));
-
+        mRecycleView.setVisibility(View.INVISIBLE);
         mRecycleView.setHasFixedSize(true);
-        //mRecycleView.setBackgroundColor(Color.WHITE);
         return mRecycleView;
+    }
+
+    private void addOnTouchSpringAnimation(View... v) {
+        for (View view : v) {
+            Spring spring = mSpringSystem.createSpring();
+            springMap.add(spring);
+            FaceBookRebound.addSpringAnimation(view, spring, mAnimCallback);
+        }
     }
 
     private void updateAdapterData(List<Channel> channels) {
@@ -123,6 +143,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
                     List<Channel> channels = Channel.parserJson(jsonObject);
                     if (channels != null) {
                         updateAdapterData(channels);
+                        showChannelListView();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -163,28 +184,21 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         ViewPropertyAnimator.animate(mControllerView).alpha(1).
                 scaleX(1).scaleY(1).
                 translationX(0).translationY(dy).
-                setDuration(800).
+                setDuration(500).
                 setInterpolator(sDecelerator).
                 setListener(new AnimListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         ViewPropertyAnimator.animate(mControllerView).alpha(1);
-                        //放大Cover Image
-//                        ViewPropertyAnimator.animate(mCoverImage).alpha(1).
-//                                scaleX(1.5f).scaleY(1.5f).
-//                                translationX(0).translationY(-500).
-//                                setDuration(800).
-//                                setInterpolator(sDecelerator);
                     }
                 });
-
 
 
         int recycleViewDy = mRootView.getHeight();
         ViewPropertyAnimator.animate(mRecycleView).alpha(1).
                 scaleX(1).scaleY(1).
                 translationX(0).translationY(recycleViewDy).
-                setDuration(800).
+                setDuration(500).
                 setInterpolator(sDecelerator).
                 setListener(new AnimListener() {
                     @Override
@@ -192,35 +206,26 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
                         mRecycleView.setVisibility(View.INVISIBLE);
                     }
                 });
+        mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
     }
 
     /**
      * 显示频道列表
      */
     private void showChannelListView() {
+        mRecycleView.setVisibility(View.VISIBLE);
         //播放控制面板上移到顶端
-        ViewPropertyAnimator.animate(mControllerView).alpha(1).
+        ViewPropertyAnimator.animate(mControllerView).alpha(0).
                 scaleX(1).scaleY(1).
                 translationX(0).translationY(0).
-                setDuration(800).
+                setDuration(500).
                 setInterpolator(sDecelerator).
                 setListener(new AnimListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        ViewPropertyAnimator.animate(mControllerView).alpha(1);
-                        mRecycleView.setVisibility(View.VISIBLE);
+                        ViewPropertyAnimator.animate(mControllerView).alpha(0);
                     }
                 });
-
-//        //缩小Cover Image
-//        ViewPropertyAnimator.animate(mCoverImage).alpha(1).
-//                translationX(0).translationY(0).
-//                scaleX(1f).scaleY(1f).
-//                setDuration(800).
-//                setInterpolator(sDecelerator);
-        int screenHeight = mRootView.getHeight();
-
-        //ViewHelper.setTranslationY(mRecycleView, screenHeight);
         mRecycleView.setVisibility(View.VISIBLE);
         ViewHelper.setAlpha(mRecycleView, 0.5f);
         ViewHelper.setScaleX(mRecycleView, 0.5f);
@@ -229,15 +234,59 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         ViewPropertyAnimator.animate(mRecycleView).alpha(1).
                 scaleX(1).scaleY(1).
                 translationX(0).translationY(0).
-                setDuration(800).
+                setDuration(500).
                 setInterpolator(sDecelerator).
                 setListener(new AnimListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        ViewPropertyAnimator.animate(mControllerView).alpha(1);
-                        mRecycleView.setVisibility(View.VISIBLE);
                     }
                 });
+        mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (Spring spring : springMap) {
+            spring.removeAllListeners();
+        }
+        if (mSpringSystem != null) {
+            mSpringSystem.removeAllListeners();
+            mSpringSystem = null;
+        }
+
+        mPlayerController.release();
+        getActivity().unbindService(connection);
+    }
+
+    class AnimCallBack extends AnimCallbackImp {
+        @Override
+        public void animationEnd(View v) {
+            if (v == mShowHideButton) {
+                Log.i("veve", "animationEnd ");
+                onFloatButtonClick();
+            }
+        }
+    }
+
+    public Player getPlayer() {
+        return mPlayer;
+    }
+
+    private void bindPlayerService() {
+        this.getActivity().bindService(new Intent(this.getActivity(), Player.class),connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mPlayer = ((Player.LocalBinder) service).getPlayerService();
+            mPlayer.setPlayerListener(mPlayerController); //设置播放监听
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mPlayer = null;
+        }
+    };
 }

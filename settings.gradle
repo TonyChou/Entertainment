@@ -1,1 +1,1 @@
-include ':app', ':fmximalaya', ':fmdouban', ':commonlib'
+include ':fmximalaya', ':fmdouban', ':commonlib', ':app'
