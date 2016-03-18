@@ -13,11 +13,8 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file("/Users/zhouxiaming/work/sengled/keystore/sengled.keystore")
-            storePassword "sengled1234"
-            keyAlias "sengled"
-            keyPassword "sengled1234"
+        debug {
+            storeFile     file("debug.keystore")
         }
     }
 
@@ -25,9 +22,8 @@ android {
     buildTypes {
 
         debug {
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
         }
-
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
