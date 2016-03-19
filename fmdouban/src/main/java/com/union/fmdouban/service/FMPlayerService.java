@@ -1,0 +1,364 @@
+package com.union.fmdouban.service;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.SystemClock;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.union.commonlib.utils.LogUtils;
+import com.union.fmdouban.Constant;
+import com.union.fmdouban.R;
+import com.union.fmdouban.bean.Channel;
+import com.union.fmdouban.bean.Song;
+import com.union.fmdouban.play.FMMediaPlayer;
+import com.union.fmdouban.play.PlayerControllerListener;
+import com.union.fmdouban.play.PlayerListener;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * Created by zhouxiaming on 2015/4/16.
+ */
+
+public class FMPlayerService extends Service implements PlayerListener{
+    private static List<Song> songCache = new ArrayList<Song>();
+    private final int PROGRESS_UPDATE = 0x000011; //进度条更新
+    private String TAG = "FMMediaPlayer";
+    private static FMMediaPlayer mPlayer;
+    private PlayerListener playerListener;
+    private final IBinder mBinder = new LocalBinder();
+    private static Channel mChannel;
+    private static PlayState mCurrentPLayState = PlayState.NONE;
+    RequestQueue mQueue;
+    private static int mSongIndex = 0;
+    Context mContext;
+    private Timer mProgressTimer;
+    private boolean isTimerStarted = false;
+    PlayerControllerListener controllerListener;
+
+    @Override
+    public void onError(String errorMsg) {
+        mCurrentPLayState = PlayState.NONE;
+        stopProgressTimer();
+        refreshView();
+    }
+
+    @Override
+    public void onFinish() {
+        mCurrentPLayState = PlayState.STOP;
+        refreshView();
+        stopProgressTimer();
+        loadSong();
+    }
+
+    @Override
+    public void onPrepared() {
+        mCurrentPLayState = PlayState.PLAYING;
+        startProgressTimer();
+        refreshView();
+    }
+
+    public enum PlayState {
+        NONE,
+        PLAYING,
+        PAUSE,
+        STOP,
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mContext = this.getApplicationContext();
+        mQueue = Volley.newRequestQueue(this);
+        mPlayer = FMMediaPlayer.getInstance();
+        mPlayer.setPlayerListener(this);
+    }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int what = msg.what;
+            switch (what) {
+                case PROGRESS_UPDATE:
+                    int progress = msg.arg1;
+                    sendProgressCallback(progress);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    public FMPlayerService() {
+
+    }
+
+    public class LocalBinder extends Binder {
+        public FMPlayerService getPlayerService() {
+            return FMPlayerService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
+    }
+
+    /**
+     * 再次进入播放界面，需要恢复一下界面状态
+     * @param controllerListener
+     */
+    public void setControllerListener(PlayerControllerListener controllerListener) {
+        this.controllerListener = controllerListener;
+        refreshView();
+        controllerListener.loadCover();
+    }
+
+    public void sendProgressCallback(int progress) {
+        if (controllerListener != null) {
+            controllerListener.sendProgress(progress);
+        }
+    }
+
+
+
+    public void play(String url) {
+        stopProgressTimer();
+        sendProgressCallback(0);
+        mPlayer.play(url);
+        mCurrentPLayState = PlayState.PLAYING;
+        if (controllerListener != null) {
+            controllerListener.loadCover();
+        }
+    }
+
+
+    public void pause() {
+        mPlayer.pause();
+        mCurrentPLayState = PlayState.PAUSE;
+        refreshView();
+    }
+
+    public void resume() {
+        mPlayer.resume();
+        mCurrentPLayState = PlayState.PLAYING;
+        refreshView();
+    }
+
+    public void stop() {
+        mPlayer.stop();
+        mCurrentPLayState = PlayState.NONE;
+        refreshView();
+    }
+
+    private void refreshView() {
+        if (controllerListener != null) {
+            controllerListener.refreshControllerView(mChannel, getCurrentSong(), getPlayState());
+        }
+    }
+
+    public void playOrPause() {
+        if (mCurrentPLayState == PlayState.PLAYING) {
+            mCurrentPLayState = PlayState.PAUSE;
+            pause();
+        } else if (mCurrentPLayState == PlayState.PAUSE) {
+            mCurrentPLayState = PlayState.PLAYING;
+            resume();
+        } else {
+            Song song = getSong();
+            if (song != null) {
+                play(song.getUrl());
+            } else {
+                mCurrentPLayState = PlayState.NONE;
+            }
+        }
+
+
+    }
+
+    private Song getSong() {
+        if (songCache.size() > 0 && mSongIndex <= songCache.size() - 1) {
+            return songCache.get(mSongIndex);
+        } else {
+            return null;
+        }
+    }
+
+
+    public int getCurrentPosition() {
+        if (mPlayer != null) {
+            return mPlayer.getCurrentPosition();
+        } else {
+            return 0;
+        }
+
+    }
+
+
+    public int getDuration() {
+        if (mPlayer != null) {
+            return mPlayer.getDuration();
+        } else {
+            return 0;
+        }
+    }
+
+
+    public void seekTo(int position) {
+        LogUtils.i(TAG, "seekTo: " + position);
+        mPlayer.seekTo(position);
+    }
+
+
+    public void release() {
+        if (mPlayer != null) {
+            mPlayer.release();
+        }
+    }
+
+
+    public void playNext() {
+        mCurrentPLayState = PlayState.NONE;
+        stop();
+        loadSong();
+    }
+
+
+    public void playPriority() {
+        int tempIndex = mSongIndex - 1;
+        if (tempIndex <= songCache.size() - 1 && tempIndex >= 0) {
+            mSongIndex--;
+            stop();
+            play(songCache.get(mSongIndex).getUrl());
+        } else {
+            Toast.makeText(mContext, mContext.getString(R.string.no_more_pre_songs), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void notifyToRefreshView() {
+        //TODO
+    }
+
+    public boolean isPlaying() {
+        if (mPlayer == null) {
+            return false;
+        } else {
+            return mPlayer.isPlaying();
+        }
+    }
+
+    public void switchChannel(Channel channel) {
+        mChannel = channel;
+        songCache.clear();
+        mCurrentPLayState = PlayState.NONE;
+        loadSong();
+    }
+
+
+    /**
+     * 加载歌曲信息
+     */
+    private void loadSong() {
+        if (mChannel == null) {
+            return;
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, String.format(Constant.SONG_URL_DOUBAN, mChannel.getChannelId()), null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                Log.i(TAG, "onResponse: " + jsonObject);
+                if (jsonObject != null) {
+                    Song song = new Song(jsonObject.toString());
+                    //最多只缓存50首歌曲信息
+                    if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
+                        songCache.remove(0);
+                    }
+                    songCache.add(song);
+                    mSongIndex = songCache.size() - 1;
+                    play(song.getUrl());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonObjectRequest);
+        mQueue.start();
+    }
+
+
+    public Channel getCurrentChannel() {
+        return mChannel;
+    }
+
+    public Song getCurrentSong() {
+        if (songCache.size() > 0 && songCache.size() - 1 >= mSongIndex) {
+            return songCache.get(mSongIndex);
+        }
+        return null;
+    }
+
+    public PlayState getPlayState() {
+        return mCurrentPLayState;
+    }
+
+    private void stopProgressTimer() {
+        if (isTimerStarted) {
+            mProgressTimer.cancel();
+            mProgressTimer = null;
+            isTimerStarted = false;
+        }
+    }
+
+    private void startProgressTimer() {
+        if (isTimerStarted) {
+            return;
+        }
+        isTimerStarted = true;
+        mProgressTimer = new Timer();
+        mProgressTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!isPlaying() || getDuration() == 0 ) {
+                    SystemClock.sleep(1000);
+                    return;
+                }
+
+                if (isPlaying()) {
+                    mCurrentPLayState = PlayState.PLAYING;
+                }
+                int position = getCurrentPosition();
+                int duration = getDuration();
+                int progress = (int) ((double) position / duration * 1000);
+                Message msg = handler.obtainMessage(PROGRESS_UPDATE);
+                msg.arg1 = progress;
+                msg.sendToTarget();
+            }
+        }, 0, 300);
+    }
+
+}

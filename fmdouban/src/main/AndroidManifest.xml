@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".play.Player"/>
+        <service android:name=".service.FMPlayerService"/>
     </application>
 
 </manifest>

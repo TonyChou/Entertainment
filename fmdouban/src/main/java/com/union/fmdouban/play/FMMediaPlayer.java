@@ -1,14 +1,8 @@
 package com.union.fmdouban.play;
 
-import android.app.Service;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.os.Binder;
 
 
 import com.union.commonlib.utils.LogUtils;
@@ -19,33 +13,21 @@ import java.io.IOException;
  * Created by zhouxiaming on 2015/4/16.
  */
 
-public class Player extends Service implements IPlayer {
-    private String TAG = "Player";
-    private static Player instance;
-    private PlayerListener playerListener;
+public class FMMediaPlayer implements IPlayer {
+    private String TAG = "FMMediaPlayer";
+    private static FMMediaPlayer instance;
+    private static PlayerListener playerListener;
     private MediaPlayer mediaPlayer;
-    private final IBinder mBinder = new LocalBinder();
-    public Player() {
-
+    private FMMediaPlayer() {
+        mediaPlayer = new MediaPlayer();
+        init();
     }
-
-    public class LocalBinder extends Binder {
-        public Player getPlayerService() {
-            return Player.this;
+    public synchronized static FMMediaPlayer getInstance() {
+        if (instance == null) {
+            instance = new FMMediaPlayer();
         }
+        return instance;
     }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        this.release();
-        return super.onUnbind(intent);
-    }
-
 
     /**
      *初始化
@@ -79,7 +61,6 @@ public class Player extends Service implements IPlayer {
                 if (playerListener != null) {
                     playerListener.onPrepared();
                 }
-                mediaPlayer.start();
             }
         });
 
@@ -102,7 +83,7 @@ public class Player extends Service implements IPlayer {
         mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
-
+                LogUtils.i(TAG, "onBufferingUpdate percent: " + percent);
             }
         });
 
@@ -126,8 +107,6 @@ public class Player extends Service implements IPlayer {
         playStream(url, AudioManager.STREAM_MUSIC);
     }
 
-
-
     @Override
     public void playStream(String url, int streamType) {
         try {
@@ -139,7 +118,7 @@ public class Player extends Service implements IPlayer {
             mediaPlayer.prepareAsync();
 
             //seekTo(mediaPlayer.getDuration() - 20000);
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (playerListener != null) {
                 playerListener.onError("Play IOException: " + url);
             }
@@ -148,13 +127,11 @@ public class Player extends Service implements IPlayer {
     }
 
     private void resetPlayer() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
+        if ( mediaPlayer.isPlaying()) {
+            stop();
+        } else {
+            mediaPlayer.reset();
         }
-
-        mediaPlayer = new MediaPlayer();
-        init();
     }
 
     @Override
@@ -176,21 +153,12 @@ public class Player extends Service implements IPlayer {
 
     @Override
     public int getCurrentPosition() {
-        if (mediaPlayer != null) {
-            return mediaPlayer.getCurrentPosition();
-        } else {
-            return 0;
-        }
-
+        return mediaPlayer.getCurrentPosition();
     }
 
     @Override
     public int getDuration() {
-        if (mediaPlayer != null) {
-            return mediaPlayer.getDuration();
-        } else {
-            return 0;
-        }
+        return mediaPlayer.getDuration();
     }
 
     @Override
@@ -201,26 +169,14 @@ public class Player extends Service implements IPlayer {
 
     @Override
     public void release() {
-        mediaPlayer.stop();
-        mediaPlayer.release();
+//        mediaPlayer.stop();
+//        mediaPlayer.release();
     }
 
-    @Override
-    public void playNext() {
 
-    }
-
-    @Override
-    public void playPriority() {
-
-    }
 
     public boolean isPlaying() {
-        if (mediaPlayer == null) {
-            return false;
-        } else {
-            return mediaPlayer.isPlaying();
-        }
+        return mediaPlayer.isPlaying();
     }
 
 }

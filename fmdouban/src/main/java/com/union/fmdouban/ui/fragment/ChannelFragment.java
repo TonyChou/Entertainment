@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,16 +34,16 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
 import com.union.commonlib.ui.anim.FaceBookRebound;
-import com.union.commonlib.ui.anim.IAnimCallback;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.listener.ItemClickListener;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
 import com.union.fmdouban.bean.Channel;
-import com.union.fmdouban.play.Player;
+import com.union.fmdouban.play.FMMediaPlayer;
+import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.ui.adapter.ChannelAdapter;
-import com.union.fmdouban.ui.view.PlayerController;
+import com.union.fmdouban.service.PlayerController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,7 +68,8 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     private BaseSpringSystem mSpringSystem;
     private List<Spring> springMap = new ArrayList<Spring>();
     AnimCallBack mAnimCallback;
-    Player mPlayer;
+    FMPlayerService mPlayerService;
+    Channel mCurrentChannel;
 
     public static ChannelFragment newInstance() {
         ChannelFragment fragment = new ChannelFragment();
@@ -162,10 +162,34 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
 
     @Override
     public void onItemClick(int position) {
+        showOrHideChannelsPanel();
+        Channel selectedChannel = mAdapter.getChannel(position);
+        if (mCurrentChannel != null && selectedChannel.getChannelId() == mCurrentChannel.getChannelId()) {
+            return;
+        }
 
+        for(Channel channel : mAdapter.getData()) {
+            channel.setIsPlaying(false);
+        }
+
+        selectedChannel.setIsPlaying(true);
+        mCurrentChannel = selectedChannel;
+        mAdapter.notifyDataSetChanged();
+        switchChannel();
     }
 
-    public void onFloatButtonClick() {
+    public RequestQueue getQueue() {
+        return mQueue;
+    }
+
+    /**
+     * 切换频道播放歌曲
+     */
+    private void switchChannel() {
+        getPlayerSercie().switchChannel(mCurrentChannel);
+    }
+
+    public void showOrHideChannelsPanel() {
         if (mRecycleView.getVisibility() == View.INVISIBLE) {
             showChannelListView();
         } else {
@@ -264,29 +288,29 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         public void animationEnd(View v) {
             if (v == mShowHideButton) {
                 Log.i("veve", "animationEnd ");
-                onFloatButtonClick();
+                showOrHideChannelsPanel();
             }
         }
     }
 
-    public Player getPlayer() {
-        return mPlayer;
+    public FMPlayerService getPlayerSercie() {
+        return mPlayerService;
     }
 
     private void bindPlayerService() {
-        this.getActivity().bindService(new Intent(this.getActivity(), Player.class),connection, Context.BIND_AUTO_CREATE);
+        this.getActivity().bindService(new Intent(this.getActivity(), FMPlayerService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mPlayer = ((Player.LocalBinder) service).getPlayerService();
-            mPlayer.setPlayerListener(mPlayerController); //设置播放监听
+            mPlayerService = ((FMPlayerService.LocalBinder) service).getPlayerService();
+            mPlayerService.setControllerListener(mPlayerController); //设置播放监听
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mPlayer = null;
+            mPlayerService = null;
         }
     };
 }

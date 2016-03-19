@@ -12,8 +12,6 @@ public interface IPlayer {
     public int getDuration();
     public void seekTo(int position);
     public void release();
-    public void playNext();
-    public void playPriority();
 
     /**
      * @param url

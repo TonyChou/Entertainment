@@ -15,6 +15,15 @@ public class Channel extends BaseObject {
     private int channelId; //channel id
     private int seqId;  //序列ID
     private String abbrEn; //未知
+    private boolean isPlaying;
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setIsPlaying(boolean isPlaying) {
+        this.isPlaying = isPlaying;
+    }
 
     public String getNameZh() {
         return nameZh;

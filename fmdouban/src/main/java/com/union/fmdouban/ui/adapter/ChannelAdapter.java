@@ -29,6 +29,15 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelH
     public void setData(List<Channel> channels) {
         this.mChannelList = channels;
     }
+
+    public Channel getChannel(int position) {
+        return mChannelList.get(position);
+    }
+
+    public List<Channel> getData() {
+        return mChannelList;
+    }
+
     @Override
     public ChannelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.channel_grid_item, null);
@@ -60,6 +69,12 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelH
         public void setData(int position) {
             Channel channel = mChannelList.get(position);
             channelNameView.setText(channel.getNameZh());
+            if (channel.isPlaying()) {
+                channelNameView.setTextColor(mContext.getResources().getColor(R.color.light_blue));
+            } else {
+                channelNameView.setTextColor(mContext.getResources().getColor(R.color.text_white));
+            }
+
         }
 
         @Override

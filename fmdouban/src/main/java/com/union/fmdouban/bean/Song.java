@@ -49,29 +49,34 @@ public class Song extends BaseObject {
     }
 
     private void parserJsonData(String jsonData) throws JSONException {
-        JSONObject jsonObject = new JSONObject(jsonData);
-        if (jsonObject == null) {
+        JSONObject object = new JSONObject(jsonData);
+        if (object == null) {
             return;
         }
-        this.album = getStringValue("album", jsonObject);
-        this.status = getIntValue("status", jsonObject);
-        this.ssid = getStringValue("ssid", jsonObject);
-        this.picture = getStringValue("picture", jsonObject);
-        this.artist = getStringValue("artist", jsonObject);
-        this.url = getStringValue("url", jsonObject);
-        this.title = getStringValue("title", jsonObject);
-        this.length = getIntValue("length", jsonObject);
-        this.like = getStringValue("like", jsonObject);
-        this.subtype = getStringValue("subtype", jsonObject);
-        this.publicTime = getStringValue("public_time", jsonObject);
-        this.sid = getStringValue("sid", jsonObject);
-        this.aid = getStringValue("aid", jsonObject);
-        this.mimeType = getStringValue("file_ext", jsonObject);
-        this.sha256 = getStringValue("sha256", jsonObject);
-        this.kbps = getStringValue("kbps", jsonObject);
-        this.albumTitle = getStringValue("albumtitle", jsonObject);
-        this.alertMsg = getStringValue("alert_msg", jsonObject);
-        parserSingers(jsonObject);
+        Object songArray = object.get("song");
+        if (songArray != null && songArray instanceof JSONArray) {
+            JSONObject jsonObject = ((JSONArray) songArray).getJSONObject(0);
+            this.album = getStringValue("album", jsonObject);
+            this.status = getIntValue("status", jsonObject);
+            this.ssid = getStringValue("ssid", jsonObject);
+            this.picture = getStringValue("picture", jsonObject);
+            this.artist = getStringValue("artist", jsonObject);
+            this.url = getStringValue("url", jsonObject);
+            this.title = getStringValue("title", jsonObject);
+            this.length = getIntValue("length", jsonObject);
+            this.like = getStringValue("like", jsonObject);
+            this.subtype = getStringValue("subtype", jsonObject);
+            this.publicTime = getStringValue("public_time", jsonObject);
+            this.sid = getStringValue("sid", jsonObject);
+            this.aid = getStringValue("aid", jsonObject);
+            this.mimeType = getStringValue("file_ext", jsonObject);
+            this.sha256 = getStringValue("sha256", jsonObject);
+            this.kbps = getStringValue("kbps", jsonObject);
+            this.albumTitle = getStringValue("albumtitle", jsonObject);
+            this.alertMsg = getStringValue("alert_msg", jsonObject);
+            parserSingers(jsonObject);
+        }
+
     }
 
     private void parserSingers(JSONObject jsonObject) throws JSONException {

@@ -10,8 +10,24 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:layout_centerVertical="true" />
-    <FrameLayout
+    <TextView
         android:layout_above="@+id/deliver"
+        android:id="@+id/song_name"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        android:layout_centerHorizontal="true"
+        android:text="Hello"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:textColor="@color/text_black"
+        android:textSize="@dimen/song_name_size" />
+    <FrameLayout
+        android:id="@+id/cover_and_progress"
+        android:layout_above="@+id/song_name"
         android:layout_width="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_height="match_parent">
@@ -45,15 +61,12 @@
         </com.union.commonlib.ui.view.CircleProgressBar>
     </FrameLayout>
 
-
-
-
     <LinearLayout
         android:id="@+id/control_buttons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/deliver"
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="5dip"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -63,7 +76,6 @@
             android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
-
             <include layout="@layout/button_circle_bg" />
 
         </RelativeLayout>
@@ -74,7 +86,6 @@
             android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
-
             <include layout="@layout/button_circle_bg" />
         </RelativeLayout>
 
@@ -84,11 +95,25 @@
             android:layout_height="@dimen/player_button_height"
             android:layout_weight="1.0"
             android:gravity="center">
-
             <include layout="@layout/button_circle_bg" />
-
         </RelativeLayout>
-
     </LinearLayout>
 
+    <TextView
+        android:layout_below="@+id/control_buttons"
+        android:id="@+id/channel_name"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        android:layout_centerHorizontal="true"
+        android:text="Hello"
+        android:gravity="center"
+        android:layout_marginTop="30dip"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textColor="@color/text_white"
+        android:background="@drawable/text_bg_shape"
+        android:textSize="@dimen/channel_name_size" />
 </RelativeLayout>
