@@ -122,7 +122,13 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
             mSongNameView.setVisibility(View.INVISIBLE);
         } else {
             mSongNameView.setVisibility(View.VISIBLE);
-            StringBuffer sb = new StringBuffer(song.getTitle());
+
+            StringBuffer sb = new StringBuffer();
+            if (song.getTitle() != null) {
+                sb.append(song.getTitle());
+            } else {
+                sb.append("Unknown");
+            }
             if (song.getSingers() != null && song.getSingers().size() > 0) {
                 sb.append("--");
                 for (Singer singer : song.getSingers()) {
