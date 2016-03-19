@@ -16,6 +16,9 @@
     <string name="pic_local">本地图片</string>
     <string name="pic_network">网络图片</string>
 
+    <string name="fm_group">FM</string>
+    <string name="fm_douban">豆瓣FM</string>
+
     <string name="music_group">音乐</string>
     <string name="music_local">本地音乐</string>
     <string name="music_spotify">Spotify</string>

@@ -58,7 +58,7 @@ public class CircleProgressBar extends LinearLayout {
     private void init() {
         setBackgroundResource(R.color.transparent); //必须要设置一个背景颜色，不然显示不出绘制的界面
         mProgressBarPaint = new Paint();
-        mProgressBarPaint.setColor(getResources().getColor(R.color.draw_btn));
+        mProgressBarPaint.setColor(getResources().getColor(R.color.light_blue));
         mProgressBarPaint.setAntiAlias(true);
         mProgressBarPaint.setStyle(Paint.Style.STROKE);
         mProgressBarPaint.setStrokeWidth(mProgressBarPaintWidth);

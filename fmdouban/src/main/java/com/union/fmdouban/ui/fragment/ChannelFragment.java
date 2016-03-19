@@ -28,9 +28,12 @@ import com.android.volley.toolbox.Volley;
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringSystem;
+import com.google.gson.reflect.TypeToken;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.squareup.picasso.LruCache;
+import com.union.commonlib.cache.CacheManager;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
 import com.union.commonlib.ui.anim.FaceBookRebound;
@@ -40,7 +43,6 @@ import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
 import com.union.fmdouban.bean.Channel;
-import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.ui.adapter.ChannelAdapter;
 import com.union.fmdouban.service.PlayerController;
@@ -130,6 +132,16 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     }
 
     private void updateAdapterData(List<Channel> channels) {
+        Channel currentChannel = mPlayerService != null ? mPlayerService.getCurrentChannel() : null;
+        if (currentChannel != null) {
+            for (Channel channel : channels) {
+                if (channel.getChannelId() == currentChannel.getChannelId()) {
+                    channel.setIsPlaying(true);
+                } else {
+                    channel.setIsPlaying(false);
+                }
+            }
+        }
         mAdapter.setData(channels);
         mAdapter.notifyDataSetChanged();
     }
@@ -141,10 +153,8 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
                 Log.i(TAG, "jsonObject: " + jsonObject);
                 try {
                     List<Channel> channels = Channel.parserJson(jsonObject);
-                    if (channels != null) {
-                        updateAdapterData(channels);
-                        showChannelListView();
-                    }
+                    renderChannelsData(channels);
+                    saveChannelsToCache(channels);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -153,10 +163,42 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.i(TAG, "volleyError: " + volleyError.getMessage());
+                List<Channel> channels = loadChannelsFromCache();
+                renderChannelsData(channels);
             }
         });
         mQueue.add(jsonObjectRequest);
         mQueue.start();
+    }
+
+    public void renderChannelsData(List<Channel> channels) {
+        if (channels != null && channels.size() > 0) {
+            updateAdapterData(channels);
+            boolean isPlaying = mPlayerService != null ? mPlayerService.isPlaying() : false;
+            if (!isPlaying) {
+                showChannelListView();
+            }
+        }
+    }
+
+    /**
+     * 讲频道数据保存到缓存中
+     * @param channels
+     */
+    private void saveChannelsToCache(List<Channel> channels) {
+        if (channels != null && channels.size() > 0) {
+            CacheManager cacheManager = new CacheManager(this.getActivity());
+            cacheManager.saveToCache(CacheManager.FM_DOUBAN_CHANNELS, channels);
+        }
+    }
+
+    /**
+     * 从缓存中加载数据
+     * @return
+     */
+    private List<Channel> loadChannelsFromCache() {
+        CacheManager cacheManager = new CacheManager(this.getActivity());
+        return cacheManager.getFromCache(CacheManager.FM_DOUBAN_CHANNELS, new TypeToken<List<Channel>>(){});
     }
 
 
@@ -281,13 +323,15 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
 
         mPlayerController.release();
         getActivity().unbindService(connection);
+        CacheManager cacheManager = new CacheManager(this.getActivity());
+        cacheManager.clearPicassoCache();
+        cacheManager.clearVolleyCache();
     }
 
     class AnimCallBack extends AnimCallbackImp {
         @Override
         public void animationEnd(View v) {
             if (v == mShowHideButton) {
-                Log.i("veve", "animationEnd ");
                 showOrHideChannelsPanel();
             }
         }

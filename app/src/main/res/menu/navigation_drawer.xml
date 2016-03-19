@@ -17,11 +17,21 @@
 
         </item>
 
+    </group>
+
+    <group android:id="@+id/fm_group">
+        <item android:title="@string/fm_group">
+            <menu android:checkableBehavior="single">
+                <item
+                    android:id="@+id/fm_douban"
+                    android:title="@string/fm_douban" />
+            </menu>
+        </item>
 
     </group>
 
-    <group
-        android:id="@+id/music_group">
+
+    <group android:id="@+id/music_group">
         <item android:title="@string/music_group">
             <menu android:checkableBehavior="single">
                 <item
@@ -29,8 +39,8 @@
                     android:title="@string/music_local" />
                 <item
                     android:id="@+id/music_spotify"
-                    app:actionLayout="@layout/menu_action_layout"
-                    android:title="@string/music_spotify" />
+                    android:title="@string/music_spotify"
+                    app:actionLayout="@layout/menu_action_layout" />
                 <item
                     android:id="@+id/music_qq"
                     android:title="@string/music_qq" />

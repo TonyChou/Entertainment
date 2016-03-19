@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/control_normal_teal"
+        android:background="@color/fg_yellow"
         app:headerLayout="@layout/navigation_header"
         app:itemTextAppearance="@style/TextAppearance.WithColor"
         app:menu="@menu/navigation_drawer" />

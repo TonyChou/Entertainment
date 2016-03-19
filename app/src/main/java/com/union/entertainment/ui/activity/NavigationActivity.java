@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -30,6 +31,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
     private NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private Fragment mCurrentFragment;
+    Toolbar toolbar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +54,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
 
     protected void initPageView() {
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, getToolBar(), R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
@@ -63,13 +65,10 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         spotifyNews.setText("hello");
     }
 
-    private Toolbar getToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        return toolbar;
-    }
+
 
     private void initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.pic_local);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,12 +78,28 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         });
     }
 
+    private void showToolBar(boolean show) {
+        if (show) {
+            toolbar.setVisibility(View.VISIBLE);
+        } else {
+            toolbar.setVisibility(View.GONE);
+        }
+    }
+
     private void switchFragment(int position) {
         Fragment f = FragmentFactory.createFragment(position);
-        if (f != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+        if (f != mCurrentFragment) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (mCurrentFragment != null && mCurrentFragment.isAdded()) {
+                transaction.hide(mCurrentFragment);
+            }
+            if ( !f.isAdded()) {
+                transaction.add(R.id.frame_content, f).commit();
+            } else {
+                transaction.show(f).commit();
+            }
             mCurrentFragment = f;
-            fragmentManager.beginTransaction().replace(R.id.frame_content, f).commit();
         }
     }
 
@@ -123,9 +138,14 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         switch (id) {
             case R.id.pic_local:
                 position = FragmentFactory.FRAGMENT_LOCAL_PIC;
+                showToolBar(true);
                 break;
             case R.id.pic_network:
                 position = FragmentFactory.FRAGMENT_NETWORK_PIC;
+                break;
+            case R.id.fm_douban:
+                position = FragmentFactory.FRAGMENT_DOUBAN_FM;
+                showToolBar(false);
                 break;
             case R.id.music_local:
                 position = FragmentFactory.FRAGMENT_LOCAL_MUSIC;
@@ -143,6 +163,8 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         return position;
     }
 
+
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
@@ -153,7 +175,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
     }
 
     private void setToolBarTitle(CharSequence title) {
-        getToolBar().setTitle(title);
+        toolbar.setTitle(title);
     }
 
     @Override

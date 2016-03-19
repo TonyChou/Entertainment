@@ -190,6 +190,8 @@ public class FMPlayerService extends Service implements PlayerListener{
             Song song = getSong();
             if (song != null) {
                 play(song.getUrl());
+            } else if (getCurrentChannel() != null){
+                loadSong();
             } else {
                 mCurrentPLayState = PlayState.NONE;
             }
@@ -294,9 +296,13 @@ public class FMPlayerService extends Service implements PlayerListener{
                     if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
                         songCache.remove(0);
                     }
-                    songCache.add(song);
-                    mSongIndex = songCache.size() - 1;
-                    play(song.getUrl());
+                    if (song.getUrl() == null) { //有时候返回的Json里面不包含歌曲信息
+                        loadSong();
+                    } else {
+                        songCache.add(song);
+                        mSongIndex = songCache.size() - 1;
+                        play(song.getUrl());
+                    }
                 }
 
             }

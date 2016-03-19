@@ -2,6 +2,8 @@ package com.union.entertainment.ui.fragment;
 
 import android.support.v4.app.Fragment;
 
+import com.union.fmdouban.ui.fragment.ChannelFragment;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +14,12 @@ public class FragmentFactory {
 
 	public static final int FRAGMENT_LOCAL_PIC = 0;
 	public static final int FRAGMENT_NETWORK_PIC = 1;
-	public static final int FRAGMENT_LOCAL_MUSIC = 2;
-	public static final int FRAGMENT_SPOTIFY = 3;
-	public static final int FRAGMENT_QQ = 4;
+
+	public static final int FRAGMENT_DOUBAN_FM = 2;
+
+	public static final int FRAGMENT_LOCAL_MUSIC = 3;
+	public static final int FRAGMENT_SPOTIFY = 4;
+	public static final int FRAGMENT_QQ = 5;
 
 	public static final int FRAGMENT_TEST = -1;
 
@@ -27,6 +32,9 @@ public class FragmentFactory {
 			switch (position) {
 				case FRAGMENT_LOCAL_PIC:
 					fragment = GalleryFragment.newInstance(null, null);
+					break;
+				case FRAGMENT_DOUBAN_FM:
+					fragment = ChannelFragment.newInstance();
 					break;
 				default:
 					fragment = TestFragment.newInstance(null, null);
