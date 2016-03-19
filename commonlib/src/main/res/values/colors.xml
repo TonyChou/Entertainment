@@ -6,7 +6,7 @@
 
     <color name="yellow">#fff6b404</color>
     <color name="light_yellow">#33f6b404</color>
-    <color name="text_white">#ffffff</color>
+
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
     <color name="blue_btn">#ff22b0f3</color>
@@ -17,4 +17,8 @@
     <color name="send_btn">#ffbd0afa</color>
     <color name="btn_yellow">#55f6b404</color>
     <color name="light_blue">#B3E5FC</color>
+
+
+    <color name="text_white">#ffffff</color>
+    <color name="text_black">#000000</color>
 </resources>

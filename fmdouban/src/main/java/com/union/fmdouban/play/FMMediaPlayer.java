@@ -61,6 +61,7 @@ public class FMMediaPlayer implements IPlayer {
                 if (playerListener != null) {
                     playerListener.onPrepared();
                 }
+                mediaPlayer.start();
             }
         });
 
