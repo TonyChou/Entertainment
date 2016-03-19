@@ -38,8 +38,6 @@ dependencies {
     compile files('libs/AMap_2DMap_V2.8.1_20160202.jar')
     compile files('libs/AMap_Location_V2.2.0_20151222.jar')
     compile files('libs/MapApiServices_257.jar')
-    compile files('libs/Volley.jar')
-    compile project(':commonlib')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'

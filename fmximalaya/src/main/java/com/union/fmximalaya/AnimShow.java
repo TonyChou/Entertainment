@@ -45,22 +45,22 @@ public class AnimShow {
         AnimUtils.showOrHideButtonWithAnimation(context, true, v, animId, new IAnimCallback() {
 
             @Override
-            public void handleClickEvent() {
+            public void handleClickEvent(View view) {
 
             }
 
             @Override
-            public void animationEnd() {
+            public void animationEnd(View view) {
 
             }
 
             @Override
-            public void animationStart() {
+            public void animationStart(View view) {
 
             }
 
             @Override
-            public void animationRepeat() {
+            public void animationRepeat(View view) {
 
             }
         });

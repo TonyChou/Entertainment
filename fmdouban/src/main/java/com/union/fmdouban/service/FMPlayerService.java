@@ -11,11 +11,13 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.Constant;
@@ -29,7 +31,9 @@ import com.union.fmdouban.play.PlayerListener;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -278,6 +282,15 @@ public class FMPlayerService extends Service implements PlayerListener{
         loadSong();
     }
 
+    private Map<String, String> getPostParam() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("app_name", "radio_android");
+        params.put("version", "100");
+        params.put("channel", "" + mChannel.getChannelId());
+        params.put("type", "n");
+        return params;
+    }
+
 
     /**
      * 加载歌曲信息
@@ -286,9 +299,11 @@ public class FMPlayerService extends Service implements PlayerListener{
         if (mChannel == null) {
             return;
         }
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, String.format(Constant.SONG_URL_DOUBAN, mChannel.getChannelId()), null, new Response.Listener<JSONObject>() {
+
+
+        StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, Constant.SONG_URL_DOUBAN_FM, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject jsonObject) {
+            public void onResponse(String jsonObject) {
                 Log.i(TAG, "onResponse: " + jsonObject);
                 if (jsonObject != null) {
                     Song song = new Song(jsonObject.toString());
@@ -311,7 +326,15 @@ public class FMPlayerService extends Service implements PlayerListener{
             public void onErrorResponse(VolleyError volleyError) {
                 Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return getPostParam();
+            }
+        };
+
+
+
         mQueue.add(jsonObjectRequest);
         mQueue.start();
     }
