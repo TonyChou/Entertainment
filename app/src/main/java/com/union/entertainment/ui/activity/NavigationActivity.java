@@ -30,7 +30,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Fragment mCurrentFragment;
+    private BaseFragment mCurrentFragment;
     Toolbar toolbar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
     }
 
     private void switchFragment(int position) {
-        Fragment f = FragmentFactory.createFragment(position);
+        BaseFragment f = FragmentFactory.createFragment(position);
         if (f != mCurrentFragment) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -170,7 +170,12 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
+        } else if (mCurrentFragment != null && !mCurrentFragment.isHidden()){
+            if (!mCurrentFragment.onBackPress()) {
+                return;
+            }
         }
+
         super.onBackPressed();
     }
 

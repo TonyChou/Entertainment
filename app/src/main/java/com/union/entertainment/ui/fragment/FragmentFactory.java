@@ -2,6 +2,7 @@ package com.union.entertainment.ui.fragment;
 
 import android.support.v4.app.Fragment;
 
+import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.fmdouban.ui.fragment.ChannelFragment;
 
 import java.util.HashMap;
@@ -24,10 +25,10 @@ public class FragmentFactory {
 	public static final int FRAGMENT_TEST = -1;
 
 
-	private static Map<Integer, Fragment> mFragmentCache = new HashMap<Integer, Fragment>();
+	private static Map<Integer, BaseFragment> mFragmentCache = new HashMap<Integer, BaseFragment>();
 
-	public static Fragment createFragment(int position){
-		Fragment fragment = mFragmentCache.get(position);
+	public static BaseFragment createFragment(int position){
+		BaseFragment fragment = mFragmentCache.get(position);
 		if (fragment == null) {
 			switch (position) {
 				case FRAGMENT_LOCAL_PIC:

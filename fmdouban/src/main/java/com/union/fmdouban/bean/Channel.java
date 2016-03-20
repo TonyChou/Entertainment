@@ -65,6 +65,10 @@ public class Channel extends BaseObject {
         this.abbrEn = abbrEn;
     }
 
+    public static List<Channel> parserJson(String json) throws JSONException {
+        return parserJson(new JSONObject(json));
+    }
+
     public static List<Channel> parserJson(JSONObject jsonObject) throws JSONException {
         List<Channel> channels = new ArrayList<Channel>();
         JSONArray jsonArray = jsonObject.getJSONArray("channels");

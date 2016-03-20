@@ -31,6 +31,7 @@ public class Song extends BaseObject {
     private String kbps;
     private String albumTitle;
     private String alertMsg;
+    private FMLyric lyric;
 
     public Song() {
         this(null);
@@ -244,5 +245,13 @@ public class Song extends BaseObject {
 
     public void setAlertMsg(String alertMsg) {
         this.alertMsg = alertMsg;
+    }
+
+    public FMLyric getLyric() {
+        return lyric;
+    }
+
+    public void setLyric(FMLyric lyric) {
+        this.lyric = lyric;
     }
 }

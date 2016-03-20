@@ -16,19 +16,20 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
+import com.union.fmdouban.api.ExecuteResult;
+import com.union.fmdouban.api.FMApi;
+import com.union.fmdouban.api.FMCallBack;
 import com.union.fmdouban.bean.Channel;
+import com.union.fmdouban.bean.FMLyric;
 import com.union.fmdouban.bean.Song;
 import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.play.PlayerListener;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,9 +42,10 @@ import java.util.TimerTask;
  * Created by zhouxiaming on 2015/4/16.
  */
 
-public class FMPlayerService extends Service implements PlayerListener{
+public class FMPlayerService extends Service implements PlayerListener {
     private static List<Song> songCache = new ArrayList<Song>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
+    private final int PLAYLIST_LOADED_RESULT = 0x000012; //歌曲加载结果
     private String TAG = "FMMediaPlayer";
     private static FMMediaPlayer mPlayer;
     private PlayerListener playerListener;
@@ -56,6 +58,7 @@ public class FMPlayerService extends Service implements PlayerListener{
     private Timer mProgressTimer;
     private boolean isTimerStarted = false;
     PlayerControllerListener controllerListener;
+
 
     @Override
     public void onError(String errorMsg) {
@@ -99,13 +102,11 @@ public class FMPlayerService extends Service implements PlayerListener{
         @Override
         public void handleMessage(Message msg) {
             int what = msg.what;
-            switch (what) {
-                case PROGRESS_UPDATE:
-                    int progress = msg.arg1;
-                    sendProgressCallback(progress);
-                    break;
-                default:
-                    break;
+            if (what == PROGRESS_UPDATE) {
+                int progress = msg.arg1;
+                sendProgressCallback(progress);
+            } else if (what == PLAYLIST_LOADED_RESULT) {
+                handleSongResult((ExecuteResult)msg.obj);
             }
         }
     };
@@ -132,6 +133,7 @@ public class FMPlayerService extends Service implements PlayerListener{
 
     /**
      * 再次进入播放界面，需要恢复一下界面状态
+     *
      * @param controllerListener
      */
     public void setControllerListener(PlayerControllerListener controllerListener) {
@@ -145,7 +147,6 @@ public class FMPlayerService extends Service implements PlayerListener{
             controllerListener.sendProgress(progress);
         }
     }
-
 
 
     public void play(String url) {
@@ -194,7 +195,7 @@ public class FMPlayerService extends Service implements PlayerListener{
             Song song = getSong();
             if (song != null) {
                 play(song.getUrl());
-            } else if (getCurrentChannel() != null){
+            } else if (getCurrentChannel() != null) {
                 loadSong();
             } else {
                 mCurrentPLayState = PlayState.NONE;
@@ -282,15 +283,24 @@ public class FMPlayerService extends Service implements PlayerListener{
         loadSong();
     }
 
-    private Map<String, String> getPostParam() {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("app_name", "radio_android");
-        params.put("version", "100");
-        params.put("channel", "" + mChannel.getChannelId());
-        params.put("type", "n");
-        return params;
+    private void handleSongResult(ExecuteResult result) {
+        if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
+            Song song = new Song(result.getResponseString());
+            //最多只缓存50首歌曲信息
+            if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
+                songCache.remove(0);
+            }
+            if (song.getUrl() == null) { //有时候返回的Json里面不包含歌曲信息
+                loadSong();
+            } else {
+                songCache.add(song);
+                mSongIndex = songCache.size() - 1;
+                play(song.getUrl());
+            }
+        } else {
+            Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
+        }
     }
-
 
     /**
      * 加载歌曲信息
@@ -300,42 +310,45 @@ public class FMPlayerService extends Service implements PlayerListener{
             return;
         }
 
+        FMApi.getInstance().getPlayListByChannelId(String.valueOf(mChannel.getChannelId()), new FMCallBack() {
+            @Override
+            public void onRequestResult(ExecuteResult result) {
+                Message msg = handler.obtainMessage(PLAYLIST_LOADED_RESULT);
+                msg.obj = result;
+                msg.sendToTarget();
+            }
+        });
+    }
 
-        StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, Constant.SONG_URL_DOUBAN_FM, new Response.Listener<String>() {
+    private void loadLyric() {
+        final Song song = getCurrentSong();
+        if (song == null) {
+            return;
+        }
+        final Map<String, String> params = new HashMap<String, String>();
+        params.put("sid", song.getSid());
+        params.put("ssid", song.getSid());
+
+        StringRequest request = new StringRequest(Request.Method.POST, Constant.SONG_LYRIC_DOUBAN_FM, new Response.Listener<String>() {
             @Override
             public void onResponse(String jsonObject) {
                 Log.i(TAG, "onResponse: " + jsonObject);
-                if (jsonObject != null) {
-                    Song song = new Song(jsonObject.toString());
-                    //最多只缓存50首歌曲信息
-                    if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
-                        songCache.remove(0);
-                    }
-                    if (song.getUrl() == null) { //有时候返回的Json里面不包含歌曲信息
-                        loadSong();
-                    } else {
-                        songCache.add(song);
-                        mSongIndex = songCache.size() - 1;
-                        play(song.getUrl());
-                    }
-                }
-
+                FMLyric lyric = new FMLyric(jsonObject);
+                song.setLyric(lyric);
+                //TODO 通知界面刷新歌词显示
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
+                LogUtils.e(TAG, "load lyric failed: " + song.getTitle());
             }
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                return getPostParam();
+                return params;
             }
         };
-
-
-
-        mQueue.add(jsonObjectRequest);
+        mQueue.add(request);
         mQueue.start();
     }
 
@@ -372,7 +385,7 @@ public class FMPlayerService extends Service implements PlayerListener{
         mProgressTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!isPlaying() || getDuration() == 0 ) {
+                if (!isPlaying() || getDuration() == 0) {
                     SystemClock.sleep(1000);
                     return;
                 }

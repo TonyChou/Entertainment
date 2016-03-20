@@ -41,4 +41,9 @@ public class BaseFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+
+
+    public boolean onBackPress() {
+        return true;
+    }
 }

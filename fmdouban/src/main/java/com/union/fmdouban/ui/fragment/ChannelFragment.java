@@ -5,13 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringSystem;
@@ -32,7 +27,6 @@ import com.google.gson.reflect.TypeToken;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
-import com.squareup.picasso.LruCache;
 import com.union.commonlib.cache.CacheManager;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
@@ -40,15 +34,17 @@ import com.union.commonlib.ui.anim.FaceBookRebound;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.listener.ItemClickListener;
 import com.union.commonlib.ui.view.TintUtils;
-import com.union.fmdouban.Constant;
+import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
+import com.union.fmdouban.api.ExecuteResult;
+import com.union.fmdouban.api.FMApi;
+import com.union.fmdouban.api.FMCallBack;
 import com.union.fmdouban.bean.Channel;
 import com.union.fmdouban.service.FMPlayerService;
-import com.union.fmdouban.ui.adapter.ChannelAdapter;
 import com.union.fmdouban.service.PlayerController;
+import com.union.fmdouban.ui.adapter.ChannelAdapter;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +54,11 @@ import java.util.List;
  */
 
 public class ChannelFragment extends BaseFragment implements ItemClickListener {
+    private final int REFRESH_CHANNEL_INFO = 0x000012;
     private static final Interpolator sDecelerator = new DecelerateInterpolator();
     private View mRootView;
     private RecyclerView mRecycleView;
     private ChannelAdapter mAdapter;
-    RequestQueue mQueue;
     private PlayerController mPlayerController;
     private View mControllerView;
     View mShowHideButton;
@@ -72,6 +68,16 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
     Channel mCurrentChannel;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int waht = msg.what;
+            if (waht == REFRESH_CHANNEL_INFO) {
+                ExecuteResult result = (ExecuteResult)msg.obj;
+                renderChannelsOnUiThread(result);
+            }
+        }
+    };
 
     public static ChannelFragment newInstance() {
         ChannelFragment fragment = new ChannelFragment();
@@ -82,7 +88,6 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mQueue = Volley.newRequestQueue(this.getActivity());
         mPlayerController = PlayerController.getInstance();
         mSpringSystem = SpringSystem.create();
         mAnimCallback = new AnimCallBack();
@@ -147,28 +152,31 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     }
 
     private void loadChannel() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Constant.CHANNEL_URL_DOUBAN, null, new Response.Listener<JSONObject>() {
+        FMApi.getInstance().getFmChannels(new FMCallBack() {
             @Override
-            public void onResponse(JSONObject jsonObject) {
-                Log.i(TAG, "jsonObject: " + jsonObject);
-                try {
-                    List<Channel> channels = Channel.parserJson(jsonObject);
-                    renderChannelsData(channels);
-                    saveChannelsToCache(channels);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.i(TAG, "volleyError: " + volleyError.getMessage());
-                List<Channel> channels = loadChannelsFromCache();
-                renderChannelsData(channels);
+            public void onRequestResult(ExecuteResult result) {
+                Message msg = handler.obtainMessage(REFRESH_CHANNEL_INFO);
+                msg.obj = result;
+                msg.sendToTarget();
             }
         });
-        mQueue.add(jsonObjectRequest);
-        mQueue.start();
+    }
+    private void renderChannelsOnUiThread(ExecuteResult result) {
+
+        if (result.getResult() == ExecuteResult.OK) {
+            String channelsString = result.getResponseString();
+            LogUtils.i(TAG, "channels = " + channelsString);
+            try {
+                List<Channel> channels = Channel.parserJson(channelsString);
+                updateAdapterData(channels);
+                saveChannelsToCache(channels);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            List<Channel> channels = loadChannelsFromCache();
+            updateAdapterData(channels);
+        }
     }
 
     public void renderChannelsData(List<Channel> channels) {
@@ -179,10 +187,12 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
                 showChannelListView();
             }
         }
+
     }
 
     /**
      * 讲频道数据保存到缓存中
+     *
      * @param channels
      */
     private void saveChannelsToCache(List<Channel> channels) {
@@ -194,11 +204,13 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
 
     /**
      * 从缓存中加载数据
+     *
      * @return
      */
     private List<Channel> loadChannelsFromCache() {
         CacheManager cacheManager = new CacheManager(this.getActivity());
-        return cacheManager.getFromCache(CacheManager.FM_DOUBAN_CHANNELS, new TypeToken<List<Channel>>(){});
+        return cacheManager.getFromCache(CacheManager.FM_DOUBAN_CHANNELS, new TypeToken<List<Channel>>() {
+        });
     }
 
 
@@ -210,7 +222,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
             return;
         }
 
-        for(Channel channel : mAdapter.getData()) {
+        for (Channel channel : mAdapter.getData()) {
             channel.setIsPlaying(false);
         }
 
@@ -219,11 +231,6 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         mAdapter.notifyDataSetChanged();
         switchChannel();
     }
-
-    public RequestQueue getQueue() {
-        return mQueue;
-    }
-
     /**
      * 切换频道播放歌曲
      */
@@ -326,6 +333,15 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         CacheManager cacheManager = new CacheManager(this.getActivity());
         cacheManager.clearPicassoCache();
         cacheManager.clearVolleyCache();
+    }
+
+    @Override
+    public boolean onBackPress() {
+        if (mRecycleView.getVisibility() == View.VISIBLE) {
+            showOrHideChannelsPanel();
+            return false;
+        }
+        return super.onBackPress();
     }
 
     class AnimCallBack extends AnimCallbackImp {
