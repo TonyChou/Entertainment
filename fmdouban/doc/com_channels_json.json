@@ -1,0 +1,25 @@
+[
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http:\/\/site.douban.com\/douban.fm\/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "",
+    "rec_reason": "",
+    "banner": "http://img3.doubanio.com\/img\/fmadmin\/chlBanner\/1048717.jpg",
+    "id": 253,
+    "name": "来电嘉旅，唤醒耳朵",
+    "cover": "http://img3.doubanio.com\/img\/fmadmin\/icon\/1048717.jpg",
+    "song_to_start": "",
+    "song_num": 100,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "公路之光",
+      "What A Wonderful World",
+      "预谋邂逅"
+    ]
+  }
+]

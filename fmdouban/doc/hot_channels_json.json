@@ -1,0 +1,232 @@
+[
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "每天发现一首好听的歌",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/26383.jpg",
+    "id": 1,
+    "name": "华语",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/26383.jpg",
+    "song_to_start": "",
+    "song_num": 1189,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "外面的世界",
+      "遗憾",
+      "心动"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "关于欧美流行音乐的一切，就在这里了",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/26384.jpg",
+    "id": 2,
+    "name": "欧美",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/26384.jpg",
+    "song_to_start": "",
+    "song_num": 3599,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "Glad You Came",
+      "Won't Go Home Without You",
+      "Price Tag"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "生于八零年代的我们，听着这些歌成长",
+    "rec_reason": "",
+    "banner": "http://img3.doubanio.com/img/fmadmin/chlBanner/26386.jpg",
+    "id": 4,
+    "name": "八零",
+    "cover": "http://img3.doubanio.com/img/fmadmin/icon/26386.jpg",
+    "song_to_start": "",
+    "song_num": 883,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "Never Grow Old",
+      "Going Out",
+      "First Love"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "工作学习的时候听什么",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/27132.jpg",
+    "id": 153,
+    "name": "工作学习",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/27132.jpg",
+    "song_to_start": "",
+    "song_num": 0,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "岁月神偷",
+      "See You Again - From \"Furious 7\" Soundtrack",
+      "Sugar"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "那些年我们心水的劲歌金曲",
+    "rec_reason": "",
+    "banner": "http://img3.doubanio.com/img/fmadmin/chlBanner/26388.jpg",
+    "id": 6,
+    "name": "粤语",
+    "cover": "http://img3.doubanio.com/img/fmadmin/icon/26388.jpg",
+    "song_to_start": "",
+    "song_num": 2704,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "无赖 (原唱:主唱:郑中基",
+      "怪你过份美丽",
+      "月半小夜曲"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "在属于你的放松地带，释放心灵",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/26391.jpg",
+    "id": 9,
+    "name": "轻音乐",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/26391.jpg",
+    "song_to_start": "",
+    "song_num": 2736,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "Down By The Salley Gardens",
+      "风の住む街",
+      "Sundial Dreams"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "我不在喝咖啡，就在听咖啡兆赫。",
+    "rec_reason": "",
+    "banner": "http://img3.doubanio.com/img/fmadmin/chlBanner/26379.jpg",
+    "id": 32,
+    "name": "咖啡",
+    "cover": "http://img3.doubanio.com/img/fmadmin/icon/26379.jpg",
+    "song_to_start": "",
+    "song_num": 1710,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "Two Fingers",
+      "End Of The World",
+      "Yesterday Once More"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://www.douban.com/people/48254923/",
+      "name": "Bin's",
+      "id": 48254923
+    },
+    "intro": "细听着别人的歌声，诉说着自己的故事。",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/27675.jpg",
+    "id": 1000382,
+    "name": "你的歌词我的故事",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/27675.jpg",
+    "song_to_start": "",
+    "song_num": 540,
+    "collected": "false",
+    "artist_id": 990382,
+    "hot_songs": [
+      "如果有来生",
+      "给我一个理由忘记",
+      "你不知道的事"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://www.douban.com/people/2546298/",
+      "name": "rebecca0816",
+      "id": 2546298
+    },
+    "intro": "浅吟清唱。",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/20653.jpg",
+    "id": 1002891,
+    "name": "看书浇花晒太阳",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/20653.jpg",
+    "song_to_start": "",
+    "song_num": 1228,
+    "collected": "false",
+    "artist_id": 992891,
+    "hot_songs": [
+      "You Belong To Me",
+      "そばにいるね",
+      "Rudolph The Red-Nosed Reindeer"
+    ]
+  },
+  {
+    "related_artists": [],
+    "creator": {
+      "url": "http://site.douban.com/douban.fm/",
+      "name": "豆瓣FM",
+      "id": 1
+    },
+    "intro": "",
+    "rec_reason": "",
+    "banner": "http://img3.douban.com/img/fmadmin/chlBanner/26392.jpg",
+    "id": 13,
+    "name": "爵士",
+    "cover": "http://img3.douban.com/img/fmadmin/icon/26392.jpg",
+    "song_to_start": "",
+    "song_num": 4163,
+    "collected": "false",
+    "artist_id": null,
+    "hot_songs": [
+      "Vincent (Live)",
+      "Sorry Seems To Be The Hardest Word",
+      "Quizás, Quizás, Quizás (Perhaps, Perhaps, Perhaps)"
+    ]
+  }
+]
