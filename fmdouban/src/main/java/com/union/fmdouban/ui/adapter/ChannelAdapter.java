@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.union.commonlib.ui.listener.ItemClickListener;
 import com.union.fmdouban.R;
-import com.union.fmdouban.bean.Channel;
+import com.union.fmdouban.api.bean.FMChannel;
 import java.util.List;
 /**
  * Created by zhouxiaming on 2016/3/14.
@@ -18,23 +18,23 @@ import java.util.List;
 
 public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelHolder> {
     private Context mContext;
-    private List<Channel> mChannelList;
+    private List<FMChannel> mChannelList;
     private ItemClickListener listener;
-    public ChannelAdapter(Context context, List<Channel> channels, ItemClickListener listener) {
+    public ChannelAdapter(Context context, List<FMChannel> channels, ItemClickListener listener) {
         this.mContext = context;
         this.mChannelList = channels;
         this.listener = listener;
     }
 
-    public void setData(List<Channel> channels) {
+    public void setData(List<FMChannel> channels) {
         this.mChannelList = channels;
     }
 
-    public Channel getChannel(int position) {
+    public FMChannel getChannel(int position) {
         return mChannelList.get(position);
     }
 
-    public List<Channel> getData() {
+    public List<FMChannel> getData() {
         return mChannelList;
     }
 
@@ -67,7 +67,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelH
         }
 
         public void setData(int position) {
-            Channel channel = mChannelList.get(position);
+            FMChannel channel = mChannelList.get(position);
             channelNameView.setText(channel.getNameZh());
             if (channel.isPlaying()) {
                 channelNameView.setTextColor(mContext.getResources().getColor(R.color.light_blue));

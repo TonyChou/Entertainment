@@ -36,7 +36,7 @@ public class ApiTest {
 //                .addHeader("Cache-Control", "max-age=0")
 //                .addHeader("Connection", "keep-alive")
 //                .addHeader("Upgrade-Insecure-Requests", "1")
-                .addHeader("Cookie", cookie)
+                //.addHeader("Cookie", cookie)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36")
                 .build();

@@ -39,12 +39,11 @@ import com.union.fmdouban.R;
 import com.union.fmdouban.api.ExecuteResult;
 import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
-import com.union.fmdouban.bean.Channel;
+import com.union.fmdouban.api.FMParserFactory;
+import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.service.PlayerController;
 import com.union.fmdouban.ui.adapter.ChannelAdapter;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     private List<Spring> springMap = new ArrayList<Spring>();
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
-    Channel mCurrentChannel;
+    FMChannel mCurrentChannel;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -120,7 +119,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecycleView.setLayoutManager(layoutManager);
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new ChannelAdapter(this.getActivity(), new ArrayList<Channel>(), this);
+        mAdapter = new ChannelAdapter(this.getActivity(), new ArrayList<FMChannel>(), this);
         mRecycleView.setAdapter(mAdapter);
         mRecycleView.setHasFixedSize(true);
         mRecycleView.setVisibility(View.INVISIBLE);
@@ -136,10 +135,10 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         }
     }
 
-    private void updateAdapterData(List<Channel> channels) {
-        Channel currentChannel = mPlayerService != null ? mPlayerService.getCurrentChannel() : null;
+    private void updateAdapterData(List<FMChannel> channels) {
+        FMChannel currentChannel = mPlayerService != null ? mPlayerService.getCurrentChannel() : null;
         if (currentChannel != null) {
-            for (Channel channel : channels) {
+            for (FMChannel channel : channels) {
                 if (channel.getChannelId() == currentChannel.getChannelId()) {
                     channel.setIsPlaying(true);
                 } else {
@@ -167,19 +166,19 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
             String channelsString = result.getResponseString();
             LogUtils.i(TAG, "channels = " + channelsString);
             try {
-                List<Channel> channels = Channel.parserJson(channelsString);
+                List<FMChannel> channels = FMParserFactory.parserToChannelList(channelsString);
                 updateAdapterData(channels);
                 saveChannelsToCache(channels);
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            List<Channel> channels = loadChannelsFromCache();
+            List<FMChannel> channels = loadChannelsFromCache();
             updateAdapterData(channels);
         }
     }
 
-    public void renderChannelsData(List<Channel> channels) {
+    public void renderChannelsData(List<FMChannel> channels) {
         if (channels != null && channels.size() > 0) {
             updateAdapterData(channels);
             boolean isPlaying = mPlayerService != null ? mPlayerService.isPlaying() : false;
@@ -195,7 +194,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
      *
      * @param channels
      */
-    private void saveChannelsToCache(List<Channel> channels) {
+    private void saveChannelsToCache(List<FMChannel> channels) {
         if (channels != null && channels.size() > 0) {
             CacheManager cacheManager = new CacheManager(this.getActivity());
             cacheManager.saveToCache(CacheManager.FM_DOUBAN_CHANNELS, channels);
@@ -207,9 +206,9 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
      *
      * @return
      */
-    private List<Channel> loadChannelsFromCache() {
+    private List<FMChannel> loadChannelsFromCache() {
         CacheManager cacheManager = new CacheManager(this.getActivity());
-        return cacheManager.getFromCache(CacheManager.FM_DOUBAN_CHANNELS, new TypeToken<List<Channel>>() {
+        return cacheManager.getFromCache(CacheManager.FM_DOUBAN_CHANNELS, new TypeToken<List<FMChannel>>() {
         });
     }
 
@@ -217,12 +216,12 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
     @Override
     public void onItemClick(int position) {
         showOrHideChannelsPanel();
-        Channel selectedChannel = mAdapter.getChannel(position);
+        FMChannel selectedChannel = mAdapter.getChannel(position);
         if (mCurrentChannel != null && selectedChannel.getChannelId() == mCurrentChannel.getChannelId()) {
             return;
         }
 
-        for (Channel channel : mAdapter.getData()) {
+        for (FMChannel channel : mAdapter.getData()) {
             channel.setIsPlaying(false);
         }
 

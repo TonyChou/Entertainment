@@ -4,6 +4,7 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.union.commonlib.utils.LogUtils;
 
 import java.io.IOException;
 
@@ -11,6 +12,7 @@ import java.io.IOException;
  * Created by zhouxiaming on 16/3/20.
  */
 public class FMApi {
+    private String TAG = "FMApi";
     private static final int TIMEOUT = 10;
     private OkHttpClient client;
     private static FMApi instance = new FMApi();
@@ -72,6 +74,7 @@ public class FMApi {
                     result.setResponseString(response.body().string());
                     result.setResponse(response);
                     result.setResult(ExecuteResult.OK);
+                    LogUtils.i(TAG, "Response: " + result.getResponseString());
                 } catch (IOException e) {
                     result.setResult(ExecuteResult.FAILED);
                     e.printStackTrace();

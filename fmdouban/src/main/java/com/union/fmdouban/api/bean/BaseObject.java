@@ -1,4 +1,4 @@
-package com.union.fmdouban.bean;
+package com.union.fmdouban.api.bean;
 
 import org.json.JSONException;
 import org.json.JSONObject;

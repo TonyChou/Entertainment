@@ -24,9 +24,10 @@ import com.union.fmdouban.R;
 import com.union.fmdouban.api.ExecuteResult;
 import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
-import com.union.fmdouban.bean.Channel;
-import com.union.fmdouban.bean.FMLyric;
-import com.union.fmdouban.bean.Song;
+import com.union.fmdouban.api.FMParserFactory;
+import com.union.fmdouban.api.bean.FMChannel;
+import com.union.fmdouban.api.bean.FMLyric;
+import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.play.PlayerListener;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,14 +45,14 @@ import java.util.TimerTask;
  */
 
 public class FMPlayerService extends Service implements PlayerListener {
-    private static List<Song> songCache = new ArrayList<Song>();
+    private static List<FMSong> songCache = new ArrayList<FMSong>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
     private final int PLAYLIST_LOADED_RESULT = 0x000012; //歌曲加载结果
     private String TAG = "FMMediaPlayer";
     private static FMMediaPlayer mPlayer;
     private PlayerListener playerListener;
     private final IBinder mBinder = new LocalBinder();
-    private static Channel mChannel;
+    private static FMChannel mChannel;
     private static PlayState mCurrentPLayState = PlayState.NONE;
     RequestQueue mQueue;
     private static int mSongIndex = 0;
@@ -58,6 +60,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     private Timer mProgressTimer;
     private boolean isTimerStarted = false;
     PlayerControllerListener controllerListener;
+    Queue<FMSong> mPlayList;
 
 
     @Override
@@ -192,7 +195,7 @@ public class FMPlayerService extends Service implements PlayerListener {
             mCurrentPLayState = PlayState.PLAYING;
             resume();
         } else {
-            Song song = getSong();
+            FMSong song = getSong();
             if (song != null) {
                 play(song.getUrl());
             } else if (getCurrentChannel() != null) {
@@ -205,7 +208,7 @@ public class FMPlayerService extends Service implements PlayerListener {
 
     }
 
-    private Song getSong() {
+    private FMSong getSong() {
         if (songCache.size() > 0 && mSongIndex <= songCache.size() - 1) {
             return songCache.get(mSongIndex);
         } else {
@@ -276,31 +279,16 @@ public class FMPlayerService extends Service implements PlayerListener {
         }
     }
 
-    public void switchChannel(Channel channel) {
+    public void switchChannel(FMChannel channel) {
         mChannel = channel;
         songCache.clear();
         mCurrentPLayState = PlayState.NONE;
         loadSong();
     }
 
-    private void handleSongResult(ExecuteResult result) {
-        if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
-            Song song = new Song(result.getResponseString());
-            //最多只缓存50首歌曲信息
-            if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
-                songCache.remove(0);
-            }
-            if (song.getUrl() == null) { //有时候返回的Json里面不包含歌曲信息
-                loadSong();
-            } else {
-                songCache.add(song);
-                mSongIndex = songCache.size() - 1;
-                play(song.getUrl());
-            }
-        } else {
-            Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
-        }
-    }
+
+
+
 
     /**
      * 加载歌曲信息
@@ -309,7 +297,11 @@ public class FMPlayerService extends Service implements PlayerListener {
         if (mChannel == null) {
             return;
         }
-
+        //TODO
+        if (addTOCacheAndPlay()) {
+            return;
+        }
+        // 请求下一个playList
         FMApi.getInstance().getPlayListByChannelId(String.valueOf(mChannel.getChannelId()), new FMCallBack() {
             @Override
             public void onRequestResult(ExecuteResult result) {
@@ -320,8 +312,41 @@ public class FMPlayerService extends Service implements PlayerListener {
         });
     }
 
+    private boolean addTOCacheAndPlay() {
+        if (mPlayList == null || mPlayList.size() < 1) {
+            return false;
+        }
+        FMSong song = mPlayList.poll();
+        //最多只缓存50首歌曲信息
+        if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
+            songCache.remove(0);
+        }
+        if (song.getUrl() != null) { //有时候返回的Json里面不包含歌曲信息
+            songCache.add(song);
+            mSongIndex = songCache.size() - 1;
+            play(song.getUrl());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 解析Playlist
+     * @param result
+     */
+    private void handleSongResult(ExecuteResult result) {
+        if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
+            mPlayList = FMParserFactory.parserToSongList(result.getResponseString());
+            if (!addTOCacheAndPlay()) {
+                loadSong();
+            }
+        } else {
+            Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void loadLyric() {
-        final Song song = getCurrentSong();
+        final FMSong song = getCurrentSong();
         if (song == null) {
             return;
         }
@@ -353,11 +378,11 @@ public class FMPlayerService extends Service implements PlayerListener {
     }
 
 
-    public Channel getCurrentChannel() {
+    public FMChannel getCurrentChannel() {
         return mChannel;
     }
 
-    public Song getCurrentSong() {
+    public FMSong getCurrentSong() {
         if (songCache.size() > 0 && songCache.size() - 1 >= mSongIndex) {
             return songCache.get(mSongIndex);
         }

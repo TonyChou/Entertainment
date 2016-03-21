@@ -1,7 +1,7 @@
 package com.union.fmdouban.play;
 
-import com.union.fmdouban.bean.Channel;
-import com.union.fmdouban.bean.Song;
+import com.union.fmdouban.api.bean.FMChannel;
+import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.service.FMPlayerService;
 
 /**
@@ -9,6 +9,6 @@ import com.union.fmdouban.service.FMPlayerService;
  */
 public interface PlayerControllerListener {
     public void loadCover();
-    public void refreshControllerView(Channel channel, Song song, FMPlayerService.PlayState state);
+    public void refreshControllerView(FMChannel channel, FMSong song, FMPlayerService.PlayState state);
     public void sendProgress(int progress);
 }

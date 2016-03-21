@@ -1,99 +1,72 @@
-package com.union.fmdouban.bean;
+package com.union.fmdouban.api.bean;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * Created by zhouxiaming on 16/3/13.
  */
-public class Song extends BaseObject {
+public class FMSong extends BaseObject {
+
+    @SerializedName("album")
     private String album;
+
+    @SerializedName("status")
     private int status;
+
+    @SerializedName("picture")
     private String picture;
+
+    @SerializedName("ssid")
     private String ssid;
+
+    @SerializedName("artist")
     private String artist;
+
+    @SerializedName("url")
     private String url;
+
+    @SerializedName("title")
     private String title;
+
+    @SerializedName("length")
     private int length;
+
+    @SerializedName("like")
     private String like;
+
+    @SerializedName("subtype")
     private String subtype;
+
+    @SerializedName("public_time")
     private String publicTime;
+
+    @SerializedName("sid")
     private String sid;
-    private List<Singer> singers;
+
+    private List<FMSinger> singers;
+
+    @SerializedName("aid")
     private String aid;
+
+    @SerializedName("file_ext")
     private String mimeType;
+
+    @SerializedName("sha256")
     private String sha256;
+
+    @SerializedName("kbps")
     private String kbps;
+
+    @SerializedName("albumtitle")
     private String albumTitle;
+
+    @SerializedName("alert_msg")
     private String alertMsg;
+
     private FMLyric lyric;
-
-    public Song() {
-        this(null);
-    }
-
-    public Song(String jsonData) {
-        singers = new ArrayList<Singer>();
-        if (jsonData == null) {
-            return;
-        }
-        try {
-            parserJsonData(jsonData);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void parserJsonData(String jsonData) throws JSONException {
-        JSONObject object = new JSONObject(jsonData);
-        if (object == null) {
-            return;
-        }
-        Object songArray = object.get("song");
-        if (songArray != null && songArray instanceof JSONArray) {
-            JSONObject jsonObject = ((JSONArray) songArray).getJSONObject(0);
-            this.album = getStringValue("album", jsonObject);
-            this.status = getIntValue("status", jsonObject);
-            this.ssid = getStringValue("ssid", jsonObject);
-            this.picture = getStringValue("picture", jsonObject);
-            this.artist = getStringValue("artist", jsonObject);
-            this.url = getStringValue("url", jsonObject);
-            this.title = getStringValue("title", jsonObject);
-            this.length = getIntValue("length", jsonObject);
-            this.like = getStringValue("like", jsonObject);
-            this.subtype = getStringValue("subtype", jsonObject);
-            this.publicTime = getStringValue("public_time", jsonObject);
-            this.sid = getStringValue("sid", jsonObject);
-            this.aid = getStringValue("aid", jsonObject);
-            this.mimeType = getStringValue("file_ext", jsonObject);
-            this.sha256 = getStringValue("sha256", jsonObject);
-            this.kbps = getStringValue("kbps", jsonObject);
-            this.albumTitle = getStringValue("albumtitle", jsonObject);
-            this.alertMsg = getStringValue("alert_msg", jsonObject);
-            parserSingers(jsonObject);
-        }
-
-    }
-
-    private void parserSingers(JSONObject jsonObject) throws JSONException {
-        JSONArray singerArr = jsonObject.isNull("singers")? null : jsonObject.getJSONArray("singers");
-        if (singerArr != null && singerArr.length() > 0) {
-            for (int i = 0; i < singerArr.length(); i++) {
-                JSONObject singerJson = singerArr.getJSONObject(i);
-                Singer s = new Singer();
-                s.setId(getStringValue("id", singerJson));
-                s.setName(getStringValue("name", singerJson));
-                singers.add(s);
-            }
-        }
-    }
-
-
 
     public String getAlbum() {
         return album;
@@ -191,11 +164,11 @@ public class Song extends BaseObject {
         this.sid = sid;
     }
 
-    public List<Singer> getSingers() {
+    public List<FMSinger> getSingers() {
         return singers;
     }
 
-    public void setSingers(List<Singer> singers) {
+    public void setSingers(List<FMSinger> singers) {
         this.singers = singers;
     }
 

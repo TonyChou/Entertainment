@@ -9,15 +9,16 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimUtils;
 import com.union.commonlib.ui.view.CircleProgressBar;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.R;
-import com.union.fmdouban.bean.Channel;
-import com.union.fmdouban.bean.Singer;
-import com.union.fmdouban.bean.Song;
+import com.union.fmdouban.api.bean.FMChannel;
+import com.union.fmdouban.api.bean.FMSinger;
+import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.ui.fragment.ChannelFragment;
 
@@ -62,7 +63,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
         mPreButton = mControlPanelView.findViewById(R.id.pre);
         mPreIcon = (AppCompatTextView)mPreButton.findViewById(R.id.button_icon);
         mPreIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
-        mPreIcon.setRotation(180f);
+        ViewHelper.setRotation(mPreIcon, 180f);
         mPlayButton = mControlPanelView.findViewById(R.id.play);
         mPlayIcon = (AppCompatTextView)mPlayButton.findViewById(R.id.button_icon);
         mNextButton = mControlPanelView.findViewById(R.id.next);
@@ -108,7 +109,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
 
 
 
-    private void setChannelName(Channel channel) {
+    private void setChannelName(FMChannel channel) {
         if (channel == null) {
             mChannelNameView.setVisibility(View.INVISIBLE);
         } else {
@@ -117,7 +118,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
         }
     }
 
-    private void setSongName(Song song) {
+    private void setSongName(FMSong song) {
         if (song== null) {
             mSongNameView.setVisibility(View.INVISIBLE);
         } else {
@@ -131,7 +132,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
             }
             if (song.getSingers() != null && song.getSingers().size() > 0) {
                 sb.append("--");
-                for (Singer singer : song.getSingers()) {
+                for (FMSinger singer : song.getSingers()) {
                     sb.append(singer.getName());
                     sb.append("&");
                 }
@@ -197,7 +198,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     }
 
     public void loadCover() {
-        Song song = mFragment.getPlayerSercie().getCurrentSong();
+        FMSong song = mFragment.getPlayerSercie().getCurrentSong();
         if (song == null) {
             return;
         }
@@ -207,7 +208,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     }
 
     @Override
-    public void refreshControllerView(Channel channel, Song song, FMPlayerService.PlayState state) {
+    public void refreshControllerView(FMChannel channel, FMSong song, FMPlayerService.PlayState state) {
         refreshViews(state);
         setChannelName(channel);
         setSongName(song);
