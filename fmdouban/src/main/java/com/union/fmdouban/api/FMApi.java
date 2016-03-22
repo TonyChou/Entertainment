@@ -49,10 +49,18 @@ public class FMApi {
     /**
      * 获取歌曲
      * @param channelId
+     * @param sid
+     * @param reportType
      * @param callBack
      */
-    public void getPlayListByChannelId(String channelId, FMCallBack callBack) {
-        Request request = new Request.Builder().url(String.format(FMUrl.FM_PLAYLIST_URL, channelId)).headers(FMHeader.genRequestHeader()).build();
+    public void reportAndGetPlayList(String channelId, String sid, String reportType, FMCallBack callBack) {
+        String url = String.format(FMUrl.FM_PLAYLIST_URL, reportType, channelId);
+        if (!reportType.equals("n") && sid != null) {
+            url = url + "&sid=" + sid;
+        }
+
+        LogUtils.i(TAG, "reportAndGetPlayList url: " + url);
+        Request request = new Request.Builder().url(url).headers(FMHeader.genRequestHeader()).build();
         sendRequest(request, callBack);
     }
 
@@ -71,6 +79,7 @@ public class FMApi {
             @Override
             public void onResponse(Response response)  {
                 try {
+                    FMCookie.parserBid(response);
                     result.setResponseString(response.body().string());
                     result.setResponse(response);
                     result.setResult(ExecuteResult.OK);

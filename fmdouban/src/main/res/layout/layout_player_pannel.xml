@@ -8,9 +8,9 @@
     <FrameLayout
         android:id="@+id/cover_and_progress"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_centerHorizontal="true"
-        android:layout_weight="5">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:layout_centerHorizontal="true">
 
         <View
             android:id="@+id/cover_bg_mask"
@@ -26,6 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_margin="20dip"
             android:gravity="center"
             android:padding="4dip">
 
@@ -45,8 +46,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -58,17 +58,28 @@
             android:layout_marginRight="10dip"
             android:ellipsize="end"
             android:gravity="center"
-            android:padding="5dip"
             android:singleLine="true"
-            android:text="Hello"
             android:textColor="@color/text_black"
             android:textSize="@dimen/song_name_size" />
+
+        <TextView
+            android:id="@+id/channel_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/channel_name_size" />
 
         <LinearLayout
             android:id="@+id/control_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
+            android:layout_marginTop="5dip"
             android:layout_marginBottom="10dip"
             android:gravity="center"
             android:orientation="horizontal">
@@ -105,22 +116,7 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/channel_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="15dip"
-            android:layout_marginRight="15dip"
-            android:layout_marginTop="20dip"
-            android:background="@drawable/text_bg_shape"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:padding="5dip"
-            android:singleLine="true"
-            android:text="Hello"
-            android:textColor="@color/text_white"
-            android:textSize="@dimen/channel_name_size" />
+
     </LinearLayout>
 
 

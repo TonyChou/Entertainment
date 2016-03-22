@@ -1,6 +1,9 @@
 package com.union.fmdouban.api;
 
+import com.squareup.okhttp.Response;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,5 +30,32 @@ public class FMCookie {
         cookieBuild.append(String.format(FLAG_FORMAT, Cookie.get(FLAG)))
                    .append(String.format(BID_FORMAT, Cookie.get(BID_KEY)));
         return cookieBuild.toString();
+    }
+
+    /**
+     * 解析Bid
+     * @param response
+     * @return
+     */
+    public static void parserBid(Response response) {
+        List<String> cookie = response.headers("set-cookie");
+        String bid = null;
+        if (cookie != null && cookie.size() > 0) {
+            for (String str : cookie) {
+                String[] array = str.split(";");
+                if (array != null && array.length > 0) {
+                    for(String s : array) {
+                        if (s.contains("bid")) {
+                            bid = s.split("=")[1].replaceAll("\"", "");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (bid != null) {
+            Cookie.put(BID_KEY, bid);
+        }
     }
 }

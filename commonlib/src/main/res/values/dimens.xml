@@ -7,6 +7,6 @@
 
     <dimen name="player_button_height">80.0dip</dimen>
     <dimen name="circle_button_height">60.0dip</dimen>
-    <dimen name="channel_name_size">24sp</dimen>
+    <dimen name="channel_name_size">20sp</dimen>
     <dimen name="song_name_size">16sp</dimen>
 </resources>

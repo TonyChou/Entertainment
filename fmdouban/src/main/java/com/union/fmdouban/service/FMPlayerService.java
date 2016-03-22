@@ -25,6 +25,7 @@ import com.union.fmdouban.api.ExecuteResult;
 import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
 import com.union.fmdouban.api.FMParserFactory;
+import com.union.fmdouban.api.FMReport;
 import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.api.bean.FMLyric;
 import com.union.fmdouban.api.bean.FMSong;
@@ -34,6 +35,7 @@ import com.union.fmdouban.play.PlayerListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -60,7 +62,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     private Timer mProgressTimer;
     private boolean isTimerStarted = false;
     PlayerControllerListener controllerListener;
-    Queue<FMSong> mPlayList;
+    Queue<FMSong> mPlayList = new LinkedList<FMSong>();
 
 
     @Override
@@ -75,7 +77,7 @@ public class FMPlayerService extends Service implements PlayerListener {
         mCurrentPLayState = PlayState.STOP;
         refreshView();
         stopProgressTimer();
-        loadSong();
+        loadSongAndReport();
     }
 
     @Override
@@ -199,7 +201,7 @@ public class FMPlayerService extends Service implements PlayerListener {
             if (song != null) {
                 play(song.getUrl());
             } else if (getCurrentChannel() != null) {
-                loadSong();
+                loadSongAndReport();
             } else {
                 mCurrentPLayState = PlayState.NONE;
             }
@@ -252,7 +254,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void playNext() {
         mCurrentPLayState = PlayState.NONE;
         stop();
-        loadSong();
+        loadSongAndReport();
     }
 
 
@@ -283,7 +285,7 @@ public class FMPlayerService extends Service implements PlayerListener {
         mChannel = channel;
         songCache.clear();
         mCurrentPLayState = PlayState.NONE;
-        loadSong();
+        loadSongAndReport();
     }
 
 
@@ -293,16 +295,15 @@ public class FMPlayerService extends Service implements PlayerListener {
     /**
      * 加载歌曲信息
      */
-    private void loadSong() {
+    private void loadSongAndReport() {
         if (mChannel == null) {
             return;
         }
-        //TODO
-        if (addTOCacheAndPlay()) {
-            return;
-        }
         // 请求下一个playList
-        FMApi.getInstance().getPlayListByChannelId(String.valueOf(mChannel.getChannelId()), new FMCallBack() {
+        FMSong song = getCurrentSong();
+        String sid = song != null?song.getSid() : null;
+        String reportType = FMReport.genReportType(song, mPlayList, false);
+        FMApi.getInstance().reportAndGetPlayList(String.valueOf(mChannel.getChannelId()), sid, reportType, new FMCallBack() {
             @Override
             public void onRequestResult(ExecuteResult result) {
                 Message msg = handler.obtainMessage(PLAYLIST_LOADED_RESULT);
@@ -336,9 +337,12 @@ public class FMPlayerService extends Service implements PlayerListener {
      */
     private void handleSongResult(ExecuteResult result) {
         if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
-            mPlayList = FMParserFactory.parserToSongList(result.getResponseString());
+            Queue<FMSong> list = FMParserFactory.parserToSongList(result.getResponseString());
+            if (list != null && list.size() > 0) {
+                mPlayList.addAll(list);
+            }
             if (!addTOCacheAndPlay()) {
-                loadSong();
+                loadSongAndReport();
             }
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
