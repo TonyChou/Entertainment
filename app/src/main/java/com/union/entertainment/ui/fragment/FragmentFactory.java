@@ -3,7 +3,8 @@ package com.union.entertainment.ui.fragment;
 import android.support.v4.app.Fragment;
 
 import com.union.commonlib.ui.fragment.BaseFragment;
-import com.union.fmdouban.ui.fragment.ChannelFragment;
+import com.union.fmdouban.ui.fragment.FMChannelsFragment;
+import com.union.fmdouban.ui.fragment.FMPlayerFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +36,10 @@ public class FragmentFactory {
 					fragment = GalleryFragment.newInstance(null, null);
 					break;
 				case FRAGMENT_DOUBAN_FM:
-					fragment = ChannelFragment.newInstance();
+					fragment = FMPlayerFragment.newInstance();
+					break;
+				case FRAGMENT_SPOTIFY:
+					fragment = FMChannelsFragment.newInstance();
 					break;
 				default:
 					fragment = TestFragment.newInstance(null, null);

@@ -20,7 +20,7 @@ import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.api.bean.FMSinger;
 import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.PlayerControllerListener;
-import com.union.fmdouban.ui.fragment.ChannelFragment;
+import com.union.fmdouban.ui.fragment.FMPlayerFragment;
 
 /**
  * Created by zhouxiaming on 2016/3/14.
@@ -36,7 +36,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     private View mCoverBgMask;
     ImageView mCover;
     private AppCompatTextView mPreIcon, mPlayIcon, mNextIcon;
-    private ChannelFragment mFragment;
+    private FMPlayerFragment mFragment;
     Animation mCoverBgMaskAnimation, mCoverRotateAnimation;
 
     private CircleProgressBar mProgressBar;
@@ -56,7 +56,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
         return instance;
     }
 
-    public void init(ChannelFragment flagment, View panelView) {
+    public void init(FMPlayerFragment flagment, View panelView) {
         this.mControlPanelView = panelView;
         this.mFragment = flagment;
         mCover = (ImageView) mControlPanelView.findViewById(R.id.cover);

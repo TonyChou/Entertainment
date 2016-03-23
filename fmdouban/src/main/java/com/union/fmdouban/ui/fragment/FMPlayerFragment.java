@@ -52,7 +52,7 @@ import java.util.List;
  * Created by zhouxiaming on 2016/3/14.
  */
 
-public class ChannelFragment extends BaseFragment implements ItemClickListener {
+public class FMPlayerFragment extends BaseFragment implements ItemClickListener {
     private final int REFRESH_CHANNEL_INFO = 0x000012;
     private static final Interpolator sDecelerator = new DecelerateInterpolator();
     private View mRootView;
@@ -78,8 +78,8 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
         }
     };
 
-    public static ChannelFragment newInstance() {
-        ChannelFragment fragment = new ChannelFragment();
+    public static FMPlayerFragment newInstance() {
+        FMPlayerFragment fragment = new FMPlayerFragment();
         return fragment;
     }
 
@@ -95,7 +95,7 @@ public class ChannelFragment extends BaseFragment implements ItemClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_channel_list_layout, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_player_layout, container, false);
         initView(mRootView);
         initListView();
         loadChannel();
