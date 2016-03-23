@@ -30,20 +30,20 @@ public class MyViewGroup extends ViewGroup {
     };
     public MyViewGroup(Context context) {
         super(context);
-        log("MyViewGroup 1");
-        startRefresh();
+        //log("MyViewGroup 1");
+        //startRefresh();
     }
 
     public MyViewGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
-        log("MyViewGroup 2");
-        startRefresh();
+       // log("MyViewGroup 2");
+       // startRefresh();
     }
 
     public MyViewGroup(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        log("MyViewGroup 3");
-        startRefresh();
+        //log("MyViewGroup 3");
+        //startRefresh();
     }
 
     private void startRefresh(){
@@ -71,13 +71,13 @@ public class MyViewGroup extends ViewGroup {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
-        log("width = " + width + "   height = " + height);
+        //log("width = " + width + "   height = " + height);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int childrenCount = getChildCount();
-        log("layout = " + l + "  " + t + "  " + r + "  " + b) ;
+        //log("layout = " + l + "  " + t + "  " + r + "  " + b) ;
         for (int i = 0; i < childrenCount; i++) {
             View child = getChildAt(i);
             int childWidth = child.getMeasuredWidth();

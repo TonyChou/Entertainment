@@ -3,6 +3,7 @@ package com.union.fmximalaya;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import java.io.File;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmximalaya.plugin.IPlugin;
+import com.union.fmximalaya.ui.activity.ListTestActivity;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,9 +53,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                AnimShow.showAnim(atc, imageView);
-                //getWebViewPackageInfo();
-                dynamicLoadDex();
+//                AnimShow.showAnim(atc, imageView);
+//                //getWebViewPackageInfo();
+//                dynamicLoadDex();
+
+                startActivity(new Intent(MainActivity.this, ListTestActivity.class));
             }
         });
 
