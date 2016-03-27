@@ -22,6 +22,18 @@ public class FMHeader {
     public static final FMPair<String, String> CONTENT_TYPE = new FMPair<String, String>("Content-Type", "application/x-www-form-urlencoded");
     public static final FMPair<String, String> USER_AGENT = new FMPair<String, String>("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
 
+    /**
+     * 构建获取Html content 的header
+     * @return
+     */
+    public static Headers genGetHtmlContentHeader() {
+        Map<String, String> headMap = new HashMap<String, String>();
+        Headers headers = Headers.of(headMap);
+        headMap.put(USER_AGENT.key, USER_AGENT.value);
+        headMap.put(CONTENT_TYPE.key, CONTENT_TYPE.value);
+        headMap.put(COOKIE, FMCookie.getCookie());
+        return headers;
+    }
 
     /**
      * 构建获取bid的requestHeader
@@ -40,6 +52,8 @@ public class FMHeader {
         Headers headers = Headers.of(headMap);
         return headers;
     }
+
+
 
     /**
      * 构建获取channels 的requestHeader

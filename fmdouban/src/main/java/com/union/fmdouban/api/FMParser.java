@@ -26,7 +26,7 @@ public class FMParser {
      * @param response
      * @return
      */
-    public String paserChannels(Response response) {
+    public String parserChannels(Response response) {
         try {
             return response.body().string();
         } catch (IOException e) {
@@ -34,4 +34,6 @@ public class FMParser {
         }
         return null;
     }
+
+
 }

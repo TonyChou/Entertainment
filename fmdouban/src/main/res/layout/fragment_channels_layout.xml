@@ -2,19 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_channel_category"
-        style="@style/MyCustomTabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="scrollable" />
-
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager_channel_category"
+    <RelativeLayout
+        android:id="@+id/channel_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tab_channel_category" />
+        android:background="@color/light_yellow">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_channel_category"
+            style="@style/MyCustomTabLayout"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable" />
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager_channel_category"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tab_channel_category" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/no_channel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_yellow"
+        android:visibility="invisible">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/fetch_channels"
+            android:padding="5dip"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/button_bg_shape_blue"/>
+
+    </RelativeLayout>
+
+
 </RelativeLayout>

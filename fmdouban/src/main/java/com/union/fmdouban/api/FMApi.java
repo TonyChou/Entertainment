@@ -28,14 +28,17 @@ public class FMApi {
 
 
     /**
-     * 第一步
+     * 获取Html content
      * 获取bid
      * @return
      */
-    public void getFMBid(FMCallBack callBack) {
-        Request request = new Request.Builder().url(FMUrl.HOST).headers(FMHeader.genGetBidRequestHeader()).build();
+    public void getHtmlContent(FMCallBack callBack) {
+        Request request = new Request.Builder().url(FMUrl.HOST).headers(FMHeader.genGetHtmlContentHeader()).build();
         sendRequest(request, callBack);
     }
+
+
+
 
     /**
      * 获取频道列表

@@ -9,4 +9,6 @@
     <dimen name="circle_button_height">60.0dip</dimen>
     <dimen name="channel_name_size">20sp</dimen>
     <dimen name="song_name_size">16sp</dimen>
+
+    <dimen name="button_height">45dip</dimen>
 </resources>

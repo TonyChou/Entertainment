@@ -175,11 +175,11 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
             @Override
             public void animationEnd(View view) {
                 if (view == mPreButton) {
-                    mFragment.getPlayerSercie().playPriority();
+                    mFragment.getPlayerService().playPriority();
                 } else if (view == mPlayButton) {
-                    mFragment.getPlayerSercie().playOrPause();
+                    mFragment.getPlayerService().playOrPause();
                 } else if (view == mNextButton) {
-                    mFragment.getPlayerSercie().playNext();
+                    mFragment.getPlayerService().playNext();
                 }
 
             }
@@ -198,7 +198,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     }
 
     public void loadCover() {
-        FMSong song = mFragment.getPlayerSercie().getCurrentSong();
+        FMSong song = mFragment.getPlayerService().getCurrentSong();
         if (song == null) {
             return;
         }

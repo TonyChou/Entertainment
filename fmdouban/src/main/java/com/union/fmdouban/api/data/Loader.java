@@ -1,4 +1,4 @@
-package com.union.fmdouban.data;
+package com.union.fmdouban.api.data;
 
 import android.os.Handler;
 

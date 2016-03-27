@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -67,6 +68,8 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
     FMChannel mCurrentChannel;
+    BaseFragment mChannelsFragment;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -99,6 +102,7 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
         initView(mRootView);
         initListView();
         loadChannel();
+
         return mRootView;
     }
 
@@ -111,6 +115,47 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
         addOnTouchSpringAnimation(mShowHideButton);
 
         TintUtils.setBackgroundTint(this.getActivity(), (AppCompatTextView) mShowHideButton.findViewById(R.id.button_icon), R.color.white);
+    }
+
+    /**
+     *显示频道选择面板
+     */
+    private void showOrHideChannelsFragment() {
+        if (mChannelsFragment == null) {
+            mChannelsFragment = FMChannelsFragment.newInstance();
+        }
+        FragmentTransaction transaction = this.getChildFragmentManager().beginTransaction();
+
+        if (mChannelsFragment.isVisible()) {
+            hideFragment(transaction);
+        } else {
+            if ( !mChannelsFragment.isAdded()) {
+                transaction.add(R.id.fragment_container, mChannelsFragment).commit();
+            } else {
+                showFragment(transaction);
+            }
+        }
+    }
+
+    private void showFragment(final FragmentTransaction transaction) {
+        transaction.show(mChannelsFragment).commit();
+        mChannelsFragment.showWithAnimation();
+    }
+
+    private void hideFragment(final FragmentTransaction transaction) {
+        mChannelsFragment.hideWithAnimation();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                transaction.hide(mChannelsFragment).commit();
+            }
+        }, 300);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     private View initListView() {
@@ -234,21 +279,21 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
      * 切换频道播放歌曲
      */
     private void switchChannel() {
-        getPlayerSercie().switchChannel(mCurrentChannel);
+        getPlayerService().switchChannel(mCurrentChannel);
     }
 
     public void showOrHideChannelsPanel() {
         if (mRecycleView.getVisibility() == View.INVISIBLE) {
             showChannelListView();
         } else {
-            hideChannelListView();
+            showControllerView();
         }
     }
 
     /**
      * Y轴平移播放控制面板到屏幕中间位置
      */
-    public void hideChannelListView() {
+    public void showControllerView() {
         ViewHelper.setAlpha(mControllerView, 0.5f);
         ViewHelper.setScaleX(mControllerView, 0.5f);
         ViewHelper.setScaleY(mControllerView, 0.5f);
@@ -267,17 +312,17 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
 
 
         int recycleViewDy = mRootView.getHeight();
-        ViewPropertyAnimator.animate(mRecycleView).alpha(1).
-                scaleX(1).scaleY(1).
-                translationX(0).translationY(recycleViewDy).
-                setDuration(500).
-                setInterpolator(sDecelerator).
-                setListener(new AnimListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mRecycleView.setVisibility(View.INVISIBLE);
-                    }
-                });
+//        ViewPropertyAnimator.animate(mRecycleView).alpha(1).
+//                scaleX(1).scaleY(1).
+//                translationX(0).translationY(recycleViewDy).
+//                setDuration(500).
+//                setInterpolator(sDecelerator).
+//                setListener(new AnimListener() {
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                        mRecycleView.setVisibility(View.INVISIBLE);
+//                    }
+//                });
         mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
     }
 
@@ -336,8 +381,8 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
 
     @Override
     public boolean onBackPress() {
-        if (mRecycleView.getVisibility() == View.VISIBLE) {
-            showOrHideChannelsPanel();
+        if (!mChannelsFragment.isHidden()) {
+            showOrHideChannelsFragment();
             return false;
         }
         return super.onBackPress();
@@ -347,12 +392,13 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
         @Override
         public void animationEnd(View v) {
             if (v == mShowHideButton) {
-                showOrHideChannelsPanel();
+                //showOrHideChannelsPanel();
+                showOrHideChannelsFragment();
             }
         }
     }
 
-    public FMPlayerService getPlayerSercie() {
+    public FMPlayerService getPlayerService() {
         return mPlayerService;
     }
 

@@ -3,6 +3,7 @@ package com.union.commonlib.ui.fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 /**
  * Created by zhouxiaming on 16/3/6.
@@ -11,7 +12,7 @@ public class BaseFragment extends Fragment {
     protected String TAG = this.getClass().getSimpleName();
     protected static final String ARG_PARAM1 = "param1";
     protected static final String ARG_PARAM2 = "param2";
-
+    protected View mRootView;
     protected String mParam1;
     protected String mParam2;
     public BaseFragment() {
@@ -45,5 +46,13 @@ public class BaseFragment extends Fragment {
 
     public boolean onBackPress() {
         return true;
+    }
+
+    public void showWithAnimation() {
+
+    }
+
+    public void hideWithAnimation() {
+
     }
 }

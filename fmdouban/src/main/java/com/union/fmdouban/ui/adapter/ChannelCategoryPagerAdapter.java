@@ -2,42 +2,47 @@ package com.union.fmdouban.ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
-import com.union.fmdouban.ui.fragment.FMChannelsFragment;
-import com.union.fmdouban.ui.fragment.FMPlayerFragment;
+import com.union.commonlib.ui.fragment.BaseFragment;
+import com.union.fmdouban.api.bean.FMChannelType;
+import com.union.fmdouban.ui.fragment.FMChannelList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zhouxiaming on 16/3/23.
  */
-public class ChannelCategoryPagerAdapter extends FragmentPagerAdapter {
-
-    private String[] mCategory = new String[]{"热门", "经典", "怀旧", "音乐", "电影", "咖啡", "hello android"};
-
-    public ChannelCategoryPagerAdapter(FragmentManager fm) {
+public class ChannelCategoryPagerAdapter extends FragmentStatePagerAdapter {
+    List<BaseFragment> fragmentList = new ArrayList<BaseFragment>();
+    List<FMChannelType> typeList;
+    public ChannelCategoryPagerAdapter(FragmentManager fm, List<FMChannelType> types) {
         super(fm);
+        typeList = types;
+        for (int i = 0; i < typeList.size(); i++) {
+            fragmentList.add(FMChannelList.newInstance());
+        }
     }
 
     @Override
     public int getCount() {
-        return mCategory.length;
+        return typeList.size();
     }
 
     @Override
     public Fragment getItem(int position) {
-        return FMChannelsFragment.newInstance();
+        return fragmentList.get(position);
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return false;
+        return super.isViewFromObject(view, object);
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mCategory[position];
+        return typeList.get(position).getName();
     }
 }

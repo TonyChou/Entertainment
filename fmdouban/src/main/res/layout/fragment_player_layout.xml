@@ -21,6 +21,13 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:padding="5dp" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+
+        </FrameLayout>
     </FrameLayout>
 
 

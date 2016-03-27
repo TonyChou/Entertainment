@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.union.commonlib.data.LoaderToken;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
@@ -111,13 +112,13 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(PhotosQuery._TOKEN, null, this);
+        getLoaderManager().initLoader(LoaderToken.PhotosQuery, null, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(PhotosQuery._TOKEN, null, this);
+        getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
     }
 
     private void refreshPhotos(Cursor cursor) {
@@ -133,14 +134,14 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        getLoaderManager().restartLoader(PhotosQuery._TOKEN, null, GalleryFragment.this);
+        getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, GalleryFragment.this);
     }
 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Loader<Cursor> loader = null;
-        if(id == PhotosQuery._TOKEN) {
+        if(id == LoaderToken.PhotosQuery) {
             loader = new CursorLoader(getActivity(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, PhotosQuery.PROJECTION, null, null, null);
         }
 
@@ -151,7 +152,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(loader.getId() == PhotosQuery._TOKEN) {
+        if(loader.getId() == LoaderToken.PhotosQuery) {
             refreshPhotos(data);
         } else {
             data.close();
@@ -163,8 +164,14 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(loader.getId() == PhotosQuery._TOKEN) {
+        if(loader.getId() == LoaderToken.PhotosQuery) {
             //TODO
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getLoaderManager().destroyLoader(LoaderToken.PhotosQuery);
     }
 }
