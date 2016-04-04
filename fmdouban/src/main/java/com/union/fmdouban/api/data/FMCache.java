@@ -15,7 +15,11 @@ public class FMCache {
     public static void addHotChannelsToCache(List<FMRichChannel> list) {
         synchronized (hotChannels) {
             hotChannels.clear();
-            hotChannels.addAll(list);
+            for(FMRichChannel channel : list) {
+                if (!hotChannels.contains(channel)) {
+                    hotChannels.add(channel);
+                }
+            }
         }
     }
 

@@ -63,6 +63,7 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
 
     private void initView() {
         channelList.addAll(FMCache.getHotChannelsFromCache());
+        Log.i(TAG, "HotChannel size: " + channelList.size());
         mListView = (ListView) mRootView.findViewById(R.id.channel_list);
         // 为listview的创建一个headerview,注意，如果不加会影响到加载的footview的显示！
         View headerMarginView = new View(this.getActivity());

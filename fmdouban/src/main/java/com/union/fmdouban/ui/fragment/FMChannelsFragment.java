@@ -77,6 +77,8 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     }
 
     private void showChannelPanel() {
+        FMChannelType hotType = new FMChannelType(FMChannelType.hotTypeId, getString(R.string.hot_channel));
+        typeList.add(0, hotType);
         channelPanelView.setVisibility(View.VISIBLE);
         noChannelLayout.setVisibility(View.INVISIBLE);
         mViewPage = (ViewPager) mRootView.findViewById(R.id.pager_channel_category);

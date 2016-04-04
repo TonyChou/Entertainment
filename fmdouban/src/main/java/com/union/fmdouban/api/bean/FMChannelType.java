@@ -5,6 +5,7 @@ package com.union.fmdouban.api.bean;
  * Created by zhouxiaming on 16/3/26.
  */
 public class FMChannelType {
+    public static final String hotTypeId = "0x0001";
     private String id;
     private String name;
     public FMChannelType(String id, String name) {

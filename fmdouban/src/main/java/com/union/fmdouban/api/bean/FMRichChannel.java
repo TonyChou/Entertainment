@@ -105,4 +105,12 @@ public class FMRichChannel {
     public void setHotSongs(String[] hotSongs) {
         this.hotSongs = hotSongs;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o != null && o instanceof FMRichChannel && ((FMRichChannel) o).getChannelId() == getChannelId()) {
+            return true;
+        }
+        return super.equals(o);
+    }
 }
