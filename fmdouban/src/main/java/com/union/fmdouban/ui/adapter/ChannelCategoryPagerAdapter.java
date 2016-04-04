@@ -24,6 +24,7 @@ public class ChannelCategoryPagerAdapter extends FragmentStatePagerAdapter {
         typeList = types;
         for (int i = 0; i < typeList.size(); i++) {
             FMChannelList channelList = FMChannelList.newInstance();
+            channelList.setChannelType(typeList.get(i));
             channelList.setChannelSelectedListener(channelSelectedListener);
             fragmentList.add(channelList);
         }

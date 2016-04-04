@@ -67,6 +67,19 @@ public class FMApi {
         sendRequest(request, callBack);
     }
 
+    /**
+     * 根据类型获取频道列表
+     * @param typeId
+     * @param startPosition
+     * @param limit
+     * @param callBack
+     */
+    public void getChannelListByType(String typeId, int startPosition, int limit, FMCallBack callBack) {
+        String url = String.format(FMUrl.FM_GET_CHANNEL_LIST_BY_TYPE, typeId, startPosition, limit);
+        Request request = new Request.Builder().url(url).headers(FMHeader.genRequestHeader()).build();
+        sendRequest(request, callBack);
+    }
+
 
 
     private ExecuteResult sendRequest(final Request request, final FMCallBack callBack) {

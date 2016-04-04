@@ -27,8 +27,18 @@ public class FMCookie {
      */
     public static String getCookie() {
         StringBuffer cookieBuild = new StringBuffer();
+        cookieBuild.append(String.format(BID_FORMAT, Cookie.get(BID_KEY)));
+        return cookieBuild.toString();
+    }
+
+    /**
+     * 拼接Cookie
+     * @return
+     */
+    public static String getCookieWithFlag() {
+        StringBuffer cookieBuild = new StringBuffer();
         cookieBuild.append(String.format(FLAG_FORMAT, Cookie.get(FLAG)))
-                   .append(String.format(BID_FORMAT, Cookie.get(BID_KEY)));
+                .append(String.format(BID_FORMAT, Cookie.get(BID_KEY)));
         return cookieBuild.toString();
     }
 

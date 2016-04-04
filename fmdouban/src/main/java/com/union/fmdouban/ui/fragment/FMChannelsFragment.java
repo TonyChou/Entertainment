@@ -93,7 +93,7 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         Log.i(TAG, "onHiddenChanged   " + hidden);
-        if (!hidden) {
+        if (!hidden && fragmentAdapter != null) {
             List<FMChannelList> fragmentList = fragmentAdapter.getFragmentList();
             if (fragmentList != null && fragmentList.size() > 0) {
                 for (FMChannelList frag : fragmentList) {

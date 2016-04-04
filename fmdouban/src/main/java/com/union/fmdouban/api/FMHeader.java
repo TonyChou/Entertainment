@@ -28,10 +28,10 @@ public class FMHeader {
      */
     public static Headers genGetHtmlContentHeader() {
         Map<String, String> headMap = new HashMap<String, String>();
-        Headers headers = Headers.of(headMap);
         headMap.put(USER_AGENT.key, USER_AGENT.value);
         headMap.put(CONTENT_TYPE.key, CONTENT_TYPE.value);
         headMap.put(COOKIE, FMCookie.getCookie());
+        Headers headers = Headers.of(headMap);
         return headers;
     }
 
@@ -61,7 +61,7 @@ public class FMHeader {
      */
     public static Headers genRequestHeader() {
         Map<String, String> headMap = new HashMap<String, String>();
-        headMap.put(ACCEPT_ANYTHING.key, ACCEPT_ANYTHING.value);
+        //headMap.put(ACCEPT_ANYTHING.key, ACCEPT_ANYTHING.value);
         headMap.put(USER_AGENT.key, USER_AGENT.value);
         headMap.put(CONTENT_TYPE.key, CONTENT_TYPE.value);
         headMap.put(COOKIE, FMCookie.getCookie());
