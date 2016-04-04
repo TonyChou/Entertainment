@@ -1,0 +1,36 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:roundedImage="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    card_view:cardBackgroundColor="@color/yellow"
+    card_view:cardCornerRadius="1dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.makeramen.RoundedImageView
+            android:id="@+id/channel_cover"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/example"
+            roundedImage:riv_border_color="@color/yellow"
+            roundedImage:riv_border_width="4dip"
+            roundedImage:riv_corner_radius="100dp" />
+
+        <TextView
+            android:id="@+id/channel_name"
+            style="@style/ListItemText"
+            android:layout_marginLeft="20dip"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/channel_cover"
+            android:text="Hello" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
+
+

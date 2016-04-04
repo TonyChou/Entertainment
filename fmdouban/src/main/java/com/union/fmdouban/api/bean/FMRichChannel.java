@@ -33,6 +33,7 @@ public class FMRichChannel {
     @SerializedName("hot_songs")
     private String[] hotSongs;
 
+
     public int getChannelId() {
         return channelId;
     }

@@ -10,10 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +20,6 @@ import android.widget.ImageView;
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringSystem;
-import com.google.gson.reflect.TypeToken;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -33,18 +28,15 @@ import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
 import com.union.commonlib.ui.anim.FaceBookRebound;
 import com.union.commonlib.ui.fragment.BaseFragment;
-import com.union.commonlib.ui.listener.ItemClickListener;
 import com.union.commonlib.ui.view.TintUtils;
-import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.api.ExecuteResult;
 import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
-import com.union.fmdouban.api.FMParserFactory;
-import com.union.fmdouban.api.bean.FMChannel;
+import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.service.PlayerController;
-import com.union.fmdouban.ui.adapter.ChannelAdapter;
+import com.union.fmdouban.ui.listener.ChannelSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +45,10 @@ import java.util.List;
  * Created by zhouxiaming on 2016/3/14.
  */
 
-public class FMPlayerFragment extends BaseFragment implements ItemClickListener {
+public class FMPlayerFragment extends BaseFragment implements ChannelSelectedListener{
     private final int REFRESH_CHANNEL_INFO = 0x000012;
     private static final Interpolator sDecelerator = new DecelerateInterpolator();
     private View mRootView;
-    private RecyclerView mRecycleView;
-    private ChannelAdapter mAdapter;
     private PlayerController mPlayerController;
     private View mControllerView;
     View mShowHideButton;
@@ -67,17 +57,16 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
     private List<Spring> springMap = new ArrayList<Spring>();
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
-    FMChannel mCurrentChannel;
-    BaseFragment mChannelsFragment;
+    FMChannelsFragment mChannelsFragment;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            int waht = msg.what;
-            if (waht == REFRESH_CHANNEL_INFO) {
-                ExecuteResult result = (ExecuteResult)msg.obj;
-                renderChannelsOnUiThread(result);
-            }
+//            int waht = msg.what;
+//            if (waht == REFRESH_CHANNEL_INFO) {
+//                ExecuteResult result = (ExecuteResult)msg.obj;
+//                renderChannelsOnUiThread(result);
+//            }
         }
     };
 
@@ -100,14 +89,11 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_player_layout, container, false);
         initView(mRootView);
-        initListView();
-        loadChannel();
-
+        //loadChannel();
         return mRootView;
     }
 
     private void initView(View rootView) {
-        mRecycleView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mCoverImage = (ImageView) rootView.findViewById(R.id.cover);
         mControllerView = rootView.findViewById(R.id.player_controller_view);
         mPlayerController.init(this, mControllerView);
@@ -123,6 +109,7 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
     private void showOrHideChannelsFragment() {
         if (mChannelsFragment == null) {
             mChannelsFragment = FMChannelsFragment.newInstance();
+            mChannelsFragment.setChannelSelectedListener(this);
         }
         FragmentTransaction transaction = this.getChildFragmentManager().beginTransaction();
 
@@ -158,20 +145,6 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
         super.onResume();
     }
 
-    private View initListView() {
-        GridLayoutManager layoutManager = new GridLayoutManager(this.getActivity(), 2);
-        // LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecycleView.setLayoutManager(layoutManager);
-        mRecycleView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new ChannelAdapter(this.getActivity(), new ArrayList<FMChannel>(), this);
-        mRecycleView.setAdapter(mAdapter);
-        mRecycleView.setHasFixedSize(true);
-        mRecycleView.setVisibility(View.INVISIBLE);
-        mRecycleView.setHasFixedSize(true);
-        return mRecycleView;
-    }
-
     private void addOnTouchSpringAnimation(View... v) {
         for (View view : v) {
             Spring spring = mSpringSystem.createSpring();
@@ -180,20 +153,6 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
         }
     }
 
-    private void updateAdapterData(List<FMChannel> channels) {
-        FMChannel currentChannel = mPlayerService != null ? mPlayerService.getCurrentChannel() : null;
-        if (currentChannel != null) {
-            for (FMChannel channel : channels) {
-                if (channel.getChannelId() == currentChannel.getChannelId()) {
-                    channel.setIsPlaying(true);
-                } else {
-                    channel.setIsPlaying(false);
-                }
-            }
-        }
-        mAdapter.setData(channels);
-        mAdapter.notifyDataSetChanged();
-    }
 
     private void loadChannel() {
         FMApi.getInstance().getFmChannels(new FMCallBack() {
@@ -205,90 +164,8 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
             }
         });
     }
-    private void renderChannelsOnUiThread(ExecuteResult result) {
-
-        if (result.getResult() == ExecuteResult.OK) {
-            String channelsString = result.getResponseString();
-            LogUtils.i(TAG, "channels = " + channelsString);
-            try {
-                List<FMChannel> channels = FMParserFactory.parserToChannelList(channelsString);
-                updateAdapterData(channels);
-                saveChannelsToCache(channels);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            List<FMChannel> channels = loadChannelsFromCache();
-            updateAdapterData(channels);
-        }
-    }
-
-    public void renderChannelsData(List<FMChannel> channels) {
-        if (channels != null && channels.size() > 0) {
-            updateAdapterData(channels);
-            boolean isPlaying = mPlayerService != null ? mPlayerService.isPlaying() : false;
-            if (!isPlaying) {
-                showChannelListView();
-            }
-        }
-
-    }
-
-    /**
-     * 讲频道数据保存到缓存中
-     *
-     * @param channels
-     */
-    private void saveChannelsToCache(List<FMChannel> channels) {
-        if (channels != null && channels.size() > 0) {
-            CacheManager cacheManager = new CacheManager(this.getActivity());
-            cacheManager.saveToCache(CacheManager.FM_DOUBAN_CHANNELS, channels);
-        }
-    }
-
-    /**
-     * 从缓存中加载数据
-     *
-     * @return
-     */
-    private List<FMChannel> loadChannelsFromCache() {
-        CacheManager cacheManager = new CacheManager(this.getActivity());
-        return cacheManager.getFromCache(CacheManager.FM_DOUBAN_CHANNELS, new TypeToken<List<FMChannel>>() {
-        });
-    }
 
 
-    @Override
-    public void onItemClick(int position) {
-        showOrHideChannelsPanel();
-        FMChannel selectedChannel = mAdapter.getChannel(position);
-        if (mCurrentChannel != null && selectedChannel.getChannelId() == mCurrentChannel.getChannelId()) {
-            return;
-        }
-
-        for (FMChannel channel : mAdapter.getData()) {
-            channel.setIsPlaying(false);
-        }
-
-        selectedChannel.setIsPlaying(true);
-        mCurrentChannel = selectedChannel;
-        mAdapter.notifyDataSetChanged();
-        switchChannel();
-    }
-    /**
-     * 切换频道播放歌曲
-     */
-    private void switchChannel() {
-        getPlayerService().switchChannel(mCurrentChannel);
-    }
-
-    public void showOrHideChannelsPanel() {
-        if (mRecycleView.getVisibility() == View.INVISIBLE) {
-            showChannelListView();
-        } else {
-            showControllerView();
-        }
-    }
 
     /**
      * Y轴平移播放控制面板到屏幕中间位置
@@ -326,41 +203,6 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
         mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
     }
 
-    /**
-     * 显示频道列表
-     */
-    private void showChannelListView() {
-        mRecycleView.setVisibility(View.VISIBLE);
-        //播放控制面板上移到顶端
-        ViewPropertyAnimator.animate(mControllerView).alpha(0).
-                scaleX(1).scaleY(1).
-                translationX(0).translationY(0).
-                setDuration(500).
-                setInterpolator(sDecelerator).
-                setListener(new AnimListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        ViewPropertyAnimator.animate(mControllerView).alpha(0);
-                    }
-                });
-        mRecycleView.setVisibility(View.VISIBLE);
-        ViewHelper.setAlpha(mRecycleView, 0.5f);
-        ViewHelper.setScaleX(mRecycleView, 0.5f);
-        ViewHelper.setScaleY(mRecycleView, 0.5f);
-
-        ViewPropertyAnimator.animate(mRecycleView).alpha(1).
-                scaleX(1).scaleY(1).
-                translationX(0).translationY(0).
-                setDuration(500).
-                setInterpolator(sDecelerator).
-                setListener(new AnimListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                    }
-                });
-        mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -386,6 +228,13 @@ public class FMPlayerFragment extends BaseFragment implements ItemClickListener 
             return false;
         }
         return super.onBackPress();
+    }
+
+    @Override
+    public boolean switchChannel(FMRichChannel channel) {
+        getPlayerService().switchChannel(channel);
+        showOrHideChannelsFragment(); 
+        return true;
     }
 
     class AnimCallBack extends AnimCallbackImp {

@@ -15,12 +15,6 @@
             android:id="@+id/player_controller_view"
             layout="@layout/layout_player_pannel"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_view"
-            android:layout_below="@+id/player_controller_view"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:padding="5dp" />
 
         <FrameLayout
             android:id="@+id/fragment_container"

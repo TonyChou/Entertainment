@@ -22,4 +22,14 @@
         <item name="android:scaleType">centerCrop</item>
         <item name="riv_corner_radius">100dp</item>
     </style>
+
+    <style name="ListItemText">
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

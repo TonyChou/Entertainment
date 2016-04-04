@@ -1,14 +1,10 @@
 package com.union.fmdouban.ui.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.Adapter;
+import android.widget.ProgressBar;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
@@ -24,6 +20,7 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.union.commonlib.data.LoaderToken;
 import com.union.commonlib.ui.anim.AnimListener;
 import com.union.commonlib.ui.fragment.BaseFragment;
+import com.union.commonlib.ui.view.CircularProgress;
 import com.union.commonlib.utils.UiUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.api.bean.FMChannelType;
@@ -31,8 +28,8 @@ import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.data.ChannelLoader;
 import com.union.fmdouban.api.data.FMCache;
 import com.union.fmdouban.ui.adapter.ChannelCategoryPagerAdapter;
+import com.union.fmdouban.ui.listener.ChannelSelectedListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,14 +44,20 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     private List<FMChannelType> typeList;
     private List<FMRichChannel> channels;
     private View channelPanelView, noChannelLayout;
+    private CircularProgress mLoadingBar;
+    private ChannelSelectedListener channelSelectedListener;
+    private ChannelCategoryPagerAdapter fragmentAdapter;
     public static FMChannelsFragment newInstance() {
         return new FMChannelsFragment();
+    }
+
+    public void setChannelSelectedListener(ChannelSelectedListener listener) {
+        this.channelSelectedListener = listener;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(LoaderToken.DoubanFMChannelType, null, this);
         //getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
     }
 
@@ -63,24 +66,39 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         mRootView = inflater.inflate(R.layout.fragment_channels_layout, null);
         initView(mRootView);
         showWithAnimation();
+        getLoaderManager().initLoader(LoaderToken.DoubanFMChannelType, null, this);
         return mRootView;
     }
 
     private void initView(View mRootView) {
         channelPanelView = mRootView.findViewById(R.id.channel_layout);
         noChannelLayout = mRootView.findViewById(R.id.no_channel_layout);
-
+        mLoadingBar = (CircularProgress)mRootView.findViewById(R.id.rl_loading);
     }
 
     private void showChannelPanel() {
         channelPanelView.setVisibility(View.VISIBLE);
         noChannelLayout.setVisibility(View.INVISIBLE);
         mViewPage = (ViewPager) mRootView.findViewById(R.id.pager_channel_category);
-        FragmentStatePagerAdapter adapter = new ChannelCategoryPagerAdapter(this.getChildFragmentManager(), typeList);
-        mViewPage.setAdapter(adapter);
+        fragmentAdapter = new ChannelCategoryPagerAdapter(this.getChildFragmentManager(), typeList, channelSelectedListener);
+        mViewPage.setAdapter(fragmentAdapter);
         mTabLayout = (TabLayout) mRootView.findViewById(R.id.tab_channel_category);
         mTabLayout.setupWithViewPager(mViewPage);
         mViewPage.setCurrentItem(0);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        Log.i(TAG, "onHiddenChanged   " + hidden);
+        if (!hidden) {
+            List<FMChannelList> fragmentList = fragmentAdapter.getFragmentList();
+            if (fragmentList != null && fragmentList.size() > 0) {
+                for (FMChannelList frag : fragmentList) {
+                    frag.refreshData();
+                }
+            }
+        }
     }
 
     private void showNoChannelLayout() {
@@ -91,7 +109,6 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("veve", " onStop============= ");
     }
 
     @Override
@@ -106,9 +123,6 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
 
     @Override
     public void showWithAnimation() {
-//        ViewHelper.setAlpha(mRootView, 0.5f);
-//        ViewHelper.setScaleX(mRootView, 0.5f);
-//        ViewHelper.setScaleY(mRootView, 0.5f);
         int[] screenSize = UiUtils.getScreenWidthAndHeight(this.getActivity());
         ViewHelper.setTranslationX(mRootView, screenSize[0]);
         ViewPropertyAnimator.animate(mRootView).alpha(1).
@@ -146,6 +160,7 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
             loader = new ChannelLoader(this.getActivity());
 
         }
+        mLoadingBar.setVisibility(View.VISIBLE);
         return loader;
     }
 
@@ -154,11 +169,13 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         Log.i("ChannelLoader", "onLoadFinished");
         typeList = FMCache.getTypeList();
         channels = FMCache.getHotChannelsFromCache();
+        mLoadingBar.setVisibility(View.GONE);
         if (typeList.size() > 0 && channels.size() > 0) {
             showChannelPanel();
         } else {
             showNoChannelLayout();
         }
+
     }
 
     @Override
@@ -172,7 +189,6 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         if (loader != null) {
             loader.cancelLoad();
         }
-
         getLoaderManager().destroyLoader(LoaderToken.DoubanFMChannelType);
     }
 }

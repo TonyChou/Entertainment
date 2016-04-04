@@ -17,6 +17,7 @@ import com.union.commonlib.ui.view.CircleProgressBar;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.api.bean.FMChannel;
+import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.bean.FMSinger;
 import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.PlayerControllerListener;
@@ -109,12 +110,12 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
 
 
 
-    private void setChannelName(FMChannel channel) {
+    private void setChannelName(FMRichChannel channel) {
         if (channel == null) {
             mChannelNameView.setVisibility(View.INVISIBLE);
         } else {
             mChannelNameView.setVisibility(View.VISIBLE);
-            mChannelNameView.setText(channel.getNameZh());
+            mChannelNameView.setText(channel.getName());
         }
     }
 
@@ -208,7 +209,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     }
 
     @Override
-    public void refreshControllerView(FMChannel channel, FMSong song, FMPlayerService.PlayState state) {
+    public void refreshControllerView(FMRichChannel channel, FMSong song, FMPlayerService.PlayState state) {
         refreshViews(state);
         setChannelName(channel);
         setSongName(song);

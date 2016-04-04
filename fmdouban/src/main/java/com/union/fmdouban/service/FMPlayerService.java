@@ -28,6 +28,7 @@ import com.union.fmdouban.api.FMParserFactory;
 import com.union.fmdouban.api.FMReport;
 import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.api.bean.FMLyric;
+import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.play.PlayerControllerListener;
@@ -54,7 +55,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     private static FMMediaPlayer mPlayer;
     private PlayerListener playerListener;
     private final IBinder mBinder = new LocalBinder();
-    private static FMChannel mChannel;
+    private static FMRichChannel mChannel;
     private static PlayState mCurrentPLayState = PlayState.NONE;
     RequestQueue mQueue;
     private static int mSongIndex = 0;
@@ -273,7 +274,7 @@ public class FMPlayerService extends Service implements PlayerListener {
         //TODO
     }
 
-    public boolean isPlaying() {
+    public static boolean isPlaying() {
         if (mPlayer == null) {
             return false;
         } else {
@@ -281,11 +282,12 @@ public class FMPlayerService extends Service implements PlayerListener {
         }
     }
 
-    public void switchChannel(FMChannel channel) {
+    public boolean switchChannel(FMRichChannel channel) {
         mChannel = channel;
         songCache.clear();
         mCurrentPLayState = PlayState.NONE;
         loadSongAndReport();
+        return true;
     }
 
 
@@ -382,7 +384,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     }
 
 
-    public FMChannel getCurrentChannel() {
+    public static FMRichChannel getCurrentChannel() {
         return mChannel;
     }
 
