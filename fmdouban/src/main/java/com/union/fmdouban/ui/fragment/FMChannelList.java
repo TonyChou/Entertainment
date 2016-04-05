@@ -3,20 +3,14 @@ package com.union.fmdouban.ui.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.listener.ItemClickListener;
@@ -25,7 +19,6 @@ import com.union.fmdouban.R;
 import com.union.fmdouban.api.ExecuteResult;
 import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
-import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.api.bean.FMChannelType;
 import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.data.FMCache;
@@ -124,24 +117,13 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
                 mPtrFrameLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        mockStrList.clear();
-//                        start = 0;
-//                        mockStrList.addAll(getMockData(start, count));
                        mPtrFrameLayout.refreshComplete();
 //                        //第一个参数是：数据是否为空；第二个参数是：是否还有更多数据
                         mLoadMoreListViewContainer.loadMoreFinish(false, true);
-//                        adapter.notifyDataSetChanged();
                     }
                 }, 500);
             }
         });
-        //设置延时自动刷新数据
-//        mPtrFrameLayout.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mPtrFrameLayout.autoRefresh(true);
-//            }
-//        }, 200);
 
 
         //4.加载更多的组件
@@ -154,14 +136,6 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
         mLoadMoreListViewContainer.setLoadMoreHandler(new LoadMoreHandler() {
             @Override
             public void onLoadMore(LoadMoreContainer loadMoreContainer) {
-//                //模拟加载更多的业务处理
-//                mLoadMoreListViewContainer.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mLoadMoreListViewContainer.loadMoreFinish(false, true);
-//                    }
-//                }, 1000);
-
                 int startPosition = currentPage * limit;
                 getChannelList(mType.getId(), startPosition, limit);
             }
@@ -192,6 +166,8 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
                     msg.sendToTarget();
                 }
             });
+        } else {
+            mLoadMoreListViewContainer.loadMoreFinish(false, false);
         }
     }
 

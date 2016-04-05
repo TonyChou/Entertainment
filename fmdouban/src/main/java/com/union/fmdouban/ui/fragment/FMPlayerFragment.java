@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +118,7 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
         } else {
             if ( !mChannelsFragment.isAdded()) {
                 transaction.add(R.id.fragment_container, mChannelsFragment).commit();
+                mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
             } else {
                 showFragment(transaction);
             }
@@ -128,6 +128,7 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
     private void showFragment(final FragmentTransaction transaction) {
         transaction.show(mChannelsFragment).commit();
         mChannelsFragment.showWithAnimation();
+        mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
     }
 
     private void hideFragment(final FragmentTransaction transaction) {
@@ -136,6 +137,7 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
             @Override
             public void run() {
                 transaction.hide(mChannelsFragment).commit();
+                mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
             }
         }, 300);
 
@@ -187,20 +189,6 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
                         ViewPropertyAnimator.animate(mControllerView).alpha(1);
                     }
                 });
-
-
-        int recycleViewDy = mRootView.getHeight();
-//        ViewPropertyAnimator.animate(mRecycleView).alpha(1).
-//                scaleX(1).scaleY(1).
-//                translationX(0).translationY(recycleViewDy).
-//                setDuration(500).
-//                setInterpolator(sDecelerator).
-//                setListener(new AnimListener() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        mRecycleView.setVisibility(View.INVISIBLE);
-//                    }
-//                });
         mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
     }
 

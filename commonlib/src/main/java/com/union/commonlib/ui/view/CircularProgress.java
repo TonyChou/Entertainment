@@ -60,8 +60,8 @@ public class CircularProgress extends View {
                 DEFAULT_BORDER_WIDTH * density);
         a.recycle();
         mColors = new int[2];
-        mColors[0] = Color.parseColor("#43b149");
-        mColors[1] = Color.parseColor("#43b149");
+        mColors[0] = Color.parseColor("#B3E5FC");
+        mColors[1] = Color.parseColor("#B3E5FC");
         mCurrentColorIndex = 0;
         mNextColorIndex = 1;
 

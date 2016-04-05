@@ -26,7 +26,6 @@ import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
 import com.union.fmdouban.api.FMParserFactory;
 import com.union.fmdouban.api.FMReport;
-import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.api.bean.FMLyric;
 import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.bean.FMSong;
@@ -285,6 +284,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     public boolean switchChannel(FMRichChannel channel) {
         mChannel = channel;
         songCache.clear();
+        mPlayList.clear();
         mCurrentPLayState = PlayState.NONE;
         loadSongAndReport();
         return true;
