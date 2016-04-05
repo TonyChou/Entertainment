@@ -34,18 +34,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_yellow"
-        android:visibility="invisible">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/button_height"
-            android:text="@string/fetch_channels"
-            android:padding="5dip"
-            android:paddingLeft="20dip"
-            android:paddingRight="20dip"
+        android:layout_gravity="center">
+        <RelativeLayout
+            android:layout_margin="@dimen/fab_margin"
+            android:id="@+id/refresh_button"
             android:layout_centerInParent="true"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:background="@drawable/button_bg_shape_blue"/>
+            android:layout_width="@dimen/circle_button_height"
+            android:layout_height="@dimen/circle_button_height"
+            android:background="@drawable/circle_blue_shape"
+            android:gravity="center">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/button_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_refresh_black_48dp" />
+        </RelativeLayout>
 
     </RelativeLayout>
     <com.union.commonlib.ui.view.CircularProgress

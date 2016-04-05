@@ -6,21 +6,31 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 
+import com.facebook.rebound.BaseSpringSystem;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringSystem;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.union.commonlib.data.LoaderToken;
+import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
+import com.union.commonlib.ui.anim.FaceBookRebound;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.view.CircularProgress;
+import com.union.commonlib.ui.view.TintUtils;
 import com.union.commonlib.utils.UiUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.api.bean.FMChannelType;
@@ -47,6 +57,9 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     private CircularProgress mLoadingBar;
     private ChannelSelectedListener channelSelectedListener;
     private ChannelCategoryPagerAdapter fragmentAdapter;
+    View mRefreshButton;
+    private BaseSpringSystem mSpringSystem;
+    AnimCallBack mAnimCallback;
     public static FMChannelsFragment newInstance() {
         return new FMChannelsFragment();
     }
@@ -58,6 +71,8 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSpringSystem = SpringSystem.create();
+        mAnimCallback = new AnimCallBack();
         //getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
     }
 
@@ -74,6 +89,15 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         channelPanelView = mRootView.findViewById(R.id.channel_layout);
         noChannelLayout = mRootView.findViewById(R.id.no_channel_layout);
         mLoadingBar = (CircularProgress)mRootView.findViewById(R.id.rl_loading);
+        mRefreshButton = noChannelLayout.findViewById(R.id.refresh_button);
+        addOnTouchSpringAnimation(mRefreshButton);
+        TintUtils.setBackgroundTint(this.getActivity(), (AppCompatTextView) mRefreshButton.findViewById(R.id.button_icon), R.color.white);
+    }
+    private void addOnTouchSpringAnimation(View... v) {
+        for (View view : v) {
+            Spring spring = mSpringSystem.createSpring();
+            FaceBookRebound.addSpringAnimation(view, spring, mAnimCallback);
+        }
     }
 
     private void showChannelPanel() {
@@ -191,6 +215,25 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         if (loader != null) {
             loader.cancelLoad();
         }
+        if (mSpringSystem != null) {
+            mSpringSystem.removeAllListeners();
+            mSpringSystem = null;
+        }
         getLoaderManager().destroyLoader(LoaderToken.DoubanFMChannelType);
+    }
+
+    private void restartLoader() {
+        noChannelLayout.setVisibility(View.INVISIBLE);
+        getLoaderManager().restartLoader(LoaderToken.DoubanFMChannelType, null, this);
+    }
+
+    class AnimCallBack extends AnimCallbackImp {
+        @Override
+        public void animationEnd(View v) {
+            if (v == mRefreshButton) {
+                //TODO
+                restartLoader();
+            }
+        }
     }
 }
