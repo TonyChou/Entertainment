@@ -212,7 +212,7 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
 
     @Override
     public boolean onBackPress() {
-        if (!mChannelsFragment.isHidden()) {
+        if (mChannelsFragment != null && !mChannelsFragment.isHidden()) {
             showOrHideChannelsFragment();
             return false;
         }
@@ -256,4 +256,6 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
             mPlayerService = null;
         }
     };
+
+
 }

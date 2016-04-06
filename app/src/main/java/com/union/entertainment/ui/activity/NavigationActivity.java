@@ -3,22 +3,21 @@ package com.union.entertainment.ui.activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.union.entertainment.R;
+import com.union.commonlib.ui.activity.BaseActivity;
 import com.union.commonlib.ui.fragment.BaseFragment;
+import com.union.entertainment.R;
 import com.union.entertainment.ui.fragment.FragmentFactory;
 
 
@@ -26,7 +25,7 @@ import com.union.entertainment.ui.fragment.FragmentFactory;
  * Created by zhouxiaming on 2016/3/4.
  */
 
-public class NavigationActivity extends AppCompatActivity implements DrawerLayout.DrawerListener, NavigationView.OnNavigationItemSelectedListener, BaseFragment.OnFragmentInteractionListener {
+public class NavigationActivity extends BaseActivity implements DrawerLayout.DrawerListener, NavigationView.OnNavigationItemSelectedListener, BaseFragment.OnFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -109,6 +108,7 @@ public class NavigationActivity extends AppCompatActivity implements DrawerLayou
     @Override
     public void onDrawerOpened(View drawerView) {// 打开drawer
         invalidateOptionsMenu();
+        Log.i("veve", "====onDrawerOpened=======");
     }
 
     @Override

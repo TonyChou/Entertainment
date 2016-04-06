@@ -18,10 +18,12 @@ package com.union.entertainment.ui.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +37,7 @@ import com.union.entertainment.module.picture.Photo;
 import com.union.commonlib.utils.UiUtils;
 
 import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -50,7 +53,7 @@ public class PhotosViewPagerActivity extends Activity {
 	private MenuItem menuLockItem;
 	private List<Photo> photoList;
 	private int position;
-	private static Queue<PhotoView> photoViews = new LinkedList<PhotoView>();
+	//private static Queue<PhotoView> photoViews = new LinkedList<PhotoView>();
 	
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,24 +98,39 @@ public class PhotosViewPagerActivity extends Activity {
 		@Override
 		public View instantiateItem(ViewGroup container, int position) {
 			PhotoView photoView = null;
-			if (!photoViews.isEmpty()) {
-				PhotoView cacheView = photoViews.poll();
-				if (cacheView.getParent() == null) {
-					photoView = cacheView;
-				}
-			} else {
-				photoView = new PhotoView(mContext);
-			}
-
+//			if (!photoViews.isEmpty()) {
+//				PhotoView cacheView = photoViews.poll();
+//				if (cacheView.getParent() == null) {
+//					photoView = cacheView;
+//				}
+//			} else {
+//				photoView = new PhotoView(mContext);
+//			}
+			photoView = new PhotoView(mContext);
 
 			// Now just add PhotoView to ViewPager and return it
 			container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 			Photo photo = photoList.get(position);
+
 			if (photo != null) {
-				Picasso.with(mContext).load(new File(photo.getPath())).config(Bitmap.Config.ARGB_8888).into(photoView);
+				Bitmap bitmap = BitmapFactory.decodeFile(photo.getPath());
+				photoView.setImageBitmap(bitmap);
+				photoView.setTag(bitmap);
+				//Picasso.with(mContext).load(new File(photo.getPath())).config(Bitmap.Config.ARGB_8888).into(photoView);
 			}
 
+			addScaleListener(photoView);
+
 			return photoView;
+		}
+
+		private void addScaleListener(PhotoView photoView) {
+			photoView.setOnScaleChangeListener(new PhotoViewAttacher.OnScaleChangeListener() {
+				@Override
+				public void onScaleChange(float v, float v1, float v2) {
+					Log.i("veve", " ======= " + v + "    " + v1 + "    " + v2);
+				}
+			});
 		}
 
 		@Override
@@ -120,7 +138,18 @@ public class PhotosViewPagerActivity extends Activity {
 			if (object instanceof PhotoView) {
 				((PhotoView)object).destroyDrawingCache();
 				container.removeView((View) object);
-				photoViews.add((PhotoView) object);
+				//photoViews.add((PhotoView) object);
+				Bitmap bitmap = ((PhotoView)object).getVisibleRectangleBitmap();
+				if (bitmap != null) {
+					bitmap.recycle();
+					bitmap = null;
+				}
+
+				Bitmap bm = (Bitmap) ((PhotoView)object).getTag();
+				if (bm != null) {
+					bm.recycle();
+					bm = null;
+				}
 			}
 		}
 
@@ -152,6 +181,8 @@ public class PhotosViewPagerActivity extends Activity {
 
         return super.onPrepareOptionsMenu(menu);
     }
+
+
     
     private void toggleViewPagerScrolling() {
     	if (isViewPagerActive()) {
@@ -185,10 +216,10 @@ public class PhotosViewPagerActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		for (PhotoView photoView : photoViews) {
-			photoView.destroyDrawingCache();
-		}
-
-		photoViews.clear();
+//		for (PhotoView photoView : photoViews) {
+//			photoView.destroyDrawingCache();
+//		}
+//
+//		photoViews.clear();
 	}
 }

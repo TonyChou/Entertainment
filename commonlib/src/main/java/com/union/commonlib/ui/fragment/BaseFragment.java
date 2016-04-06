@@ -1,9 +1,12 @@
 package com.union.commonlib.ui.fragment;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
+
+import com.union.commonlib.ui.activity.BaseActivity;
 
 /**
  * Created by zhouxiaming on 16/3/6.
@@ -15,6 +18,7 @@ public class BaseFragment extends Fragment {
     protected View mRootView;
     protected String mParam1;
     protected String mParam2;
+    private Activity mActivity;
     public BaseFragment() {
         // Required empty public constructor
     }
@@ -23,6 +27,7 @@ public class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getArgument();
+        mActivity = this.getActivity();
     }
 
     protected void getArgument() {
@@ -54,5 +59,23 @@ public class BaseFragment extends Fragment {
 
     public void hideWithAnimation() {
 
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            onResume();
+        }
+    }
+
+    /**
+     * 设置状态栏颜色
+     * @param colorId
+     */
+    public void setStatusBarColor(int colorId) {
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).setStatusBarColor(colorId);
+        }
     }
 }

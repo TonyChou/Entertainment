@@ -18,6 +18,7 @@ import com.union.commonlib.utils.UiUtils;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
 import com.union.entertainment.ui.activity.LocationShowActivity;
+import com.union.entertainment.ui.activity.PhotosViewPagerActivity;
 
 import java.io.File;
 import java.io.Serializable;
@@ -99,8 +100,8 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.List
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            //Intent intent = new Intent(context, PhotosViewPagerActivity.class);
-            Intent intent = new Intent(context, LocationShowActivity.class);
+            Intent intent = new Intent(context, PhotosViewPagerActivity.class);
+            //Intent intent = new Intent(context, LocationShowActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("photos", (Serializable) photoList);
             bundle.putInt("position", position);

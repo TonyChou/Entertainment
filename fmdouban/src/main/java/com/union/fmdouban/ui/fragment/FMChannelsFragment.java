@@ -85,6 +85,7 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         return mRootView;
     }
 
+
     private void initView(View mRootView) {
         channelPanelView = mRootView.findViewById(R.id.channel_layout);
         noChannelLayout = mRootView.findViewById(R.id.no_channel_layout);
