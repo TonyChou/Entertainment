@@ -1,0 +1,11 @@
+android.applicationVariants.all {
+    variant ->
+        dex.doFirst{
+            dex->
+                if (dex.additionalParameters == null) {
+                    dex.additionalParameters = []
+                }
+                dex.additionalParameters += '--set-max-idx-number=30000'
+
+        }
+}
