@@ -3,6 +3,7 @@ package com.union.fmdouban.ui.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +128,6 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
 
 
         //4.加载更多的组件
-
         mLoadMoreListViewContainer = (LoadMoreListViewContainer) mRootView.findViewById(R.id.load_more_list_view_container);
         mLoadMoreListViewContainer.setAutoLoadMore(true);//设置是否自动加载更多
         mLoadMoreListViewContainer.useDefaultHeader();
@@ -147,6 +147,9 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
 
 
     private void initData() {
+        if (mType == null) {
+            return;
+        }
         if (mType.getId() == FMChannelType.hotTypeId) {
             channelList.addAll(FMCache.getHotChannelsFromCache());
             mAdapter.notifyDataSetChanged();
@@ -218,6 +221,27 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
                 e.printStackTrace();
                 mLoadMoreListViewContainer.loadMoreFinish(false, true);
             }
+        }
+    }
+
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            FMChannelType type = (FMChannelType)savedInstanceState.getSerializable("type");
+
+            if (type != null) {
+                mType = type;
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (outState != null && mType != null) {
+            outState.putSerializable("type", mType);
         }
     }
 }

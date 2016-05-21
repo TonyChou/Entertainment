@@ -1,10 +1,12 @@
 package com.union.fmdouban.api.bean;
 
+import java.io.Serializable;
+
 /**
  * 频道分类
  * Created by zhouxiaming on 16/3/26.
  */
-public class FMChannelType {
+public class FMChannelType implements Serializable{
     public static final String hotTypeId = "0x0001";
     private String id;
     private String name;
