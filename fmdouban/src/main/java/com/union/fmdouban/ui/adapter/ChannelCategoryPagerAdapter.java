@@ -8,6 +8,7 @@ import android.view.View;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.fmdouban.api.bean.FMChannelType;
 import com.union.fmdouban.ui.fragment.FMChannelList;
+import com.union.fmdouban.ui.fragment.FMChannelListNew;
 import com.union.fmdouban.ui.listener.ChannelSelectedListener;
 
 import java.util.ArrayList;
@@ -23,10 +24,11 @@ public class ChannelCategoryPagerAdapter extends FragmentStatePagerAdapter {
         super(fm);
         typeList = types;
         for (int i = 0; i < typeList.size(); i++) {
-            FMChannelList channelList = FMChannelList.newInstance();
-            channelList.setChannelType(typeList.get(i));
-            channelList.setChannelSelectedListener(channelSelectedListener);
-            fragmentList.add(channelList);
+            //FMChannelList channelList = FMChannelList.newInstance();
+            FMChannelListNew fragment = FMChannelListNew.newInstance();
+            fragment.setChannelType(typeList.get(i));
+            fragment.setChannelSelectedListener(channelSelectedListener);
+            fragmentList.add(fragment);
         }
     }
 
