@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/listview_footer_height"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip">
+
+        <TextView
+            android:id="@+id/refresh_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dip"
+            android:gravity="center"
+            android:text="@string/loadmore_begin" />
+
+        <com.union.commonlib.ui.view.CircularProgress
+            android:id="@+id/rl_loading"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/refresh_text"
+            android:visibility="visible"
+            app:cp_borderWidth="4dp" />
+    </RelativeLayout>
+</FrameLayout>
+
+

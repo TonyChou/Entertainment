@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Commonlib</string>
     <string name="action_settings">Settings</string>
+    <string name="refresh_pulldown">下拉刷新</string>
+    <string name="refresh_doing">刷新中...</string>
+    <string name="refresh_complete">刷新完成</string>
+    <string name="loadmore_doing">正在加载更多...</string>
+    <string name="loadmore_no">没有更多数据</string>
+    <string name="loadmore_begin">加载更多</string>
 </resources>

@@ -18,7 +18,7 @@ public class BaseFragment extends Fragment {
     protected View mRootView;
     protected String mParam1;
     protected String mParam2;
-    private Activity mActivity;
+    protected Activity mActivity;
     public BaseFragment() {
         // Required empty public constructor
     }

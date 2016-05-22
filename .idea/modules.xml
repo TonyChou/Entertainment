@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/commonlib/commonlib.iml" filepath="$PROJECT_DIR$/commonlib/commonlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/fmdouban/fmdouban.iml" filepath="$PROJECT_DIR$/fmdouban/fmdouban.iml" />
       <module fileurl="file://$PROJECT_DIR$/fmximalaya/fmximalaya.iml" filepath="$PROJECT_DIR$/fmximalaya/fmximalaya.iml" />
+      <module fileurl="file://$PROJECT_DIR$/liblistview/liblistview.iml" filepath="$PROJECT_DIR$/liblistview/liblistview.iml" />
       <module fileurl="file://$PROJECT_DIR$/libview/libview.iml" filepath="$PROJECT_DIR$/libview/libview.iml" />
     </modules>
   </component>

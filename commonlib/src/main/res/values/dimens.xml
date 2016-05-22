@@ -11,4 +11,6 @@
     <dimen name="song_name_size">16sp</dimen>
 
     <dimen name="button_height">45dip</dimen>
+    <dimen name="listview_header_height">45dip</dimen>
+    <dimen name="listview_footer_height">45dip</dimen>
 </resources>
