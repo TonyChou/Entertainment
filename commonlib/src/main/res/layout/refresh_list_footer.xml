@@ -29,7 +29,7 @@
             android:layout_gravity="center"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/refresh_text"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:cp_borderWidth="4dp" />
     </RelativeLayout>
 </FrameLayout>

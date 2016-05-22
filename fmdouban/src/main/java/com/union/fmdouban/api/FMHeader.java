@@ -30,7 +30,7 @@ public class FMHeader {
         Map<String, String> headMap = new HashMap<String, String>();
         headMap.put(USER_AGENT.key, USER_AGENT.value);
         headMap.put(CONTENT_TYPE.key, CONTENT_TYPE.value);
-        headMap.put(COOKIE, FMCookie.getCookie());
+        //headMap.put(COOKIE, FMCookie.getCookie());
         Headers headers = Headers.of(headMap);
         return headers;
     }

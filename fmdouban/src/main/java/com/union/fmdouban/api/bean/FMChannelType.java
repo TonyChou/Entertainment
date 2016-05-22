@@ -30,4 +30,17 @@ public class FMChannelType implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof FMChannelType)) {
+            return false;
+        }
+
+        if (((FMChannelType)o).getId() != null && ((FMChannelType)o).getId().equals(this.getId())) {
+            return true;
+        }
+
+        return super.equals(o);
+    }
 }

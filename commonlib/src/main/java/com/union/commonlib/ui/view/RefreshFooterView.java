@@ -91,7 +91,6 @@ public class RefreshFooterView extends FrameLayout implements AbsListView.OnScro
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        Log.i("veve", "scrollState = " + scrollState + "   " + view.getCount());
         if (scrollState == 0 && CURRENT_STATUS != LOADMORE_DOING && view.getLastVisiblePosition() == view.getCount() -1 ) {
             loadMoreDoing();
         }

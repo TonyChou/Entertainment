@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.union.fmdouban.api.data.ChannelLoader;
+
 /**
  * Created by zhouxiaming on 2016/4/7.
  */
@@ -13,5 +15,19 @@ public class UnionApplication extends Application{
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        loadDataFromServer();
+    }
+
+    /**
+     * 从网络上预加载数据
+     */
+    private void loadDataFromServer() {
+        //加载豆瓣频道数据
+        ChannelLoader.loadChannelData();
     }
 }

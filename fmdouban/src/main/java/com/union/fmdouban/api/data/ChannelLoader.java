@@ -21,7 +21,7 @@ public class ChannelLoader extends AsyncTaskLoader<Boolean> implements FMCallBac
     String TAG = "ChannelLoader";
     Context mContext;
     private int timeout = 30;
-    ExecuteResult result;
+    ExecuteResult mResult;
 
     public ChannelLoader(Context context) {
         super(context);
@@ -42,7 +42,7 @@ public class ChannelLoader extends AsyncTaskLoader<Boolean> implements FMCallBac
     public Boolean loadInBackground() {
         sendRequest();
         waitForCompletion();
-        return parserResult();
+        return parserResult(mResult);
     }
 
     @Override
@@ -50,12 +50,11 @@ public class ChannelLoader extends AsyncTaskLoader<Boolean> implements FMCallBac
         super.deliverResult(result);
     }
 
-    private boolean parserResult() {
+    private static boolean parserResult(ExecuteResult result) {
         List<FMChannelType> types = null;
         boolean parserFlag = false;
         if (result != null && result.getResult() == ExecuteResult.OK) {
             types = FMParserFactory.parserChannelTypeFromHtml(result.getResponseString());
-
             //解析热门频道放入缓存中
             List<FMRichChannel> channelList = FMParserFactory.parserChannelFromHtml(result.getResponseString());
             if (channelList != null && channelList.size() > 0) {
@@ -69,25 +68,38 @@ public class ChannelLoader extends AsyncTaskLoader<Boolean> implements FMCallBac
                 parserFlag = false;
             }
         }
+        result = null;
         return parserFlag;
     }
 
     private void waitForCompletion() {
         long begin = System.currentTimeMillis();
         while (System.currentTimeMillis() - begin < timeout * 1000L) {
-            if (result != null) {
+            if (mResult != null) {
                 break;
             }
             SystemClock.sleep(100);
         }
     }
 
-    private void sendRequest() {
+    public void sendRequest() {
         FMApi.getInstance().getHtmlContent(this);
     }
 
     @Override
     public void onRequestResult(ExecuteResult result) {
-        this.result = result;
+        this.mResult = result;
+    }
+
+    /**
+     * 后台加载channel 数据
+     */
+    public static void loadChannelData() {
+        FMApi.getInstance().getHtmlContent(new FMCallBack() {
+            @Override
+            public void onRequestResult(ExecuteResult result) {
+                parserResult(result);
+            }
+        });
     }
 }

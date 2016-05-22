@@ -26,7 +26,7 @@ public class CacheManager {
         this.context = context;
     }
     public enum CacheType {
-        DoubanFmChannels, All
+        DoubanFmChannels, All, DoubanFmChannelTypeList
     }
 
 

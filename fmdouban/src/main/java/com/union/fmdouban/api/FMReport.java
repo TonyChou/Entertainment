@@ -17,12 +17,12 @@ import java.util.Queue;
    u	  sid	    unrate，歌曲正在播放，标记取消喜欢当前歌曲	                        短报告
  */
 public class FMReport {
-    public static String genReportType(FMSong song, Queue<FMSong> playList, boolean manualNext) {
+    public static String genReportType(FMSong song, Queue<FMSong> playList, boolean manualNext, boolean loadNewList) {
         if (manualNext && playList != null && playList.size() > 0) {
             return "s";
         }
 
-        if (song != null && playList != null && playList.size() == 1) {
+        if (loadNewList) {
             return "p";
         }
 

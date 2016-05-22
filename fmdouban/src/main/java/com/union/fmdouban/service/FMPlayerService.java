@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
@@ -32,6 +33,9 @@ import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.play.PlayerListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +53,8 @@ import java.util.TimerTask;
 public class FMPlayerService extends Service implements PlayerListener {
     private static List<FMSong> songCache = new ArrayList<FMSong>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
-    private final int PLAYLIST_LOADED_RESULT = 0x000012; //歌曲加载结果
+    private final int PLAYLIST_LOADED_RESULT = PROGRESS_UPDATE + 1; //歌曲加载结果
+    private final int CHANGE_CHANNEL_FAILED = PLAYLIST_LOADED_RESULT + 1; //切换频道失败
     private String TAG = "FMMediaPlayer";
     private static FMMediaPlayer mPlayer;
     private PlayerListener playerListener;
@@ -112,6 +117,8 @@ public class FMPlayerService extends Service implements PlayerListener {
                 sendProgressCallback(progress);
             } else if (what == PLAYLIST_LOADED_RESULT) {
                 handleSongResult((ExecuteResult)msg.obj);
+            } else if (what == CHANGE_CHANNEL_FAILED) {
+                Toast.makeText(mContext, R.string.change_channel_failed, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -281,12 +288,44 @@ public class FMPlayerService extends Service implements PlayerListener {
         }
     }
 
+    /**
+     * 切换频道
+     * @param channel
+     * @return
+     */
     public boolean switchChannel(FMRichChannel channel) {
-        mChannel = channel;
+        if (mChannel != null && mChannel.getChannelId() == channel.getChannelId()) {
+            return false;
+        }
         songCache.clear();
         mPlayList.clear();
         mCurrentPLayState = PlayState.NONE;
-        loadSongAndReport();
+        String fcid = mChannel != null ? String.valueOf(mChannel.getChannelId()) : null;
+        String tcid = String.valueOf(channel.getChannelId());
+        mChannel = channel;
+        FMApi.getInstance().changeChannel(fcid, tcid, new FMCallBack() {
+            @Override
+            public void onRequestResult(ExecuteResult result) {
+                boolean changeSuccess = false;
+                if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result.getResponseString());
+                        int ret = jsonObject.has("r") ? jsonObject.getInt("r") : -1;
+                        if (ret == 0) { //切换频道成功
+                            changeSuccess = true;
+                            loadSongAndReport();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        changeSuccess = false;
+                    }
+                }
+                if (!changeSuccess) {
+                    Message msg = handler.obtainMessage(CHANGE_CHANNEL_FAILED);
+                    msg.sendToTarget();
+                }
+            }
+        });
         return true;
     }
 
@@ -304,7 +343,7 @@ public class FMPlayerService extends Service implements PlayerListener {
         // 请求下一个playList
         FMSong song = getCurrentSong();
         String sid = song != null?song.getSid() : null;
-        String reportType = FMReport.genReportType(song, mPlayList, false);
+        String reportType = FMReport.genReportType(song, mPlayList, false, false);
         FMApi.getInstance().reportAndGetPlayList(String.valueOf(mChannel.getChannelId()), sid, reportType, new FMCallBack() {
             @Override
             public void onRequestResult(ExecuteResult result) {
@@ -314,6 +353,29 @@ public class FMPlayerService extends Service implements PlayerListener {
             }
         });
     }
+
+    /**
+     * 切换频道时需要重新加载播放列表
+     */
+    private void loadSongWhenSwitchChannel() {
+        if (mChannel == null) {
+            return;
+        }
+        // 请求下一个playList
+        FMSong song = getCurrentSong();
+        String sid = song != null?song.getSid() : null;
+        String reportType = FMReport.genReportType(song, mPlayList, false, true);
+        FMApi.getInstance().reportAndGetPlayList(String.valueOf(mChannel.getChannelId()), sid, reportType, new FMCallBack() {
+            @Override
+            public void onRequestResult(ExecuteResult result) {
+                Message msg = handler.obtainMessage(PLAYLIST_LOADED_RESULT);
+                msg.obj = result;
+                msg.sendToTarget();
+            }
+        });
+    }
+
+
 
     private boolean addTOCacheAndPlay() {
         if (mPlayList == null || mPlayList.size() < 1) {

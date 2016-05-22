@@ -81,16 +81,25 @@ public class FMChannelListNew extends FMChannelList implements ItemClickListener
         Log.i(TAG, "HotChannel size: " + channelList.size());
         mListView = (XListView) mRootView.findViewById(R.id.list_view);
 
+        addHeaderView();
+        addFooterView();
+        mAdapter = new ChannelAdapter(mActivity, channelList, this);
+        mListView.setAdapter(mAdapter);
+    }
+
+    private void addHeaderView() {
         mHeaderView = new RefreshHeaderView(mActivity);
-        mFooterView = new RefreshFooterView(mActivity);
-        mFooterView.setLoadMoreListener(this);
-        mListView.addFooterView(mFooterView);
         mHeaderView.setRefreshListener(this);
         mListView.setOverScrollHeader(mHeaderView);
         mListView.setOverScrollListener(mHeaderView);
+
+    }
+
+    private void addFooterView() {
+        mFooterView = new RefreshFooterView(mActivity);
+        mFooterView.setLoadMoreListener(this);
+        mListView.addFooterView(mFooterView);
         mListView.setOnScrollListener(mFooterView);
-        mAdapter = new ChannelAdapter(mActivity, channelList, this);
-        mListView.setAdapter(mAdapter);
     }
 
 
@@ -166,13 +175,14 @@ public class FMChannelListNew extends FMChannelList implements ItemClickListener
                 } else {
                     mFooterView.loadMoreComplete(true);
                 }
-
                 mAdapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
                 e.printStackTrace();
                 mFooterView.loadMoreComplete(true);
             }
+        } else {
+            mFooterView.loadMoreComplete(true);
         }
     }
 

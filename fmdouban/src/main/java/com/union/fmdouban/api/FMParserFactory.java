@@ -25,6 +25,7 @@ import org.htmlparser.util.ParserException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by zhouxiaming on 16/3/21.
@@ -70,25 +71,25 @@ public class FMParserFactory {
     public static List<FMChannelType> parserChannelTypeFromHtml(String htmlContent) {
         List<FMChannelType> typeList = new ArrayList<FMChannelType>();
         try {
+            long time1 = System.currentTimeMillis();
             Parser parser = new Parser(htmlContent);
             parser.setEncoding("UTF-8");
             //解析频道类别
             NodeFilter filter = new NodeClassFilter(Bullet.class);
             NodeList nodeList = parser.parse(filter);
             Node[] nodes = nodeList.toNodeArray();
+
             for (Node node : nodes) {
-                if (node.toString().contains("data-genre_id") && node.getParent().toString().contains("fm-side-taglist")) {
-                    Node parent = node.getParent();
-                    if (parent instanceof TagNode) {
-                        TagNode tagNode = (TagNode) parent;
-                        if ("fm-side-taglist clearfix".equals(tagNode.getAttribute("class"))) {
-                            String id = ((TagNode) node).getAttribute("data-genre_id");
-                            String name = ((Bullet) node).getChild(0).getText().replaceAll("&amp;", ".");
-                            typeList.add(new FMChannelType(id, name));
-                        }
+                if (node.toString().contains("data-genre_id")) {
+                    String id = ((TagNode) node).getAttribute("data-genre_id");
+                    String name = ((Bullet) node).getChild(0).getText().replaceAll("&amp;", ".");
+                    FMChannelType type = new FMChannelType(id, name);
+                    if (!typeList.contains(type)) {
+                        typeList.add(new FMChannelType(id, name));
                     }
                 }
             }
+
         } catch (ParserException e) {
             e.printStackTrace();
         } catch (Exception e) {

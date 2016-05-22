@@ -5,4 +5,5 @@
     <string name="no_more_pre_songs">没有更多的缓存歌曲</string>
     <string name="fetch_channels">获取FM频道</string>
     <string name="hot_channel">热门</string>
+    <string name="change_channel_failed">切换频道失败</string>
 </resources>

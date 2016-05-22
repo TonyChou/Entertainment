@@ -80,6 +80,23 @@ public class FMApi {
         sendRequest(request, callBack);
     }
 
+    /**
+     * 切换频道
+     * @param fcid  上一个频道ID
+     * @param tcid  需要切换的频道ID
+     */
+    public void changeChannel(String fcid, String tcid, FMCallBack callBack) {
+        String url = null;
+        if (fcid != null && tcid != null) {
+            url = String.format(FMUrl.FM_CHANGE_CHANNELS_URL, fcid, tcid);
+        } else {
+            url = String.format(FMUrl.FM_CHANGE_CHANNELS_URL.replace("fcid=%s&", ""), tcid);
+        }
+
+        Request request = new Request.Builder().url(url).headers(FMHeader.genRequestHeader()).build();
+        sendRequest(request, callBack);
+    }
+
 
 
     private ExecuteResult sendRequest(final Request request, final FMCallBack callBack) {
