@@ -23,11 +23,11 @@
                 android:layout_centerInParent="true"
                 app:cp_borderWidth="4dp"
                 android:visibility="gone"/>
-            <ImageView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/refresh_icon"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@drawable/ic_refresh_black_48dp"/>
+                android:background="@drawable/ic_refresh_black_48dp"/>
         </FrameLayout>
 
         <TextView

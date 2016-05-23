@@ -1,6 +1,8 @@
 package com.union.commonlib.ui.view;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +26,7 @@ public class RefreshHeaderView extends FrameLayout implements OverScrollViewList
 
     Context            mContext;
     CircularProgress   mRefreshLoading;
-    ImageView          mRefreshImage;
+    AppCompatTextView  mRefreshImage;
     TextView           mRefreshText;
     ListView           mListView;
     RefreshListener    mRefreshListener;
@@ -48,7 +50,8 @@ public class RefreshHeaderView extends FrameLayout implements OverScrollViewList
         View headerView = LayoutInflater.from(context).inflate(R.layout.refresh_list_header, null);
         addView(headerView);
         mRefreshLoading = (CircularProgress) findViewById(R.id.rl_loading);
-        mRefreshImage   = (ImageView) findViewById(R.id.refresh_icon);
+        mRefreshImage   = (AppCompatTextView) findViewById(R.id.refresh_icon);
+        TintUtils.setBackgroundTint(mContext, mRefreshImage, R.color.light_blue);
         mRefreshText    = (TextView) findViewById(R.id.refresh_text);
     }
 
