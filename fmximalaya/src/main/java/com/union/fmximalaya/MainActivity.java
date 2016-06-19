@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     private void dynamicLoadDex() {
         File dexFile = new File(Environment.getExternalStorageDirectory().toString()
                 + File.separator + "plugin_dex.jar");
-        Log.i("veve", "==========  " + dexFile.exists());
 
         // optimized directory, the applciation and package directory
         final File optimizedDexOutputPath = getDir("outdex", 0);
@@ -86,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             Class libProviderClazz = classLoader.loadClass("com.union.fmximalaya.plugin.PluginTest");
             IPlugin plugin = (IPlugin)libProviderClazz.newInstance();
-            Log.i("veve", "==========  " + plugin.getResult());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {

@@ -24,7 +24,7 @@
     </style>
 
     <style name="ListItemText">
-        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textColor">@color/text_white</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
         <item name="android:layout_gravity">center_vertical</item>

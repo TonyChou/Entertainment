@@ -34,9 +34,10 @@ import com.union.fmdouban.api.ExecuteResult;
 import com.union.fmdouban.api.FMApi;
 import com.union.fmdouban.api.FMCallBack;
 import com.union.fmdouban.api.bean.FMRichChannel;
+import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.service.PlayerController;
-import com.union.fmdouban.ui.listener.ChannelSelectedListener;
+import com.union.fmdouban.ui.activity.FMChannelSelectActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ import java.util.List;
  * Created by zhouxiaming on 2016/3/14.
  */
 
-public class FMPlayerFragment extends BaseFragment implements ChannelSelectedListener{
+public class FMPlayerFragment extends BaseFragment implements FMController.FMChannelChangedListener{
     private final int REFRESH_CHANNEL_INFO = 0x000012;
     private static final Interpolator sDecelerator = new DecelerateInterpolator();
     private View mRootView;
@@ -83,6 +84,7 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
         mSpringSystem = SpringSystem.create();
         mAnimCallback = new AnimCallBack();
         bindPlayerService();
+        FMController.registerFMChannelListener(this);
     }
 
     @Override
@@ -103,26 +105,32 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
         TintUtils.setBackgroundTint(this.getActivity(), (AppCompatTextView) mShowHideButton.findViewById(R.id.button_icon), R.color.white);
     }
 
+    private void showChannelsList() {
+        Intent intent = new Intent(getActivity(), FMChannelSelectActivity.class);
+        startActivity(intent);
+    }
+
     /**
      *显示频道选择面板
      */
     private void showOrHideChannelsFragment() {
-        if (mChannelsFragment == null) {
-            mChannelsFragment = FMChannelsFragment.newInstance();
-            mChannelsFragment.setChannelSelectedListener(this);
-        }
-        FragmentTransaction transaction = this.getChildFragmentManager().beginTransaction();
-
-        if (mChannelsFragment.isVisible()) {
-            hideFragment(transaction);
-        } else {
-            if ( !mChannelsFragment.isAdded()) {
-                transaction.add(R.id.fragment_container, mChannelsFragment).commit();
-                mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
-            } else {
-                showFragment(transaction);
-            }
-        }
+//        if (mChannelsFragment == null) {
+//            mChannelsFragment = FMChannelsFragment.newInstance();
+//            mChannelsFragment.setChannelSelectedListener(this);
+//        }
+//        FragmentTransaction transaction = this.getChildFragmentManager().beginTransaction();
+//
+//        if (mChannelsFragment.isVisible()) {
+//            hideFragment(transaction);
+//        } else {
+//            if ( !mChannelsFragment.isAdded()) {
+//                transaction.add(R.id.fragment_container, mChannelsFragment).commit();
+//                mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
+//            } else {
+//                showFragment(transaction);
+//            }
+//        }
+        showChannelsList();
     }
 
     private void showFragment(final FragmentTransaction transaction) {
@@ -208,6 +216,7 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
         CacheManager cacheManager = new CacheManager(this.getActivity());
         cacheManager.clearPicassoCache();
         cacheManager.clearVolleyCache();
+        FMController.removeFMChannelListener(this);
     }
 
     @Override
@@ -219,11 +228,15 @@ public class FMPlayerFragment extends BaseFragment implements ChannelSelectedLis
         return super.onBackPress();
     }
 
-    @Override
     public boolean switchChannel(FMRichChannel channel) {
         getPlayerService().switchChannel(channel);
         showOrHideChannelsFragment(); 
         return true;
+    }
+
+    @Override
+    public void changeFMChannel(FMRichChannel channel) {
+        switchChannel(channel);
     }
 
     class AnimCallBack extends AnimCallbackImp {

@@ -2,8 +2,9 @@ package com.union.entertainment;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
+import android.util.Log;
 
+import com.union.commonlib.multidex.MultiDex;
 import com.union.fmdouban.api.data.ChannelLoader;
 
 /**
@@ -28,6 +29,11 @@ public class UnionApplication extends Application{
      */
     private void loadDataFromServer() {
         //加载豆瓣频道数据
-        ChannelLoader.loadChannelData();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ChannelLoader.loadChannelData();
+            }
+        }).start();
     }
 }

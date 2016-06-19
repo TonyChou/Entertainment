@@ -8,9 +8,7 @@
     <color name="accentLight">#009688</color>
 
 
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
     <color name="white">#ffffff</color>
     <!-- 作用于次要的文字提示 -->
     <color name="white_text">#ffffff</color>

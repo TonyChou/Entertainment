@@ -2,7 +2,6 @@ package com.union.fmdouban.ui.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
@@ -11,12 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.ProgressBar;
 
 import com.facebook.rebound.BaseSpringSystem;
 import com.facebook.rebound.Spring;
@@ -38,7 +33,6 @@ import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.data.ChannelLoader;
 import com.union.fmdouban.api.data.FMCache;
 import com.union.fmdouban.ui.adapter.ChannelCategoryPagerAdapter;
-import com.union.fmdouban.ui.listener.ChannelSelectedListener;
 
 import java.util.List;
 
@@ -55,7 +49,6 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     private List<FMRichChannel> channels;
     private View channelPanelView, noChannelLayout;
     private CircularProgress mLoadingBar;
-    private ChannelSelectedListener channelSelectedListener;
     private ChannelCategoryPagerAdapter fragmentAdapter;
     View mRefreshButton;
     private BaseSpringSystem mSpringSystem;
@@ -64,9 +57,7 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         return new FMChannelsFragment();
     }
 
-    public void setChannelSelectedListener(ChannelSelectedListener listener) {
-        this.channelSelectedListener = listener;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,7 +71,7 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_channels_layout, null);
         initView(mRootView);
-        showWithAnimation();
+        //showWithAnimation();
         getLoaderManager().initLoader(LoaderToken.DoubanFMChannelType, null, this);
         return mRootView;
     }
@@ -107,7 +98,7 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
         channelPanelView.setVisibility(View.VISIBLE);
         noChannelLayout.setVisibility(View.INVISIBLE);
         mViewPage = (ViewPager) mRootView.findViewById(R.id.pager_channel_category);
-        fragmentAdapter = new ChannelCategoryPagerAdapter(this.getChildFragmentManager(), typeList, channelSelectedListener);
+        fragmentAdapter = new ChannelCategoryPagerAdapter(this.getChildFragmentManager(), typeList);
         mViewPage.setAdapter(fragmentAdapter);
         mTabLayout = (TabLayout) mRootView.findViewById(R.id.tab_channel_category);
         mTabLayout.setupWithViewPager(mViewPage);
@@ -237,4 +228,6 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
             }
         }
     }
+
+
 }

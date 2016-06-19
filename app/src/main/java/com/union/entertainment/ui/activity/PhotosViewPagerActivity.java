@@ -128,7 +128,6 @@ public class PhotosViewPagerActivity extends Activity {
 			photoView.setOnScaleChangeListener(new PhotoViewAttacher.OnScaleChangeListener() {
 				@Override
 				public void onScaleChange(float v, float v1, float v2) {
-					Log.i("veve", " ======= " + v + "    " + v1 + "    " + v2);
 				}
 			});
 		}

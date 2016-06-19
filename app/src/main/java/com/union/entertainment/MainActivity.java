@@ -1,5 +1,6 @@
 package com.union.entertainment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -21,7 +22,7 @@ import com.union.commonlib.ui.anim.AnimUtils;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback{
+public class MainActivity extends Activity implements View.OnClickListener, SurfaceHolder.Callback{
     private String TAG = "MainActivity";
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         mPlayButton.setVisibility(View.INVISIBLE);
         mSkipButton.setVisibility(View.INVISIBLE);
-        Log.i("veve", "===========  onPause ");
     }
 
     @Override
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mMediaPlayer.release();
         mMediaPlayer = null;
-        Log.i("veve", "===========  onStop ");
     }
 
     private void initView() {
@@ -133,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showButton(mSkipButton, true);
         showButton(mPlayButton, false);
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
-            Log.i("veve", "========");
             showButton(mPlayButton, true);
         } else {
             mPlayButton.setVisibility(View.INVISIBLE);

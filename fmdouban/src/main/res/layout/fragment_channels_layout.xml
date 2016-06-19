@@ -9,8 +9,7 @@
         android:id="@+id/channel_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:background="@color/light_yellow">
+        android:visibility="invisible">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_channel_category"
@@ -33,7 +32,6 @@
         android:id="@+id/no_channel_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_yellow"
         android:layout_gravity="center"
         android:visibility="invisible">
         <RelativeLayout

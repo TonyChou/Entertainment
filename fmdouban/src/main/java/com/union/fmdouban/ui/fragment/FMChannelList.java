@@ -23,8 +23,8 @@ import com.union.fmdouban.api.FMCallBack;
 import com.union.fmdouban.api.bean.FMChannelType;
 import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.data.FMCache;
+import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.ui.adapter.ChannelAdapter;
-import com.union.fmdouban.ui.listener.ChannelSelectedListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +51,6 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
     private ListView mListView;
     private List<FMRichChannel> channelList = new ArrayList<FMRichChannel>();
     private ChannelAdapter mAdapter;
-    ChannelSelectedListener listener;
     Gson mGson = new Gson();
     FMChannelType mType;
     private int limit = 20;
@@ -176,14 +175,9 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
 
     @Override
     public void onItemClick(int position) {
-        if (listener != null) {
-            boolean switchResult = listener.switchChannel(channelList.get(position));
-        }
+        FMController.switchChannel(channelList.get(position));
     }
 
-    public void setChannelSelectedListener(ChannelSelectedListener listener) {
-        this.listener = listener;
-    }
 
     public void refreshData() {
         if (mAdapter != null) {

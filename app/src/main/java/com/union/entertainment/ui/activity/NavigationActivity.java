@@ -108,7 +108,6 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     @Override
     public void onDrawerOpened(View drawerView) {// 打开drawer
         invalidateOptionsMenu();
-        Log.i("veve", "====onDrawerOpened=======");
     }
 
     @Override
@@ -145,7 +144,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
                 break;
             case R.id.fm_douban:
                 position = FragmentFactory.FRAGMENT_DOUBAN_FM;
-                showToolBar(false);
+                showToolBar(true);
                 break;
             case R.id.music_local:
                 position = FragmentFactory.FRAGMENT_LOCAL_MUSIC;
