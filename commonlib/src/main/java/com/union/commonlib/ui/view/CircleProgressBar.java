@@ -23,7 +23,7 @@ public class CircleProgressBar extends LinearLayout {
     private int mXCenterPosition = 0;
     private int mYCenterPosition = 0;
     private Paint mProgressBarPaint;
-    private int mProgressBarPaintWidth = 10;
+    private int mProgressBarPaintWidth = 6;
     private float mProgressBarPaintRadius = 0;
     private RectF oval;
     private Context mContext;
@@ -85,7 +85,7 @@ public class CircleProgressBar extends LinearLayout {
         this.mXCenterPosition = this.getMeasuredWidth() / 2;
         this.mYCenterPosition = this.getMeasuredHeight() / 2;
         int mMin = Math.min(mXCenterPosition, mYCenterPosition);
-        mProgressBarPaintRadius = (float)mMin;
+        mProgressBarPaintRadius = (float)mMin - 4;
         int padding = getPaddingLeft();
         mProgressBarPaintWidth = padding;
         mProgressBarPaintRadius = (float)(mProgressBarPaintRadius - (mProgressBarPaintWidth/2));

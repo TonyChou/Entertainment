@@ -1,8 +1,10 @@
 package com.union.fmdouban.api;
 
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.union.commonlib.utils.LogUtils;
 
@@ -94,6 +96,19 @@ public class FMApi {
         }
 
         Request request = new Request.Builder().url(url).headers(FMHeader.genRequestHeader()).build();
+        sendRequest(request, callBack);
+    }
+
+    /**
+     * 获取歌词
+     * @param sid
+     * @param ssid
+     * @param callBack
+     */
+    public void getSongLyric(String sid, String ssid, FMCallBack callBack) {
+        RequestBody postBody = new FormEncodingBuilder().add("sid", sid).add("ssid", ssid).build();
+        Request request = new Request.Builder().url(FMUrl.FM_LYRIC_URL).post(postBody)
+                          .headers(FMHeader.genRequestHeader()).build();
         sendRequest(request, callBack);
     }
 

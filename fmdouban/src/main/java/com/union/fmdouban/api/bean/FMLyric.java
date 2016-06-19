@@ -60,4 +60,11 @@ public class FMLyric extends BaseObject {
     public void setSid(String sid) {
         this.sid = sid;
     }
+
+    @Override
+    public String toString() {
+        return String.format("sid:%s, name:%s",
+                sid == null?"null" : sid,
+                name == null?"null" : name);
+    }
 }

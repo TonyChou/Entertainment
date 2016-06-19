@@ -2,6 +2,7 @@ package com.union.fmdouban.service;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -17,6 +18,7 @@ import com.union.commonlib.ui.view.CircleProgressBar;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.api.bean.FMChannel;
+import com.union.fmdouban.api.bean.FMLyric;
 import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.bean.FMSinger;
 import com.union.fmdouban.api.bean.FMSong;
@@ -198,6 +200,9 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
         mCoverBgMask.clearAnimation();
     }
 
+    /**
+     * 加载歌曲专辑图片
+     */
     public void loadCover() {
         FMSong song = mFragment.getPlayerService().getCurrentSong();
         if (song == null) {
@@ -206,6 +211,18 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
         Picasso.with(mFragment.getActivity()).load(song.getPicture()).resize(mCover.getWidth(), mCover.getHeight())
                 .centerCrop().config(Bitmap.Config.ARGB_8888).placeholder(R.drawable.example)
                 .into(mCover);
+    }
+
+    /**
+     * 渲染歌词
+     */
+    public void renderLyric(FMSong song) {
+        //TODO
+        FMLyric lyric = song.getLyric();
+        if (lyric != null) {
+            Log.i(TAG, lyric.toString());
+            Log.i(TAG, "lyric: " + lyric.getLyric());
+        }
     }
 
     @Override

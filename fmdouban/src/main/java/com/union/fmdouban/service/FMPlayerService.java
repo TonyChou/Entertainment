@@ -169,6 +169,8 @@ public class FMPlayerService extends Service implements PlayerListener {
         if (controllerListener != null) {
             controllerListener.loadCover();
         }
+
+        getSongLyric();
     }
 
 
@@ -443,6 +445,36 @@ public class FMPlayerService extends Service implements PlayerListener {
         };
         mQueue.add(request);
         mQueue.start();
+    }
+
+    /**
+     * 获取歌词
+     */
+    public void getSongLyric() {
+        final FMSong song = getCurrentSong();
+        if (song == null) {
+            return;
+        }
+
+        if (song.getLyric() != null) {
+            if (controllerListener != null) {
+                controllerListener.renderLyric(song);
+            }
+        } else {
+            FMApi.getInstance().getSongLyric(song.getSid(), song.getSsid(), new FMCallBack() {
+                @Override
+                public void onRequestResult(ExecuteResult result) {
+                    //TODO
+                    if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
+                        FMLyric lyric = new FMLyric(result.getResponseString());
+                        song.setLyric(lyric);
+                        if (controllerListener != null) {
+                            controllerListener.renderLyric(song);
+                        }
+                    }
+                }
+            });
+        }
     }
 
 
