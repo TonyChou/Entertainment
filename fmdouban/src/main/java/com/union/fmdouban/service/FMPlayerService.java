@@ -74,13 +74,13 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void onError(String errorMsg) {
         mCurrentPLayState = PlayState.NONE;
         stopProgressTimer();
-        refreshView();
+        refreshView(StateFrom.ERROR);
     }
 
     @Override
     public void onFinish() {
         mCurrentPLayState = PlayState.STOP;
-        refreshView();
+        refreshView(StateFrom.FINISH);
         stopProgressTimer();
         loadSongAndReport();
     }
@@ -89,7 +89,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void onPrepared() {
         mCurrentPLayState = PlayState.PLAYING;
         startProgressTimer();
-        refreshView();
+        refreshView(StateFrom.PLAY);
     }
 
     public enum PlayState {
@@ -97,6 +97,16 @@ public class FMPlayerService extends Service implements PlayerListener {
         PLAYING,
         PAUSE,
         STOP,
+    }
+
+    public enum StateFrom {
+        NONE,
+        PLAY,
+        RESUME,
+        PAUSE,
+        STOP,
+        FINISH,
+        ERROR,
     }
 
     @Override
@@ -150,7 +160,7 @@ public class FMPlayerService extends Service implements PlayerListener {
      */
     public void setControllerListener(PlayerControllerListener controllerListener) {
         this.controllerListener = controllerListener;
-        refreshView();
+        refreshView(StateFrom.NONE);
         controllerListener.loadCover();
     }
 
@@ -177,24 +187,24 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void pause() {
         mPlayer.pause();
         mCurrentPLayState = PlayState.PAUSE;
-        refreshView();
+        refreshView(StateFrom.PAUSE);
     }
 
     public void resume() {
         mPlayer.resume();
         mCurrentPLayState = PlayState.PLAYING;
-        refreshView();
+        refreshView(StateFrom.RESUME);
     }
 
     public void stop() {
         mPlayer.stop();
         mCurrentPLayState = PlayState.NONE;
-        refreshView();
+        refreshView(StateFrom.STOP);
     }
 
-    private void refreshView() {
+    private void refreshView(StateFrom stateFrom) {
         if (controllerListener != null) {
-            controllerListener.refreshControllerView(mChannel, getCurrentSong(), getPlayState());
+            controllerListener.refreshControllerView(mChannel, getCurrentSong(), getPlayState(), stateFrom);
         }
     }
 

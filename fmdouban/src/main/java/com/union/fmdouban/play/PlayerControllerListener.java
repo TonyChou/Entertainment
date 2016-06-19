@@ -11,7 +11,7 @@ import com.union.fmdouban.service.FMPlayerService;
  */
 public interface PlayerControllerListener {
     public void loadCover();
-    public void refreshControllerView(FMRichChannel channel, FMSong song, FMPlayerService.PlayState state);
+    public void refreshControllerView(FMRichChannel channel, FMSong song, FMPlayerService.PlayState state, FMPlayerService.StateFrom stateFrom);
     public void sendProgress(int progress);
     public void renderLyric(FMSong song);
 }

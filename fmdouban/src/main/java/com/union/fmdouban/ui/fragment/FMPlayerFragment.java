@@ -97,7 +97,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
 
     private void initView(View rootView) {
         mCoverImage = (ImageView) rootView.findViewById(R.id.cover);
-        mControllerView = rootView.findViewById(R.id.player_controller_view);
+        mControllerView = rootView.findViewById(R.id.player_panel);
         mPlayerController.init(this, mControllerView);
         mShowHideButton = rootView.findViewById(R.id.foot_button);
         addOnTouchSpringAnimation(mShowHideButton);

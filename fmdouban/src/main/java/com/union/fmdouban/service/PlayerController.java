@@ -17,13 +17,14 @@ import com.union.commonlib.ui.anim.AnimUtils;
 import com.union.commonlib.ui.view.CircleProgressBar;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.R;
-import com.union.fmdouban.api.bean.FMChannel;
 import com.union.fmdouban.api.bean.FMLyric;
 import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.api.bean.FMSinger;
 import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.ui.fragment.FMPlayerFragment;
+import com.union.fmdouban.ui.lyric.LyricUtils;
+import com.union.fmdouban.ui.lyric.widget.LyricView;
 
 /**
  * Created by zhouxiaming on 2016/3/14.
@@ -41,7 +42,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     private AppCompatTextView mPreIcon, mPlayIcon, mNextIcon;
     private FMPlayerFragment mFragment;
     Animation mCoverBgMaskAnimation, mCoverRotateAnimation;
-
+    LyricView mLyricView;
     private CircleProgressBar mProgressBar;
 
     private boolean mCoverAnimIsRun = false;
@@ -62,6 +63,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     public void init(FMPlayerFragment flagment, View panelView) {
         this.mControlPanelView = panelView;
         this.mFragment = flagment;
+        mLyricView = (LyricView) mControlPanelView.findViewById(R.id.lyric_panel);
         mCover = (ImageView) mControlPanelView.findViewById(R.id.cover);
         mPreButton = mControlPanelView.findViewById(R.id.pre);
         mPreIcon = (AppCompatTextView)mPreButton.findViewById(R.id.button_icon);
@@ -151,12 +153,16 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     }
 
 
-    private void refreshViews(FMPlayerService.PlayState state) {
+    private void refreshViews(FMPlayerService.PlayState state, FMPlayerService.StateFrom stateFrom) {
         if (state == FMPlayerService.PlayState.PLAYING) {
             mPlayIcon.setBackgroundResource(R.drawable.ic_pause_circle_outline_black_48dp);
             mCoverBgMask.startAnimation(mCoverBgMaskAnimation);
             if (!mCoverAnimIsRun) {
                 mCover.startAnimation(mCoverRotateAnimation);
+            }
+
+            if (stateFrom == FMPlayerService.StateFrom.RESUME) {
+                mLyricView.resume();
             }
         } else {
             mPlayIcon.setBackgroundResource(R.drawable.ic_play_circle_outline_black_48dp);
@@ -168,6 +174,8 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
             if(state == FMPlayerService.PlayState.NONE){
                 mProgressBar.setProgress(0);
             }
+
+            mLyricView.stop();
         }
     }
 
@@ -219,15 +227,19 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     public void renderLyric(FMSong song) {
         //TODO
         FMLyric lyric = song.getLyric();
-        if (lyric != null) {
+        if (lyric != null && lyric.getLyric() != null) {
             Log.i(TAG, lyric.toString());
             Log.i(TAG, "lyric: " + lyric.getLyric());
+            mLyricView.reset();
+            mLyricView.setLyric(LyricUtils.parseLyric(lyric.getLyric()));
+            mLyricView.setLyricIndex(0);
+            mLyricView.play();
         }
     }
 
     @Override
-    public void refreshControllerView(FMRichChannel channel, FMSong song, FMPlayerService.PlayState state) {
-        refreshViews(state);
+    public void refreshControllerView(FMRichChannel channel, FMSong song, FMPlayerService.PlayState state, FMPlayerService.StateFrom stateFrom) {
+        refreshViews(state, stateFrom);
         setChannelName(channel);
         setSongName(song);
     }

@@ -6,16 +6,27 @@
     android:clipToPadding="true"
     android:fitsSystemWindows="true"
     android:background="@color/colorPrimaryDark">
-    <FrameLayout
+    <RelativeLayout
+        android:id="@+id/player_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <include
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/player_controller_view"
             layout="@layout/layout_player_pannel"/>
-    </FrameLayout>
+        <com.union.fmdouban.ui.lyric.widget.LyricView
+            android:id="@+id/lyric_panel"
+            android:layout_below="@id/player_controller_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginBottom="15dip"/>
+
+    </RelativeLayout>
 
 
 
