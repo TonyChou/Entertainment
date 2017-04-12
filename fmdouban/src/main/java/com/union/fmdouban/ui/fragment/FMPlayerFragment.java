@@ -49,7 +49,7 @@ import java.util.List;
 public class FMPlayerFragment extends BaseFragment implements FMController.FMChannelChangedListener{
     private final int REFRESH_CHANNEL_INFO = 0x000012;
     private static final Interpolator sDecelerator = new DecelerateInterpolator();
-    private View mRootView;
+
     private PlayerController mPlayerController;
     private View mControllerView;
     View mShowHideButton;
@@ -87,23 +87,24 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         FMController.registerFMChannelListener(this);
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_player_layout, container, false);
-        initView(mRootView);
-        //loadChannel();
-        return mRootView;
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_player_layout;
     }
 
-    private void initView(View rootView) {
-        mCoverImage = (ImageView) rootView.findViewById(R.id.cover);
-        mControllerView = rootView.findViewById(R.id.player_panel);
+    @Override
+    protected void initView() {
+        super.initView();
+        mCoverImage = (ImageView) mRootView.findViewById(R.id.cover);
+        mControllerView = mRootView.findViewById(R.id.player_panel);
         mPlayerController.init(this, mControllerView);
-        mShowHideButton = rootView.findViewById(R.id.foot_button);
+        mShowHideButton = mRootView.findViewById(R.id.foot_button);
         addOnTouchSpringAnimation(mShowHideButton);
 
         TintUtils.setBackgroundTint(this.getActivity(), (AppCompatTextView) mShowHideButton.findViewById(R.id.button_icon), R.color.white);
     }
+
 
     private void showChannelsList() {
         Intent intent = new Intent(getActivity(), FMChannelSelectActivity.class);

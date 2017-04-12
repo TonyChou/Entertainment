@@ -74,19 +74,26 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_channels_list;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_channels_list, null);
-        initView();
-        initData();
-        return mRootView;
+    protected void loadData() {
+        super.loadData();
+        if (mType == null) {
+            return;
+        }
+        if (mType.getId() == FMChannelType.hotTypeId) {
+            channelList.addAll(FMCache.getHotChannelsFromCache());
+            mAdapter.notifyDataSetChanged();
+            mLoadMoreListViewContainer.loadMoreFinish(false, false);
+        } else {
+            getChannelList(mType.getId(), 0, limit);
+        }
     }
 
-    private void initView() {
+    protected void initView() {
 
         Log.i(TAG, "HotChannel size: " + channelList.size());
         mListView = (ListView) mRootView.findViewById(R.id.channel_list);
@@ -144,19 +151,6 @@ public class FMChannelList extends BaseFragment implements ItemClickListener {
         mListView.setAdapter(mAdapter);
     }
 
-
-    private void initData() {
-        if (mType == null) {
-            return;
-        }
-        if (mType.getId() == FMChannelType.hotTypeId) {
-            channelList.addAll(FMCache.getHotChannelsFromCache());
-            mAdapter.notifyDataSetChanged();
-            mLoadMoreListViewContainer.loadMoreFinish(false, false);
-        } else {
-            getChannelList(mType.getId(), 0, limit);
-        }
-    }
 
     private void getChannelList(String typeId, int startPosition, int limit) {
         if (currentPage < totalPage) {

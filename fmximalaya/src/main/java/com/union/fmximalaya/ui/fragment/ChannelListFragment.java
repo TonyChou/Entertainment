@@ -30,24 +30,20 @@ public class ChannelListFragment extends BaseFragment implements AbsListView.OnI
     public ChannelListFragment() {
     }
 
+
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_channel;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_channel, container, false);
-
-        // Set the adapter
-        mListView = (RecyclerView) view.findViewById(R.id.list_view);
+    protected void initView() {
+        super.initView();
+        mListView = (RecyclerView) mRootView.findViewById(R.id.list_view);
         mAdapter = new ChannelListAdapter(this.getActivity(), ItemData.genItemData());
         mListView.setAdapter(mAdapter);
-
-        return view;
     }
-
 
     @Override
     public void onDetach() {

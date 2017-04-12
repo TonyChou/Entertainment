@@ -54,17 +54,10 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View contentView = inflater.inflate(R.layout.fragment_gallery, container, false);
-        initView(contentView);
-        return contentView;
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_gallery;
     }
 
     private void loadPicture() {
@@ -91,9 +84,9 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     }
 
-    private void initView(View contentView) {
-        recyclerView = (RecyclerView) contentView.findViewById(R.id.recycler);
-        refreshLayout = (SwipeRefreshLayout) contentView.findViewById(R.id.refresh);
+    protected void initView() {
+        recyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler);
+        refreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.refresh);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,

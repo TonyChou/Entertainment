@@ -64,19 +64,18 @@ public class FMChannelListNew extends FMChannelList implements ItemClickListener
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_channels_list_new;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_channels_list_new, null);
-        initView();
+    protected void loadData() {
+        super.loadData();
         initData();
-        return mRootView;
     }
 
-    private void initView() {
+    @Override
+    protected void initView() {
         Log.i(TAG, "HotChannel size: " + channelList.size());
         mListView = (XListView) mRootView.findViewById(R.id.list_view);
 

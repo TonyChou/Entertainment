@@ -5,16 +5,20 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.union.commonlib.R;
 import com.union.commonlib.ui.activity.BaseActivity;
 
 /**
  * Created by zhouxiaming on 16/3/6.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
     protected String TAG = this.getClass().getSimpleName();
     protected static final String ARG_PARAM1 = "param1";
     protected static final String ARG_PARAM2 = "param2";
@@ -31,6 +35,28 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         getArgument();
         mActivity = this.getActivity();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mRootView = inflater.inflate(getLayoutResourceId(), container, false);
+        initView();
+        return mRootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadData();
+    }
+
+    protected abstract int getLayoutResourceId();
+    protected void initView() {
+
+    }
+    protected void loadData() {
+
     }
 
     protected void getArgument() {

@@ -1,8 +1,8 @@
 package com.tulips.douban.service;
 
-import com.google.gson.JsonObject;
 import com.tulips.douban.model.ChannelsPage;
-import retrofit2.Call;
+
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
 
@@ -13,5 +13,5 @@ import java.util.Map;
  */
 public interface DoubanService {
     @GET("v2/fm/app_channels")
-    Call<ChannelsPage> appChannels(@QueryMap Map<String, String> params);
+    Observable<ChannelsPage> appChannels(@QueryMap Map<String, String> params);
 }

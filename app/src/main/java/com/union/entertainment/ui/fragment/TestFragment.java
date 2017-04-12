@@ -85,18 +85,13 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     }
 
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_test, container, false);
-        initView(mRootView);
-        //Find the +1 button
-        Log.i(TAG, "onCreateView ");
-        return mRootView;
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_test;
     }
 
-    private void initView(View view) {
+    protected void initView(View view) {
         colorPickerView = (ColorPickerView) view.findViewById(R.id.color_picker);
         colorPickerReviewBg = view.findViewById(R.id.color_preview_bg);
         colorPickerReview = (ImageView) view.findViewById(R.id.color_preview);

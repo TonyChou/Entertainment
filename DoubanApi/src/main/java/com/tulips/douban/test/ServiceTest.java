@@ -1,35 +1,58 @@
 package com.tulips.douban.test;
 
-import com.google.gson.JsonObject;
-import com.tulips.douban.client.RetrofitClient;
 import com.tulips.douban.model.ChannelsPage;
 import com.tulips.douban.service.DoubanService;
 import com.tulips.douban.service.DoubanUrl;
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
+import com.union.net.RetrofitClient;
 
-import javax.net.ssl.*;
-import java.io.IOException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+
 /**
  * Created by zhouxiaming on 2017/4/11.
  */
 public class ServiceTest {
     public static void main(String[] args) {
-        RetrofitClient client = new RetrofitClient(DoubanUrl.API_HOST, true, true);
-
+        RetrofitClient client = new RetrofitClient(DoubanUrl.API_HOST, true, true, true);
         DoubanService douBanService = client.createApi(DoubanService.class);
 
         try {
-            Call<ChannelsPage> appChannels = douBanService.appChannels(appChannelsMap());
-            ChannelsPage result = appChannels.execute().body();
-            System.out.println("result: " + result);
-        } catch (IOException e) {
+            douBanService.appChannels(appChannelsMap())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableObserver<ChannelsPage>() {
+                        @Override
+                        public void onNext(ChannelsPage value) {
+                            System.out.println("onNext");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            System.out.println("onError");
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            System.out.println("onComplete");
+                        }
+                    });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

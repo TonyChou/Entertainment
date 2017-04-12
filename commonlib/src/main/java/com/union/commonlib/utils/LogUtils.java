@@ -11,7 +11,7 @@ import com.union.commonlib.Constant;
 
 public class LogUtils {
     private static String TAG = "LogUtils";
-
+    public static boolean isDebug = Constant.IS_DEBUG;
     public static void e(String tag, String msg){
         if (msg == null) {
             return;

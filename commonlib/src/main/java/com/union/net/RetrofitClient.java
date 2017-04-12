@@ -1,20 +1,25 @@
-package com.tulips.douban.client;
+package com.union.net;
 
-import com.tulips.douban.Logger;
-import com.tulips.douban.service.CookieManager;
+import com.union.commonlib.utils.LogUtils;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import javax.net.ssl.*;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
 /**
  * Created by zhouxiaming on 2017/4/11.
@@ -26,12 +31,14 @@ public class RetrofitClient {
     private static final int RETRY_WAIT_TIME = 2000;
     private boolean isDebug = false;
     private boolean isRetry = false;
+    private boolean isNeedSaveCookie = false;
     private Retrofit retrofit;
 
-    public RetrofitClient(String host, boolean isDebug, boolean retry) {
+    public RetrofitClient(String host, boolean isDebug, boolean retry, boolean needSaveCookie) {
         this.host = host;
         this.isDebug = isDebug;
         this.isRetry = retry;
+        this.isNeedSaveCookie = needSaveCookie;
         createRetrofit(createHttpClient());
     }
 
@@ -58,7 +65,9 @@ public class RetrofitClient {
             clientBuilder.addInterceptor(new RetryInterceptor());
         }
 
-        clientBuilder.addInterceptor(new CookieInterceptor());
+        if (isNeedSaveCookie) {
+            clientBuilder.addInterceptor(new CookieInterceptor());
+        }
 
         if (host != null && (host.startsWith("https") || host.startsWith("HTTPS"))) {
             supportHttps(clientBuilder);
@@ -131,8 +140,8 @@ public class RetrofitClient {
             Request request = chain.request();
             // 当前在网络请求的子线程中
 
-            Logger.print(TAG, "intercept: getId " + Thread.currentThread().getId());
-            okhttp3.Response response = null;
+            LogUtils.i(TAG, "intercept: getId " + Thread.currentThread().getId());
+            Response response = null;
             int retryCount = 0;
             boolean retry = true;
 
@@ -143,31 +152,31 @@ public class RetrofitClient {
                     // 没有产生Exception
                     retry = shouldRetry(response, null);
                 } catch (ConnectException e) {
-                    Logger.print(TAG, "ConnectException : " + e);
+                    LogUtils.e(TAG, "ConnectException : " + e);
                     retry = shouldRetry(response, e);
                     if (!retry) {
                         throw e;
                     }
                 } catch (SocketException e) {
-                    Logger.print(TAG, "SocketException : " + e);
+                    LogUtils.e(TAG, "SocketException : " + e);
                     retry = shouldRetry(response, e);
                     if (!retry) {
                         throw e;
                     }
                 } catch (UnknownHostException e) {
-                    Logger.print(TAG, "UnknownHostException : " + e);
+                    LogUtils.e(TAG, "UnknownHostException : " + e);
                     retry = shouldRetry(response, e);
                     if (!retry) {
                         throw e;
                     }
                 } catch (SocketTimeoutException e) {
-                    Logger.print(TAG, "SocketTimeoutException : " + e);
+                    LogUtils.e(TAG, "SocketTimeoutException : " + e);
                     retry = shouldRetry(response, e);
                     if (!retry) {
                         throw e;
                     }
                 } catch (Exception e) {
-                    Logger.print(TAG, "Exception : " + e);
+                    LogUtils.e(TAG, "Exception : " + e);
                     retry = shouldRetry(response, e);
                     if (!retry) {
                         throw e;
@@ -175,8 +184,7 @@ public class RetrofitClient {
                 }
 
                 if (retry) {
-                    Logger.print(TAG, "RetryInterceptor tryCount: " + retryCount);
-
+                    LogUtils.e(TAG, "RetryInterceptor tryCount: " + retryCount);
                     try {
                         Thread.sleep(Math.min(retryCount * RETRY_WAIT_TIME, 1000 * 60));
                     } catch (InterruptedException e) {
@@ -193,7 +201,7 @@ public class RetrofitClient {
     }
 
     // 默认网络不可用的情况下不会重试，如果需要重试的话需，重载该函数。
-    protected static boolean shouldRetry(okhttp3.Response response, Exception e) {
+    protected static boolean shouldRetry(Response response, Exception e) {
         if (response != null && response.isSuccessful()) {
             return false;
         }
@@ -208,11 +216,11 @@ public class RetrofitClient {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             long t1 = System.nanoTime();
-            Logger.print(TAG, String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers()));
-            okhttp3.Response response = chain.proceed(request);
+            LogUtils.i(TAG, String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers()));
+            Response response = chain.proceed(request);
             if (response != null) {
                 long t2 = System.nanoTime();
-                Logger.print(TAG, String.format("Received response for %s in %.1fms%n%s", response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+                LogUtils.i(TAG,  String.format("Received response for %s in %.1fms%n%s", response.request().url(), (t2 - t1) / 1e6d, response.headers()));
             }
             return response;
         }

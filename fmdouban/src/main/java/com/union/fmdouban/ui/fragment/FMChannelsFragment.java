@@ -68,16 +68,19 @@ public class FMChannelsFragment extends BaseFragment implements LoaderManager.Lo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_channels_layout, null);
-        initView(mRootView);
-        //showWithAnimation();
-        getLoaderManager().initLoader(LoaderToken.DoubanFMChannelType, null, this);
-        return mRootView;
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_channels_layout;
     }
 
+    @Override
+    protected void loadData() {
+        super.loadData();
+        getLoaderManager().initLoader(LoaderToken.DoubanFMChannelType, null, this);
+    }
 
-    private void initView(View mRootView) {
+    @Override
+    protected void initView() {
+        super.initView();
         channelPanelView = mRootView.findViewById(R.id.channel_layout);
         noChannelLayout = mRootView.findViewById(R.id.no_channel_layout);
         mLoadingBar = (CircularProgress)mRootView.findViewById(R.id.rl_loading);

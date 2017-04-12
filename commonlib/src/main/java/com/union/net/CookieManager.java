@@ -1,7 +1,6 @@
-package com.tulips.douban.service;
+package com.union.net;
 
 
-import com.tulips.douban.Logger;
 import okhttp3.Headers;
 
 import java.util.*;
@@ -27,7 +26,6 @@ public class CookieManager {
             if (values != null && values.size() > 0) {
                 cacheValues.put(name, values.get(0));
             }
-            Logger.print(TAG, "Header name: " + name);
         }
     }
 }
