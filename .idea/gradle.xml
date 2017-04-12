@@ -17,16 +17,7 @@
             <option value="$PROJECT_DIR$/liblistview" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/commonlib" />
-            <option value="$PROJECT_DIR$/fmdouban" />
-            <option value="$PROJECT_DIR$/fmximalaya" />
-            <option value="$PROJECT_DIR$/liblistview" />
-          </set>
-        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

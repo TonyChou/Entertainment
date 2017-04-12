@@ -1,11 +1,16 @@
 package com.union.entertainment.ui.fragment;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.union.commonlib.data.LoaderToken;
 import com.union.commonlib.ui.fragment.BaseFragment;
@@ -31,8 +37,8 @@ import java.util.List;
  * Created by zhouxiaming on 2016/3/4.
  */
 public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<Cursor>{
-
-
+    public static final int REQUEST_PERMISSION_STORAGE = 0x01;
+    private static final int REQUEST_CODE = 0x123123;
     RecyclerView recyclerView;
     SwipeRefreshLayout refreshLayout;
     PhotoGridAdapter adapter;
@@ -61,6 +67,29 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
         return contentView;
     }
 
+    private void loadPicture() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
+            } else {
+                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
+            }
+        } else {
+            getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_STORAGE) {
+            if (grantResults!= null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadPicture();
+            } else {
+                Toast.makeText(mActivity, "权限被禁止，无法读取本地图片", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     private void initView(View contentView) {
         recyclerView = (RecyclerView) contentView.findViewById(R.id.recycler);
@@ -112,13 +141,12 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LoaderToken.PhotosQuery, null, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
+        loadPicture();
     }
 
     private void refreshPhotos(Cursor cursor) {
@@ -134,7 +162,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, GalleryFragment.this);
+        loadPicture();
     }
 
 

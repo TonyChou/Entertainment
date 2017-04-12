@@ -1,8 +1,11 @@
 package com.union.commonlib.ui.fragment;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -77,5 +80,9 @@ public class BaseFragment extends Fragment {
         if (mActivity instanceof BaseActivity) {
             ((BaseActivity) mActivity).setStatusBarColor(colorId);
         }
+    }
+
+    public boolean checkPermission(@NonNull String permission) {
+        return ActivityCompat.checkSelfPermission(mActivity, permission) == PackageManager.PERMISSION_GRANTED;
     }
 }
