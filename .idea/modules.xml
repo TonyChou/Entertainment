@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DoubanApi/DoubanApi.iml" filepath="$PROJECT_DIR$/DoubanApi/DoubanApi.iml" />
       <module fileurl="file://$PROJECT_DIR$/Entertainment.iml" filepath="$PROJECT_DIR$/Entertainment.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/commonlib/commonlib.iml" filepath="$PROJECT_DIR$/commonlib/commonlib.iml" />

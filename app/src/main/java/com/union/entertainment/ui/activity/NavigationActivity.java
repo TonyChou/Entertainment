@@ -127,6 +127,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     public boolean onNavigationItemSelected(MenuItem item) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
         setToolBarTitle(item.getTitle());
+        item.setCheckable(true);//设置选项可选
         item.setChecked(true);
         switchFragment(getFragmentPosition(item.getItemId()));
         return true;

@@ -1,1 +1,1 @@
-include ':fmximalaya', ':fmdouban', ':commonlib', ':app', ':liblistview'
+include ':fmximalaya', ':fmdouban', ':commonlib', ':app', ':liblistview', ':DoubanApi'

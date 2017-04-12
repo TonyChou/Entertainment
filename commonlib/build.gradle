@@ -31,7 +31,7 @@ dependencies {
     compile 'com.makeramen:roundedimageview:1.5.0'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.caverock:androidsvg:1.2.1'
-    compile 'com.google.code.gson:gson:2.6.2'
+
     compile 'com.caverock:androidsvg:1.2.1'
     compile files('libs/Volley.jar')
     compile 'com.squareup.okhttp:okhttp:2.7.2'
@@ -41,4 +41,12 @@ dependencies {
     compile 'in.srain.cube:cube-sdk:1.0.44@aar'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile project(':liblistview')
+
+    //DoubanAPI module 应用
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.okio:okio:1.12.0'
+    compile 'com.google.code.gson:gson:2.8.0'
+
 }

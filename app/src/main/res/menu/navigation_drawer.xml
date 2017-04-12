@@ -9,7 +9,8 @@
                 <item
                     android:id="@+id/pic_local"
                     android:checked="true"
-                    android:title="@string/pic_local" />
+                    android:title="@string/pic_local"
+                    app:itemBackground="@drawable/menu_activited_selector"/>
                 <item
                     android:id="@+id/pic_network"
                     android:title="@string/pic_network" />
