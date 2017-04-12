@@ -17,10 +17,10 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zhouxiaming on 2017/4/12.
  */
 
-public class DoubanFMFragment extends BaseFragment {
+public class DouBanFMFragment extends BaseFragment {
     private RetrofitClient mApiClient;
-    public static DoubanFMFragment newInstance() {
-        DoubanFMFragment fragment = new DoubanFMFragment();
+    public static DouBanFMFragment newInstance() {
+        DouBanFMFragment fragment = new DouBanFMFragment();
         return fragment;
     }
 
