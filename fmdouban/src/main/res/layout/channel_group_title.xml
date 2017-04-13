@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.union.commonlib.ui.view.RippleView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/group_item_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="48dp"
+    android:background="@color/colorAccent"
+    android:paddingLeft="12dip"
+    android:paddingRight="12dip">
+
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:ellipsize="end"
+        android:gravity="center|left"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textColor="@color/yellow"
+        android:textSize="16dp"/>
+
+</com.union.commonlib.ui.view.RippleView>

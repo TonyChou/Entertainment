@@ -21,4 +21,6 @@
     <color name="tablayout_bg">#607D8B</color>
     <color name="text_white">#ffffff</color>
     <color name="text_black">#000000</color>
+
+    <color name="rippelColor">#FFFFFF</color>
 </resources>

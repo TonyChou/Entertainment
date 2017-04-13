@@ -6,4 +6,5 @@
     <string name="fetch_channels">获取FM频道</string>
     <string name="hot_channel">热门</string>
     <string name="change_channel_failed">切换频道失败</string>
+    <string name="douban_channels_group_null">豆瓣精选</string>
 </resources>

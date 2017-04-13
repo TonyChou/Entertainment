@@ -32,7 +32,7 @@ public class UnionApplication extends Application{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ChannelLoader.loadChannelData();
+                //ChannelLoader.loadChannelData();
             }
         }).start();
     }

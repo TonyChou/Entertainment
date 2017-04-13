@@ -90,7 +90,6 @@ public class FMChannelListNew extends FMChannelList implements ItemClickListener
         mHeaderView.setRefreshListener(this);
         mListView.setOverScrollHeader(mHeaderView);
         mListView.setOverScrollListener(mHeaderView);
-
     }
 
     private void addFooterView() {

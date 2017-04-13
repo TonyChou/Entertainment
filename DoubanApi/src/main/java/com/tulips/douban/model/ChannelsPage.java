@@ -1,7 +1,6 @@
 package com.tulips.douban.model;
 
 import com.google.gson.annotations.SerializedName;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class ChannelsPage extends BasePage {
     /**
      * 频道组
      */
-    class Groups extends BaseCard {
+    public class Groups extends BaseCard {
         @SerializedName("group_id")
         public int groupId;
 
@@ -25,7 +24,7 @@ public class ChannelsPage extends BasePage {
         public List<Channel> channels;
     }
 
-    class Channel extends BaseCard {
+    public class Channel extends BaseCard {
         @SerializedName("name")
         public String channelName;
 
@@ -56,7 +55,7 @@ public class ChannelsPage extends BasePage {
 
     }
 
-    class ChannelStyle extends BaseCard {
+    public class ChannelStyle extends BaseCard {
         @SerializedName("display_text")
         public String displayText;
 
@@ -70,12 +69,12 @@ public class ChannelsPage extends BasePage {
         public String bgImage;
     }
 
-    class ChannelRelation extends BaseCard {
+    public class ChannelRelation extends BaseCard {
         @SerializedName("artist")
         public Artist artist;
     }
 
-    class Artist extends BaseCard {
+    public class Artist extends BaseCard {
         @SerializedName("id")
         public String artistId;
     }
