@@ -1,15 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.liblistview.widget.PinnedHeaderExpandableListView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/channel_list"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:cacheColorHint="#00000000"
-    android:divider="@drawable/divider"
-    android:childDivider="@drawable/divider"
-    android:dividerHeight="1px"
-    android:footerDividersEnabled="false"
-    android:indicatorLeft="16dp"
-    android:indicatorRight="28dp"
-    android:scrollingCache="false"
-    android:background="@color/white" />
+    android:layout_height="match_parent">
+
+    <com.liblistview.widget.PinnedHeaderExpandableListView
+        android:id="@+id/channel_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:cacheColorHint="#00000000"
+        android:childDivider="@drawable/divider"
+        android:divider="@drawable/divider"
+        android:dividerHeight="1px"
+        android:footerDividersEnabled="false"
+        android:indicatorLeft="16dp"
+        android:indicatorRight="28dp"
+        android:scrollingCache="false"
+        android:visibility="invisible"/>
+
+    <com.union.commonlib.ui.view.CircularProgress
+        android:id="@+id/rl_loading"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        app:cp_borderWidth="6dp"/>
+
+    <include
+        android:id="@+id/empty_layout"
+        layout="@layout/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+</RelativeLayout>
+

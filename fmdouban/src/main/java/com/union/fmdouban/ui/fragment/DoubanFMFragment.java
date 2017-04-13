@@ -8,6 +8,7 @@ import com.tulips.douban.service.DoubanParamsGen;
 import com.tulips.douban.service.DoubanService;
 import com.tulips.douban.service.DoubanUrl;
 import com.union.commonlib.ui.fragment.BaseFragment;
+import com.union.commonlib.ui.view.CircularProgress;
 import com.union.commonlib.ui.view.RefreshHeaderView;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
@@ -32,6 +33,8 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
     private RetrofitClient mApiClient;
     private ChannelGroupAdapter mAdapter;
     private RefreshHeaderView mHeaderView;
+    private CircularProgress mLoadingBar;
+    private View mEmptyView;
     public static DoubanFMFragment newInstance() {
         DoubanFMFragment fragment = new DoubanFMFragment();
         return fragment;
@@ -45,12 +48,17 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
     @Override
     protected void initView() {
         super.initView();
+        this.mLoadingBar = (CircularProgress)mRootView.findViewById(R.id.rl_loading);
+        this.mEmptyView = mRootView.findViewById(R.id.empty_layout);
         this.mListView = (PinnedHeaderExpandableListView) mRootView.findViewById(R.id.channel_list);
         this.mAdapter = new ChannelGroupAdapter(mActivity, mListView, this);
         this.mListView.setAdapter(mAdapter);
         this.mListView.setOnScrollListener(mAdapter);
         this.mListView.setGroupIndicator(null);
         addHeaderView();
+        //自动刷新数据
+        mListView.showOverScrollHeader();
+        this.mEmptyView.setOnClickListener(this);
     }
     private void addHeaderView() {
         mHeaderView = new RefreshHeaderView(mActivity);
@@ -81,12 +89,16 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
                         if (LogUtils.isDebug) {
                             e.printStackTrace();
                         }
+                        mListView.setVisibility(View.GONE);
+                        mEmptyView.setVisibility(View.VISIBLE);
+                        mLoadingBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onComplete() {
                         LogUtils.i(TAG, "onComplete ==== ");
                         mHeaderView.refreshComplete();
+                        mLoadingBar.setVisibility(View.GONE);
                     }
                 });
     }
@@ -99,14 +111,31 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
                     groups.add(group);
                 }
             }
+            this.mListView.setVisibility(View.VISIBLE);
+            this.mLoadingBar.setVisibility(View.GONE);
+            this.mEmptyView.setVisibility(View.GONE);
             this.mAdapter.setGroupList(groups);
             this.mAdapter.notifyDataSetChanged();
+        } else {
+            this.mListView.setVisibility(View.GONE);
+            this.mLoadingBar.setVisibility(View.GONE);
+            this.mEmptyView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.empty_layout) {
+            reloadData();
+        }
+    }
 
+    private void reloadData() {
+        this.mListView.setVisibility(View.GONE);
+        this.mLoadingBar.setVisibility(View.VISIBLE);
+        this.mEmptyView.setVisibility(View.GONE);
+        loadData();
     }
 
     @Override

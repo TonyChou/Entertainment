@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.union.commonlib.ui.view.RippleView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/group_item_layout"
     android:layout_width="fill_parent"
     android:layout_height="48dp"
-    android:background="@color/colorAccent"
+    android:background="@color/colorPrimaryDark"
     android:paddingLeft="12dip"
+    android:clickable="true"
     android:paddingRight="12dip">
 
     <TextView
@@ -20,4 +21,4 @@
         android:textColor="@color/yellow"
         android:textSize="16dp"/>
 
-</com.union.commonlib.ui.view.RippleView>
+</RelativeLayout>
