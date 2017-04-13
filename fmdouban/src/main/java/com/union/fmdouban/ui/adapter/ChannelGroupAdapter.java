@@ -39,6 +39,13 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
         super(context, lv);
         mContext = context;
         mOnClickListener = onClick;
+        mAttachedView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                //点击Group view 不收起
+                return true;
+            }
+        });
     }
 
     public void setGroupList(List<ChannelsPage.Groups> groups) {
@@ -137,7 +144,7 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
                     R.layout.channel_group_title, parent, false);
             holder = new GroupHolder(convertView);
             convertView.setTag(holder);
-            convertView.setOnClickListener(this);
+            //convertView.setOnClickListener(this);
         }
 
         holder.setData((ChannelsPage.Groups)getGroup(groupPosition));
@@ -153,6 +160,9 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
+        for(int i = 0; i < getGroupCount(); i++) {
+            mAttachedView.expandGroup(i);
+        }
     }
 
     @Override
