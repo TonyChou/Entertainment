@@ -4,6 +4,7 @@ package com.tulips.douban.service;
  * Created by zhouxiaming on 2017/4/11.
  */
 public class DoubanConstant {
+    public static int kbps = 64;
     public static String APP_KEY = "02f7751a55066bcb08e65f4eff134361";
     public static String APP_NAME = "radio_android";
     public static String UDID = "6aba7f108504dd47509e335b0b6335c5fee027a3";

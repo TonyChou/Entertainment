@@ -28,17 +28,17 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
     private static final String TAG = "ChannelGroupAdapter";
 
     private Context mContext;
-    private View.OnClickListener mOnClickListener;
+    private OnChannelClickListener onChannelClickListener;
     private static final int CHILD_VIEW_TYPE_COUNT = 1;
     private static final int CHILD_VIEW_TYPE_BUDDY = 0;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
     private AbsListView.OnScrollListener mOnScrollListener;
     public List<ChannelsPage.Groups> mChannelGroupList = new ArrayList<>();
 
-    public ChannelGroupAdapter(Context context, ExpandableListView lv, View.OnClickListener onClick) {
+    public ChannelGroupAdapter(Context context, ExpandableListView lv, OnChannelClickListener onClick) {
         super(context, lv);
         mContext = context;
-        mOnClickListener = onClick;
+        onChannelClickListener = onClick;
         mAttachedView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -109,6 +109,7 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
 
         holder.setData((ChannelsPage.Channel) getChild(groupPosition, childPosition));
         holder.channelPosition = childPosition;
+        holder.channelId = ((ChannelsPage.Channel)getChild(groupPosition, childPosition)).channelId;
         return convertView;
     }
 
@@ -197,12 +198,18 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
             } else {
                 mAttachedView.expandGroup(holder.groupPosition);
             }
+        } else if (obj instanceof ChannelHolder) {
+            ChannelHolder holder = (ChannelHolder) obj;
+            if (onChannelClickListener != null) {
+                onChannelClickListener.onChannelClick(holder.channelId);
+            }
         }
     }
 
 
     class ChannelHolder{
         public int channelPosition;
+        public String channelId;
         private TextView channelNameView;
         private RoundedImageView channelImage;
         public ChannelHolder(View itemView) {
@@ -231,5 +238,9 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
                 titleView.setText(group.groupName);
             }
         }
+    }
+
+    public interface OnChannelClickListener {
+        public void onChannelClick(String channelId);
     }
 }

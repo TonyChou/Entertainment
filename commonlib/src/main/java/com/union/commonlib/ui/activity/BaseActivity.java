@@ -28,4 +28,15 @@ public class BaseActivity extends AppCompatActivity {
     public void setStatusBarColor(int colorId) {
         tintManager.setStatusBarTintColor(getResources().getColor(colorId));
     }
+
+    /**
+     * 显示ActionBar
+     */
+    public void showActionBar() {
+
+    }
+
+    public void hideActionBar() {
+
+    }
 }

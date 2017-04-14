@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.liblistview.widget.PinnedHeaderExpandableListView;
 import com.tulips.douban.model.ChannelsPage;
+import com.tulips.douban.model.PlayerPage;
 import com.tulips.douban.service.DoubanParamsGen;
 import com.tulips.douban.service.DoubanService;
 import com.tulips.douban.service.DoubanUrl;
@@ -28,9 +29,9 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zhouxiaming on 2017/4/12.
  */
 
-public class DoubanFMFragment extends BaseFragment implements View.OnClickListener, RefreshHeaderView.RefreshListener{
+public class DoubanFMFragment extends BaseFragment implements View.OnClickListener, RefreshHeaderView.RefreshListener, ChannelGroupAdapter.OnChannelClickListener {
     private PinnedHeaderExpandableListView mListView;
-    private RetrofitClient mApiClient;
+    private DoubanService douBanService;
     private ChannelGroupAdapter mAdapter;
     private RefreshHeaderView mHeaderView;
     private CircularProgress mLoadingBar;
@@ -70,8 +71,8 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
     @Override
     protected void loadData() {
         super.loadData();
-        mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
-        DoubanService douBanService = mApiClient.createApi(DoubanService.class);
+        RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
+        douBanService = mApiClient.createApi(DoubanService.class);
         douBanService.appChannels(DoubanParamsGen.genGetAppChannelsParams())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -141,5 +142,29 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onRefreshDoing() {
         loadData();
+    }
+
+
+    @Override
+    public void onChannelClick(String channelId) {
+        douBanService.playList(DoubanParamsGen.genGetPlayListParams(channelId))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<PlayerPage>() {
+                    @Override
+                    public void onNext(PlayerPage playerPage) {
+                        LogUtils.i(TAG, "onNext ==== ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LogUtils.i(TAG, "onError ==== ");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LogUtils.i(TAG, "onComplete ==== ");
+                    }
+                });
     }
 }

@@ -175,7 +175,6 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
                 return;
             }
         }
-
         super.onBackPressed();
     }
 
@@ -187,4 +186,23 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void finish() {
+        // TODO Auto-generated method stub
+        if(!false){
+            setBackTask(false);
+        }else {
+            setBackTask(true);
+        }
+    }
+
+    private void setBackTask(boolean isRealFinished) {
+        if (!isRealFinished) {
+            this.moveTaskToBack(true);
+        } else {
+            super.finish();
+        }
+    }
+
 }

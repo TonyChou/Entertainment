@@ -41,7 +41,6 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     private List<Spring> springMap = new ArrayList<Spring>();
     private final BaseSpringSystem mSpringSystem = SpringSystem.create();
     Animation animation, rootViewAnimation;
-    private View mRootView;
 
 
 
@@ -91,10 +90,10 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
         return R.layout.fragment_test;
     }
 
-    protected void initView(View view) {
-        colorPickerView = (ColorPickerView) view.findViewById(R.id.color_picker);
-        colorPickerReviewBg = view.findViewById(R.id.color_preview_bg);
-        colorPickerReview = (ImageView) view.findViewById(R.id.color_preview);
+    protected void initView() {
+        colorPickerView = (ColorPickerView) mRootView.findViewById(R.id.color_picker);
+        colorPickerReviewBg = mRootView.findViewById(R.id.color_preview_bg);
+        colorPickerReview = (ImageView) mRootView.findViewById(R.id.color_preview);
         colorPickerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -103,16 +102,16 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
             }
         });
 
-        editBtn = view.findViewById(R.id.edit);
-        recBtn = view.findViewById(R.id.rec);
-        cancelBtn = view.findViewById(R.id.cancel);
-        sendBtn = view.findViewById(R.id.send);
+        editBtn = mRootView.findViewById(R.id.edit);
+        recBtn = mRootView.findViewById(R.id.rec);
+        cancelBtn = mRootView.findViewById(R.id.cancel);
+        sendBtn = mRootView.findViewById(R.id.send);
         editBtn.setOnClickListener(this);
         recBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
         sendBtn.setOnClickListener(this);
         addOnTouchSpringAnimation(editBtn, recBtn, cancelBtn, sendBtn);
-        lightLayout = view.findViewById(R.id.light_layout);
+        lightLayout = mRootView.findViewById(R.id.light_layout);
     }
 
     /**
