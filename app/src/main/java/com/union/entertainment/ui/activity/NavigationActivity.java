@@ -1,6 +1,8 @@
 package com.union.entertainment.ui.activity;
 
+import android.annotation.TargetApi;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -9,7 +11,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
         initToolBar();
         initNavigationMenuItem();
         initPageView();
+
         switchFragment(FragmentFactory.FRAGMENT_LOCAL_PIC);
     }
 
@@ -66,6 +68,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
 
 
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.pic_local);
@@ -75,6 +78,10 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
+        if (Build.VERSION.SDK_INT >= 21) {
+            //getWindow().setStatusBarColor(getResources().getColor(R.color.transparent));
+        }
+
     }
 
     private void showToolBar(boolean show) {
@@ -163,7 +170,10 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
         return position;
     }
 
-
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+    }
 
     @Override
     public void onBackPressed() {

@@ -2,14 +2,14 @@
 
     <!-- Base application theme. -->
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:colorPrimaryDark">@color/colorPrimary</item>
-        <item name="android:colorPrimary">@color/colorPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowAnimationStyle">@style/AppAnimation</item>
         <item name="actionModeBackground">@color/primaryLight</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
     </style>
 
     <style name="AppTheme" parent="BaseTheme">
@@ -52,12 +52,20 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Toolbar">
+    <style name="Toolbar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:background">@color/colorPrimary</item>
+
+    </style>
+
+    <style name="ActivityBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="welcome_contentOverlay1" parent="@android:style/Theme.NoTitleBar">
@@ -67,11 +75,14 @@
         <item name="android:windowBackground">@drawable/welcome_bg</item>
     </style>
 
-    <style name="mainactivity_contentOverlay1" parent="@android:style/Theme.NoTitleBar">
+    <style name="mainactivity_contentOverlay1" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@drawable/welcome_bg</item>
+    </style>
+    <style name="NavigationActivityTheme" parent="BaseTheme">
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
 </resources>

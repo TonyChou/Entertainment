@@ -41,7 +41,8 @@
         </activity>
         <activity android:name=".ui.activity.NavigationActivity"
                   android:configChanges="keyboardHidden|orientation"
-                  android:screenOrientation="portrait">
+                  android:screenOrientation="portrait"
+                  android:theme="@style/NavigationActivityTheme">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->

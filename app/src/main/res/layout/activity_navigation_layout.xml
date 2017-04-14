@@ -11,15 +11,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                app:contentInsetStart="0dp"
-                style="@style/Toolbar"
-                app:titleTextAppearance="@style/ActionBar.TitleText"/>
-        </LinearLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            app:contentInsetStart="0dp"
+            android:fitsSystemWindows="true"
+            android:clipToPadding="true"
+            style="@style/Toolbar"
+            app:titleTextAppearance="@style/ActionBar.TitleText"/>
 
 
         <!--内容显示布局-->
@@ -35,6 +33,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/white"
+        android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_header"
         app:itemBackground="@drawable/menu_activited_selector"
         app:itemTextAppearance="@style/TextAppearance.WithColor"

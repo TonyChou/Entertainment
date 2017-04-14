@@ -10,7 +10,7 @@
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
     <color name="blue_btn">#ff22b0f3</color>
-    <color name="transparent2">#33000000</color>
+    <color name="transparent2">#11000000</color>
     <color name="draw_btn">#ff56de0a</color>
     <color name="edit_btn">#ff22b0f3</color>
     <color name="cancel_btn">#fffc500c</color>
@@ -23,4 +23,7 @@
     <color name="text_black">#000000</color>
 
     <color name="rippelColor">#FFFFFF</color>
+    <color name="status_bar_overlay">#00000000</color>
+    <color name="status_bar_apps">#ff558b2f</color>
+    ActivityBaseTheme
 </resources>

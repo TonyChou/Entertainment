@@ -205,7 +205,7 @@
     <!-- 600 -->
     <color name="button_normal_teal">#26a69a</color>
     <!-- 400 -->
-
+    action_green
     <color name="status_green">#0d5302</color>
     <!-- 900 -->
     <color name="action_green">#259b24</color>
