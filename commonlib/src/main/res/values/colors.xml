@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#444153</color>
-    <color name="colorPrimaryDark">#383547</color>
-    <color name="colorAccent">#444153</color>
+
+    <color name="main_colorPrimary">#009688</color>
+    <color name="main_colorPrimaryDark">#26A69A</color>
+    <color name="main_colorAccent">#009688</color>
+
+    <color name="colorPrimary">@color/main_colorPrimary</color>
+    <color name="colorPrimaryDark">@color/main_colorPrimaryDark</color>
+    <color name="colorAccent">@color/main_colorAccent</color>
+
+    <color name="navigation_item_selected">#3380CBC4</color>
+
+    <color name="douban_colorPrimary">#4CAF50</color>
+    <color name="douban_colorPrimaryDark">#66BB6A</color>
+    <color name="douban_colorAccent">#4CAF50</color>
+
+    <!--文字颜色-->
+    <color name="white_text">#ffffff</color>
 
     <color name="yellow">#fff6b404</color>
     <color name="light_yellow">#33f6b404</color>

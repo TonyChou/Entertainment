@@ -36,6 +36,9 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_header"
         app:itemBackground="@drawable/menu_activited_selector"
-        app:itemTextAppearance="@style/TextAppearance.WithColor"
-        app:menu="@menu/navigation_drawer" />
+        app:itemTextAppearance="@style/NavigationMenuStyle"
+        app:menu="@menu/navigation_drawer"
+        android:theme="@style/MenuTextStyle"
+        android:textColorSecondary="#000099"
+        app:itemTextColor="@drawable/menu_text_selector"/>
 </android.support.v4.widget.DrawerLayout>

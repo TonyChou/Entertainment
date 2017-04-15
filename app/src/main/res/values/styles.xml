@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowAnimationStyle">@style/AppAnimation</item>
-        <item name="actionModeBackground">@color/primaryLight</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -27,9 +27,9 @@
 
     <style name="TextAppearance" parent="android:TextAppearance"></style>
 
-    <style name="TextAppearance.WithColor">
+    <style name="NavigationMenuStyle">
         <item name="android:textColor">@drawable/menu_text_selector</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/navigation_item_size</item>
     </style>
 
     <style name="AppAnimation" parent="@android:style/Animation.Activity">
@@ -83,6 +83,11 @@
     </style>
     <style name="NavigationActivityTheme" parent="BaseTheme">
         <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="MenuTextStyle">
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+        <item name="android:textSize">@dimen/navigation_group_size</item>
     </style>
 
 </resources>
