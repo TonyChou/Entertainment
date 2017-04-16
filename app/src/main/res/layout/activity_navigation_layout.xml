@@ -17,7 +17,6 @@
             android:fitsSystemWindows="true"
             android:clipToPadding="true"
             style="@style/Toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextAppearance="@style/ActionBar.TitleText"/>
 
 

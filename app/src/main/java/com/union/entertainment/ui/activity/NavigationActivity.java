@@ -1,14 +1,11 @@
 package com.union.entertainment.ui.activity;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -21,10 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.union.commonlib.ui.ActionBarPage;
 import com.union.commonlib.ui.activity.BaseActivity;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.utils.LogUtils;
 import com.union.entertainment.R;
+import com.union.entertainment.ui.ActionBarHelper;
 import com.union.entertainment.ui.fragment.FragmentFactory;
 
 
@@ -39,6 +38,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     private BaseFragment mCurrentFragment;
     Toolbar toolbar;
     private MenuItem clickedItem;
+    private ActionBarHelper mToolBarHelper;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +46,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
         initToolBar();
         initDrawer();
         initNavigationMenuItem();
+        mToolBarHelper = new ActionBarHelper(this, toolbar, mDrawerLayout, navigationView, mDrawerToggle);
         switchFragment(FragmentFactory.FRAGMENT_LOCAL_PIC);
     }
 
@@ -239,5 +240,11 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
         } else {
             super.finish();
         }
+    }
+
+    @Override
+    public void syncToolBarStatus(ActionBarPage actionBarPage) {
+        super.syncToolBarStatus(actionBarPage);
+        mToolBarHelper.syncToolBarStatus(actionBarPage);
     }
 }

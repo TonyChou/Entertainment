@@ -1,8 +1,6 @@
 package com.union.fmdouban.ui.fragment;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.liblistview.widget.PinnedHeaderExpandableListView;
 import com.tulips.douban.model.ChannelsPage;
@@ -10,6 +8,7 @@ import com.tulips.douban.model.PlayerPage;
 import com.tulips.douban.service.DoubanParamsGen;
 import com.tulips.douban.service.DoubanService;
 import com.tulips.douban.service.DoubanUrl;
+import com.union.commonlib.ui.ActionBarPage;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.view.CircularProgress;
 import com.union.commonlib.ui.view.RefreshHeaderView;
@@ -18,7 +17,6 @@ import com.union.fmdouban.R;
 import com.union.fmdouban.ui.adapter.ChannelGroupAdapter;
 import com.union.net.ApiClient;
 import com.union.net.RetrofitClient;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +62,13 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
         mListView.showOverScrollHeader();
         this.mEmptyView.setOnClickListener(this);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        syncToolBarStatus(ActionBarPage.DOUBAN_FM_MAIN_PAGE);
+    }
+
     private void addHeaderView() {
         mHeaderView = new RefreshHeaderView(mActivity);
         mHeaderView.setRefreshListener(this);

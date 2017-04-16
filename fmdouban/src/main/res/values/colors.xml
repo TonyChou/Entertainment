@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="listview_group_bg">#DCE0E0E0</color>
+    <color name="listview_item_bg_normal">#BDBDBD</color>
+    <color name="listview_item_bg_selected">#EEEEEE</color>
+    <color name="listview_group_text_color">#FF9800</color>
+    <color name="text_white">#ffffff</color>
+    <color name="text_black">#000000</color>
 </resources>

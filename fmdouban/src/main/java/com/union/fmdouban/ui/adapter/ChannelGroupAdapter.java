@@ -2,6 +2,7 @@ package com.union.fmdouban.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -106,6 +107,7 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
         } else {
             holder = (ChannelGroupAdapter.ChannelHolder)convertView.getTag();
         }
+
 
         holder.setData((ChannelsPage.Channel) getChild(groupPosition, childPosition));
         holder.channelPosition = childPosition;

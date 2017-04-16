@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.union.commonlib.R;
+import com.union.commonlib.ui.ActionBarPage;
 import com.union.commonlib.ui.fragment.BaseFragment;
 
 /**
@@ -64,5 +64,13 @@ public class BaseActivity extends AppCompatActivity {
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 设置Actionbar
+     * @param actionBarPage
+     */
+    public void syncToolBarStatus(ActionBarPage actionBarPage) {
+
     }
 }

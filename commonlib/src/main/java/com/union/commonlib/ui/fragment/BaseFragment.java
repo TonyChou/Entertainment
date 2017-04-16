@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.union.commonlib.ui.ActionBarPage;
 import com.union.commonlib.ui.activity.BaseActivity;
 import com.union.commonlib.utils.LogUtils;
 
@@ -101,6 +102,12 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtils.i(TAG, "onResume  ========  ");
+    }
+
     /**
      * 设置状态栏颜色
      * @param colorId
@@ -113,5 +120,15 @@ public abstract class BaseFragment extends Fragment {
 
     public boolean checkPermission(@NonNull String permission) {
         return ActivityCompat.checkSelfPermission(mActivity, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * 设置Actionbar
+     * @param actionBarPage
+     */
+    public void syncToolBarStatus(ActionBarPage actionBarPage) {
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).syncToolBarStatus(actionBarPage);
+        }
     }
 }
