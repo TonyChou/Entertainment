@@ -1,9 +1,14 @@
 package com.union.entertainment.ui.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +23,7 @@ import android.widget.TextView;
 
 import com.union.commonlib.ui.activity.BaseActivity;
 import com.union.commonlib.ui.fragment.BaseFragment;
+import com.union.commonlib.utils.LogUtils;
 import com.union.entertainment.R;
 import com.union.entertainment.ui.fragment.FragmentFactory;
 
@@ -32,34 +38,40 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     private ActionBarDrawerToggle mDrawerToggle;
     private BaseFragment mCurrentFragment;
     Toolbar toolbar;
+    private MenuItem clickedItem;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_layout);
-        initDrawer();
         initToolBar();
+        initDrawer();
         initNavigationMenuItem();
-        initPageView();
-
         switchFragment(FragmentFactory.FRAGMENT_LOCAL_PIC);
     }
 
     private void initDrawer() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //mDrawerToggle.setDrawerIndicatorEnabled(false);
         mDrawerLayout.setDrawerListener(this);
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    protected void initPageView() {
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
     }
 
+    @Override
+    public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+
+    }
 
     private void initNavigationMenuItem() {
         TextView spotifyNews = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.music_spotify)).findViewById(R.id.msg);
@@ -68,10 +80,14 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
 
 
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.pic_local);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        //getSupportActionBar().setHomeAsUpIndicator(upArrow);
+        //toolbar.setNavigationIcon(upArrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,10 +117,11 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
                 transaction.hide(mCurrentFragment);
             }
             if ( !f.isAdded()) {
-                transaction.add(R.id.frame_content, f).commit();
+                transaction.add(R.id.frame_content, f, f.getClass().toString()).commit();
             } else {
                 transaction.show(f).commit();
             }
+
             mCurrentFragment = f;
         }
     }
@@ -115,28 +132,37 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     @Override
     public void onDrawerOpened(View drawerView) {// 打开drawer
         invalidateOptionsMenu();
+        mDrawerToggle.onDrawerOpened(drawerView);
     }
 
     @Override
     public void onDrawerClosed(View drawerView) {// 关闭drawer
+        LogUtils.i(TAG, "onDrawerClosed");
+        mDrawerToggle.onDrawerClosed(drawerView);
         invalidateOptionsMenu();
+        if (clickedItem != null) {
+            switchFragment(getFragmentPosition(clickedItem.getItemId()));
+        }
     }
 
     @Override
     public void onDrawerSlide(View drawerView, float slideOffset) {// drawer滑动的回调
+        LogUtils.i(TAG, "onDrawerSlide");
+        mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
     }
 
     @Override
     public void onDrawerStateChanged(int newState) {// drawer状态改变的回调
+        LogUtils.i(TAG, "onDrawerStateChanged");
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        mDrawerLayout.closeDrawer(GravityCompat.START);
         setToolBarTitle(item.getTitle());
         item.setCheckable(true);//设置选项可选
         item.setChecked(true);
-        switchFragment(getFragmentPosition(item.getItemId()));
+        clickedItem = item;
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -214,5 +240,4 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
             super.finish();
         }
     }
-
 }

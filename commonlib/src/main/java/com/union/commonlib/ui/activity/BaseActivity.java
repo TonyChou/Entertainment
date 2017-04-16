@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.union.commonlib.R;
+import com.union.commonlib.ui.fragment.BaseFragment;
 
 /**
  * Created by zhouxiaming on 2016/4/6.
  */
 
 public class BaseActivity extends AppCompatActivity {
+    protected String TAG = this.getClass().getSimpleName();
     SystemBarTintManager tintManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,5 +41,28 @@ public class BaseActivity extends AppCompatActivity {
 
     public void hideActionBar() {
 
+    }
+
+    /**
+     * replace container fragment
+     *
+     * @param fragment your's fragment
+     * @param isAddToBackStack is add to fragment back stack
+     */
+    public void replaceContainerFragmemt(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
+        if (null == fragment) {
+            return;
+        }
+        try {
+            // setmPayBaseFragment(mPayBaseFragment);
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(containerId, fragment, fragment.getClass().toString());
+            if (isAddToBackStack) {
+                transaction.addToBackStack(fragment.getClass().toString());
+            }
+            transaction.commit();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 }

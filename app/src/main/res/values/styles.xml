@@ -52,6 +52,11 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
+
     <style name="Toolbar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -83,6 +88,7 @@
     </style>
     <style name="NavigationActivityTheme" parent="BaseTheme">
         <item name="windowActionModeOverlay">true</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
     </style>
 
     <style name="MenuTextStyle">

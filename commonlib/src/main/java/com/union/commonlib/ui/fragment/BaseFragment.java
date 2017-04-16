@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.union.commonlib.ui.activity.BaseActivity;
+import com.union.commonlib.utils.LogUtils;
 
 /**
  * Created by zhouxiaming on 16/3/6.
@@ -47,7 +48,10 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        long begin = System.currentTimeMillis();
         loadData();
+        long end = System.currentTimeMillis();
+        LogUtils.i(TAG, "loaddata time : " + (end - begin));
     }
 
     protected abstract int getLayoutResourceId();

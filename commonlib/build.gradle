@@ -42,6 +42,7 @@ dependencies {
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile project(':liblistview')
 
+
     //DoubanAPI module 应用
 
     compile 'com.squareup.okhttp3:okhttp:3.6.0'

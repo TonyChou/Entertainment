@@ -1,6 +1,8 @@
 package com.union.fmdouban.ui.fragment;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.liblistview.widget.PinnedHeaderExpandableListView;
 import com.tulips.douban.model.ChannelsPage;
@@ -50,6 +52,7 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
     protected void initView() {
         super.initView();
         this.mLoadingBar = (CircularProgress)mRootView.findViewById(R.id.rl_loading);
+        this.mLoadingBar.setVisibility(View.VISIBLE);
         this.mEmptyView = mRootView.findViewById(R.id.empty_layout);
         this.mListView = (PinnedHeaderExpandableListView) mRootView.findViewById(R.id.channel_list);
         this.mAdapter = new ChannelGroupAdapter(mActivity, mListView, this);
@@ -71,8 +74,11 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
     @Override
     protected void loadData() {
         super.loadData();
-        RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
-        douBanService = mApiClient.createApi(DoubanService.class);
+        if (douBanService == null) {
+            RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
+            douBanService = mApiClient.createApi(DoubanService.class);
+        }
+
         douBanService.appChannels(DoubanParamsGen.genGetAppChannelsParams())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

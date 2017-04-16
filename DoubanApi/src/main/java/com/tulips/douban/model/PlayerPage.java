@@ -88,7 +88,7 @@ public class PlayerPage extends BasePage {
         public int related_site_id;
 
         @SerializedName("is_site_artist")
-        public int is_site_artist;
+        public boolean is_site_artist;
 
         @SerializedName("id")
         public String id;
