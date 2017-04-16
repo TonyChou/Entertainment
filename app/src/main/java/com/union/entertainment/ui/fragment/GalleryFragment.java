@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.union.commonlib.data.LoaderToken;
+import com.union.commonlib.ui.ActionBarPage;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.entertainment.R;
 import com.union.entertainment.module.picture.Photo;
@@ -59,6 +60,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     protected int getLayoutResourceId() {
         return R.layout.fragment_gallery;
     }
+
 
     private void loadPicture() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -139,6 +141,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onResume() {
         super.onResume();
+        syncToolBarStatus(ActionBarPage.LOCAL_PHOTO_PAGE);
         loadPicture();
     }
 

@@ -23,4 +23,5 @@ android {
 
 dependencies {
     compile project(':commonlib')
+    testCompile 'junit:junit:4.12'
 }

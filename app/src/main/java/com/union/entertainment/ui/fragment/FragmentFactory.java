@@ -1,6 +1,7 @@
 package com.union.entertainment.ui.fragment;
 
 import com.union.commonlib.ui.fragment.BaseFragment;
+import com.union.fmdouban.ui.fragment.DouBanMainFragment;
 import com.union.fmdouban.ui.fragment.DoubanFMFragment;
 import com.union.fmdouban.ui.fragment.FMChannelsFragment;
 
@@ -35,7 +36,7 @@ public class FragmentFactory {
 					break;
 				case FRAGMENT_DOUBAN_FM:
 					//fragment = FMPlayerFragment.newInstance();
-					fragment = DoubanFMFragment.newInstance();
+					fragment = DouBanMainFragment.newInstance();
 					break;
 				case FRAGMENT_SPOTIFY:
 					fragment = FMChannelsFragment.newInstance();

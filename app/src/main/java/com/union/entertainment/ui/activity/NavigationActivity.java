@@ -132,7 +132,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
      */
     @Override
     public void onDrawerOpened(View drawerView) {// 打开drawer
-        invalidateOptionsMenu();
+        //invalidateOptionsMenu();
         mDrawerToggle.onDrawerOpened(drawerView);
     }
 
@@ -140,7 +140,7 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     public void onDrawerClosed(View drawerView) {// 关闭drawer
         LogUtils.i(TAG, "onDrawerClosed");
         mDrawerToggle.onDrawerClosed(drawerView);
-        invalidateOptionsMenu();
+        //invalidateOptionsMenu();
         if (clickedItem != null) {
             switchFragment(getFragmentPosition(clickedItem.getItemId()));
         }
@@ -179,7 +179,6 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
                 break;
             case R.id.fm_douban:
                 position = FragmentFactory.FRAGMENT_DOUBAN_FM;
-                showToolBar(true);
                 break;
             case R.id.music_local:
                 position = FragmentFactory.FRAGMENT_LOCAL_MUSIC;
