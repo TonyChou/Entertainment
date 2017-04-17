@@ -23,7 +23,6 @@
             android:layout_below="@id/player_controller_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimaryDark"
             android:layout_marginBottom="15dip"/>
 
     </RelativeLayout>
@@ -37,7 +36,7 @@
         android:id="@+id/foot_button"
         android:layout_width="@dimen/circle_button_height"
         android:layout_height="@dimen/circle_button_height"
-        android:background="@drawable/circle_light_yellow_shape"
+        android:background="@drawable/douban_circle_shape"
         android:gravity="center">
 
         <android.support.v7.widget.AppCompatTextView

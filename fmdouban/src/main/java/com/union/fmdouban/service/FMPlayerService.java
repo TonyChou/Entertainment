@@ -8,50 +8,39 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonObject;
+import com.tulips.douban.model.ChannelsPage;
+import com.tulips.douban.model.PlayerPage;
+import com.tulips.douban.service.DoubanParamsGen;
+import com.tulips.douban.service.DoubanService;
+import com.tulips.douban.service.DoubanUrl;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
-import com.union.fmdouban.api.ExecuteResult;
-import com.union.fmdouban.api.FMApi;
-import com.union.fmdouban.api.FMCallBack;
-import com.union.fmdouban.api.FMParserFactory;
-import com.union.fmdouban.api.FMReport;
-import com.union.fmdouban.api.bean.FMLyric;
-import com.union.fmdouban.api.bean.FMRichChannel;
-import com.union.fmdouban.api.bean.FMSong;
 import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.play.PlayerListener;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.union.net.ApiClient;
+import com.union.net.RetrofitClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by zhouxiaming on 2015/4/16.
  */
 
 public class FMPlayerService extends Service implements PlayerListener {
-    private static List<FMSong> songCache = new ArrayList<FMSong>();
+    private static List<PlayerPage.DouBanSong> songCache = new ArrayList<PlayerPage.DouBanSong>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
     private final int PLAYLIST_LOADED_RESULT = PROGRESS_UPDATE + 1; //歌曲加载结果
     private final int CHANGE_CHANNEL_FAILED = PLAYLIST_LOADED_RESULT + 1; //切换频道失败
@@ -59,15 +48,15 @@ public class FMPlayerService extends Service implements PlayerListener {
     private static FMMediaPlayer mPlayer;
     private PlayerListener playerListener;
     private final IBinder mBinder = new LocalBinder();
-    private static FMRichChannel mChannel;
+    private static ChannelsPage.Channel mCurrentChannel;
     private static PlayState mCurrentPLayState = PlayState.NONE;
-    RequestQueue mQueue;
     private static int mSongIndex = 0;
     Context mContext;
     private Timer mProgressTimer;
     private boolean isTimerStarted = false;
     PlayerControllerListener controllerListener;
-    Queue<FMSong> mPlayList = new LinkedList<FMSong>();
+    private DoubanService douBanService;
+    Queue<PlayerPage.DouBanSong> mPlayList = new LinkedList<PlayerPage.DouBanSong>();
 
 
     @Override
@@ -82,7 +71,7 @@ public class FMPlayerService extends Service implements PlayerListener {
         mCurrentPLayState = PlayState.STOP;
         refreshView(StateFrom.FINISH);
         stopProgressTimer();
-        loadSongAndReport();
+        loadSongInfoFromServer();
     }
 
     @Override
@@ -113,7 +102,6 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void onCreate() {
         super.onCreate();
         mContext = this.getApplicationContext();
-        mQueue = Volley.newRequestQueue(this);
         mPlayer = FMMediaPlayer.getInstance();
         mPlayer.setPlayerListener(this);
     }
@@ -126,7 +114,7 @@ public class FMPlayerService extends Service implements PlayerListener {
                 int progress = msg.arg1;
                 sendProgressCallback(progress);
             } else if (what == PLAYLIST_LOADED_RESULT) {
-                handleSongResult((ExecuteResult)msg.obj);
+                handleSongResult((PlayerPage)msg.obj);
             } else if (what == CHANGE_CHANNEL_FAILED) {
                 Toast.makeText(mContext, R.string.change_channel_failed, Toast.LENGTH_SHORT).show();
             }
@@ -145,6 +133,10 @@ public class FMPlayerService extends Service implements PlayerListener {
 
     @Override
     public IBinder onBind(Intent intent) {
+        if (douBanService == null) {
+            RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
+            douBanService = mApiClient.createApi(DoubanService.class);
+        }
         return mBinder;
     }
 
@@ -179,8 +171,6 @@ public class FMPlayerService extends Service implements PlayerListener {
         if (controllerListener != null) {
             controllerListener.loadCover();
         }
-
-        getSongLyric();
     }
 
 
@@ -204,7 +194,7 @@ public class FMPlayerService extends Service implements PlayerListener {
 
     private void refreshView(StateFrom stateFrom) {
         if (controllerListener != null) {
-            controllerListener.refreshControllerView(mChannel, getCurrentSong(), getPlayState(), stateFrom);
+            controllerListener.refreshControllerView(mCurrentChannel, getCurrentSong(), getPlayState(), stateFrom);
         }
     }
 
@@ -216,11 +206,11 @@ public class FMPlayerService extends Service implements PlayerListener {
             mCurrentPLayState = PlayState.PLAYING;
             resume();
         } else {
-            FMSong song = getSong();
+            PlayerPage.DouBanSong song = getSong();
             if (song != null) {
-                play(song.getUrl());
+                play(song.url);
             } else if (getCurrentChannel() != null) {
-                loadSongAndReport();
+                loadSongInfoFromServer();
             } else {
                 mCurrentPLayState = PlayState.NONE;
             }
@@ -229,7 +219,7 @@ public class FMPlayerService extends Service implements PlayerListener {
 
     }
 
-    private FMSong getSong() {
+    private PlayerPage.DouBanSong getSong() {
         if (songCache.size() > 0 && mSongIndex <= songCache.size() - 1) {
             return songCache.get(mSongIndex);
         } else {
@@ -273,7 +263,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void playNext() {
         mCurrentPLayState = PlayState.NONE;
         stop();
-        loadSongAndReport();
+        loadSongInfoFromServer();
     }
 
 
@@ -282,15 +272,12 @@ public class FMPlayerService extends Service implements PlayerListener {
         if (tempIndex <= songCache.size() - 1 && tempIndex >= 0) {
             mSongIndex--;
             stop();
-            play(songCache.get(mSongIndex).getUrl());
+            play(songCache.get(mSongIndex).url);
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.no_more_pre_songs), Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void notifyToRefreshView() {
-        //TODO
-    }
 
     public static boolean isPlaying() {
         if (mPlayer == null) {
@@ -305,87 +292,50 @@ public class FMPlayerService extends Service implements PlayerListener {
      * @param channel
      * @return
      */
-    public boolean switchChannel(FMRichChannel channel) {
-        if (mChannel != null && mChannel.getChannelId() == channel.getChannelId()) {
-            return false;
+    public void switchChannel(ChannelsPage.Channel channel) {
+        if (mCurrentChannel != null && mCurrentChannel.channelId == channel.channelId) {
+            return;
         }
         songCache.clear();
         mPlayList.clear();
         mCurrentPLayState = PlayState.NONE;
-        String fcid = mChannel != null ? String.valueOf(mChannel.getChannelId()) : null;
-        String tcid = String.valueOf(channel.getChannelId());
-        mChannel = channel;
-        FMApi.getInstance().changeChannel(fcid, tcid, new FMCallBack() {
-            @Override
-            public void onRequestResult(ExecuteResult result) {
-                boolean changeSuccess = false;
-                if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(result.getResponseString());
-                        int ret = jsonObject.has("r") ? jsonObject.getInt("r") : -1;
-                        if (ret == 0) { //切换频道成功
-                            changeSuccess = true;
-                            loadSongAndReport();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        changeSuccess = false;
-                    }
-                }
-                if (!changeSuccess) {
-                    Message msg = handler.obtainMessage(CHANGE_CHANNEL_FAILED);
-                    msg.sendToTarget();
-                }
-            }
-        });
-        return true;
+        mCurrentChannel = channel;
+        loadSongInfoFromServer();
     }
-
-
-
-
 
     /**
      * 加载歌曲信息
      */
-    private void loadSongAndReport() {
-        if (mChannel == null) {
+    private void loadSongInfoFromServer() {
+        if (mCurrentChannel == null) {
             return;
         }
-        // 请求下一个playList
-        FMSong song = getCurrentSong();
-        String sid = song != null?song.getSid() : null;
-        String reportType = FMReport.genReportType(song, mPlayList, false, false);
-        FMApi.getInstance().reportAndGetPlayList(String.valueOf(mChannel.getChannelId()), sid, reportType, new FMCallBack() {
-            @Override
-            public void onRequestResult(ExecuteResult result) {
-                Message msg = handler.obtainMessage(PLAYLIST_LOADED_RESULT);
-                msg.obj = result;
-                msg.sendToTarget();
-            }
-        });
+        douBanService.playList(DoubanParamsGen.genGetPlayListParams(mCurrentChannel.channelId))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<PlayerPage>() {
+                    @Override
+                    public void onNext(PlayerPage playerPage) {
+                        LogUtils.i(TAG, "onNext ==== ");
+                        Message msg = handler.obtainMessage(PLAYLIST_LOADED_RESULT);
+                        msg.obj = playerPage;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LogUtils.i(TAG, "onError ==== ");
+                        Message msg = handler.obtainMessage(CHANGE_CHANNEL_FAILED);
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LogUtils.i(TAG, "onComplete ==== ");
+                    }
+                });
     }
 
-    /**
-     * 切换频道时需要重新加载播放列表
-     */
-    private void loadSongWhenSwitchChannel() {
-        if (mChannel == null) {
-            return;
-        }
-        // 请求下一个playList
-        FMSong song = getCurrentSong();
-        String sid = song != null?song.getSid() : null;
-        String reportType = FMReport.genReportType(song, mPlayList, false, true);
-        FMApi.getInstance().reportAndGetPlayList(String.valueOf(mChannel.getChannelId()), sid, reportType, new FMCallBack() {
-            @Override
-            public void onRequestResult(ExecuteResult result) {
-                Message msg = handler.obtainMessage(PLAYLIST_LOADED_RESULT);
-                msg.obj = result;
-                msg.sendToTarget();
-            }
-        });
-    }
 
 
 
@@ -393,15 +343,15 @@ public class FMPlayerService extends Service implements PlayerListener {
         if (mPlayList == null || mPlayList.size() < 1) {
             return false;
         }
-        FMSong song = mPlayList.poll();
+        PlayerPage.DouBanSong song = mPlayList.poll();
         //最多只缓存50首歌曲信息
         if (songCache.size() - 1 == Constant.MAX_CACHE_SONG) {
             songCache.remove(0);
         }
-        if (song.getUrl() != null) { //有时候返回的Json里面不包含歌曲信息
+        if (song.url != null) { //有时候返回的Json里面不包含歌曲信息
             songCache.add(song);
             mSongIndex = songCache.size() - 1;
-            play(song.getUrl());
+            play(song.url);
             return true;
         }
         return false;
@@ -411,88 +361,28 @@ public class FMPlayerService extends Service implements PlayerListener {
      * 解析Playlist
      * @param result
      */
-    private void handleSongResult(ExecuteResult result) {
-        if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
-            Queue<FMSong> list = FMParserFactory.parserToSongList(result.getResponseString());
-            if (list != null && list.size() > 0) {
-                mPlayList.addAll(list);
-            }
+    private void handleSongResult(PlayerPage result) {
+        if (result != null && result.songList != null && result.songList.size() > 0) {
+
+            mPlayList.addAll(result.songList);
             if (!addTOCacheAndPlay()) {
-                loadSongAndReport();
+                loadSongInfoFromServer();
             }
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void loadLyric() {
-        final FMSong song = getCurrentSong();
-        if (song == null) {
-            return;
-        }
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("sid", song.getSid());
-        params.put("ssid", song.getSid());
 
-        StringRequest request = new StringRequest(Request.Method.POST, Constant.SONG_LYRIC_DOUBAN_FM, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String jsonObject) {
-                Log.i(TAG, "onResponse: " + jsonObject);
-                FMLyric lyric = new FMLyric(jsonObject);
-                song.setLyric(lyric);
-                //TODO 通知界面刷新歌词显示
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                LogUtils.e(TAG, "load lyric failed: " + song.getTitle());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                return params;
-            }
-        };
-        mQueue.add(request);
-        mQueue.start();
+
+
+
+
+    public static ChannelsPage.Channel getCurrentChannel() {
+        return mCurrentChannel;
     }
 
-    /**
-     * 获取歌词
-     */
-    public void getSongLyric() {
-        final FMSong song = getCurrentSong();
-        if (song == null) {
-            return;
-        }
-
-        if (song.getLyric() != null) {
-            if (controllerListener != null) {
-                controllerListener.renderLyric(song);
-            }
-        } else {
-            FMApi.getInstance().getSongLyric(song.getSid(), song.getSsid(), new FMCallBack() {
-                @Override
-                public void onRequestResult(ExecuteResult result) {
-                    //TODO
-                    if (result.getResult() == ExecuteResult.OK && result.getResponseString() != null) {
-                        FMLyric lyric = new FMLyric(result.getResponseString());
-                        song.setLyric(lyric);
-                        if (controllerListener != null) {
-                            controllerListener.renderLyric(song);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-
-    public static FMRichChannel getCurrentChannel() {
-        return mChannel;
-    }
-
-    public FMSong getCurrentSong() {
+    public PlayerPage.DouBanSong getCurrentSong() {
         if (songCache.size() > 0 && songCache.size() - 1 >= mSongIndex) {
             return songCache.get(mSongIndex);
         }

@@ -12,18 +12,16 @@ import android.widget.TextView;
 
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
+import com.tulips.douban.model.ChannelsPage;
+import com.tulips.douban.model.PlayerPage;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimUtils;
 import com.union.commonlib.ui.view.CircleProgressBar;
 import com.union.commonlib.ui.view.TintUtils;
 import com.union.fmdouban.R;
-import com.union.fmdouban.api.bean.FMLyric;
-import com.union.fmdouban.api.bean.FMRichChannel;
-import com.union.fmdouban.api.bean.FMSinger;
-import com.union.fmdouban.api.bean.FMSong;
+
 import com.union.fmdouban.play.PlayerControllerListener;
 import com.union.fmdouban.ui.fragment.FMPlayerFragment;
-import com.union.fmdouban.ui.lyric.LyricUtils;
 import com.union.fmdouban.ui.lyric.widget.LyricView;
 
 /**
@@ -114,31 +112,31 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
 
 
 
-    private void setChannelName(FMRichChannel channel) {
+    private void setChannelName(ChannelsPage.Channel channel) {
         if (channel == null) {
             mChannelNameView.setVisibility(View.INVISIBLE);
         } else {
             mChannelNameView.setVisibility(View.VISIBLE);
-            mChannelNameView.setText(channel.getName());
+            mChannelNameView.setText(channel.channelName);
         }
     }
 
-    private void setSongName(FMSong song) {
+    private void setSongName(PlayerPage.DouBanSong song) {
         if (song== null) {
             mSongNameView.setVisibility(View.INVISIBLE);
         } else {
             mSongNameView.setVisibility(View.VISIBLE);
 
             StringBuffer sb = new StringBuffer();
-            if (song.getTitle() != null) {
-                sb.append(song.getTitle());
+            if (song.title != null) {
+                sb.append(song.title);
             } else {
                 sb.append("Unknown");
             }
-            if (song.getSingers() != null && song.getSingers().size() > 0) {
+            if (song.singers != null && song.singers.size() > 0) {
                 sb.append("--");
-                for (FMSinger singer : song.getSingers()) {
-                    sb.append(singer.getName());
+                for (PlayerPage.DouBanSongSinger singer : song.singers) {
+                    sb.append(singer.name);
                     sb.append("&");
                 }
             }
@@ -212,33 +210,18 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
      * 加载歌曲专辑图片
      */
     public void loadCover() {
-        FMSong song = mFragment.getPlayerService().getCurrentSong();
+        PlayerPage.DouBanSong song = mFragment.getPlayerService().getCurrentSong();
         if (song == null) {
             return;
         }
-        Picasso.with(mFragment.getActivity()).load(song.getPicture()).resize(mCover.getWidth(), mCover.getHeight())
+        Picasso.with(mFragment.getActivity()).load(song.picture).resize(mCover.getWidth(), mCover.getHeight())
                 .centerCrop().config(Bitmap.Config.ARGB_8888).placeholder(R.drawable.example)
                 .into(mCover);
     }
 
-    /**
-     * 渲染歌词
-     */
-    public void renderLyric(FMSong song) {
-        //TODO
-        FMLyric lyric = song.getLyric();
-        if (lyric != null && lyric.getLyric() != null) {
-            Log.i(TAG, lyric.toString());
-            Log.i(TAG, "lyric: " + lyric.getLyric());
-            mLyricView.reset();
-            mLyricView.setLyric(LyricUtils.parseLyric(lyric.getLyric()));
-            mLyricView.setLyricIndex(0);
-            mLyricView.play();
-        }
-    }
 
     @Override
-    public void refreshControllerView(FMRichChannel channel, FMSong song, FMPlayerService.PlayState state, FMPlayerService.StateFrom stateFrom) {
+    public void refreshControllerView(ChannelsPage.Channel channel, PlayerPage.DouBanSong song, FMPlayerService.PlayState state, FMPlayerService.StateFrom stateFrom) {
         refreshViews(state, stateFrom);
         setChannelName(channel);
         setSongName(song);
@@ -247,6 +230,11 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     @Override
     public void sendProgress(int progress) {
         mProgressBar.setProgress(progress);
+    }
+
+    @Override
+    public void renderLyric(PlayerPage.DouBanSong song) {
+
     }
 
 }

@@ -34,7 +34,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getArgument();
         mActivity = this.getActivity();
     }
 
@@ -63,19 +62,6 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
-    protected void getArgument() {
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    protected void setArguments(String param1, String param2) {
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        setArguments(args);
-    }
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);

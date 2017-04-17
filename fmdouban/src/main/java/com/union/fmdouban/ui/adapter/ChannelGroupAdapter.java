@@ -2,7 +2,6 @@ package com.union.fmdouban.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -111,7 +110,7 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
 
         holder.setData((ChannelsPage.Channel) getChild(groupPosition, childPosition));
         holder.channelPosition = childPosition;
-        holder.channelId = ((ChannelsPage.Channel)getChild(groupPosition, childPosition)).channelId;
+        holder.channel = (ChannelsPage.Channel)getChild(groupPosition, childPosition);
         return convertView;
     }
 
@@ -203,7 +202,7 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
         } else if (obj instanceof ChannelHolder) {
             ChannelHolder holder = (ChannelHolder) obj;
             if (onChannelClickListener != null) {
-                onChannelClickListener.onChannelClick(holder.channelId);
+                onChannelClickListener.onChannelClick(holder.channel);
             }
         }
     }
@@ -211,7 +210,7 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
 
     class ChannelHolder{
         public int channelPosition;
-        public String channelId;
+        private ChannelsPage.Channel channel;
         private TextView channelNameView;
         private RoundedImageView channelImage;
         public ChannelHolder(View itemView) {
@@ -243,6 +242,6 @@ public class ChannelGroupAdapter extends BaseFacePreloadExpandableListAdapter im
     }
 
     public interface OnChannelClickListener {
-        public void onChannelClick(String channelId);
+        public void onChannelClick(ChannelsPage.Channel channel);
     }
 }

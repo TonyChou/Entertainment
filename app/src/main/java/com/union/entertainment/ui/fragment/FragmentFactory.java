@@ -2,6 +2,7 @@ package com.union.entertainment.ui.fragment;
 
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.fmdouban.ui.fragment.DouBanMainFragment;
+import com.union.fmdouban.ui.fragment.FMPlayerFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,14 +12,15 @@ import java.util.Map;
  */
 public class FragmentFactory {
 
-	public static final int FRAGMENT_LOCAL_PIC = 0;
-	public static final int FRAGMENT_NETWORK_PIC = 1;
+	public static final int FRAGMENT_LOCAL_PIC = 0x01;
+	public static final int FRAGMENT_NETWORK_PIC = 0x10;
 
-	public static final int FRAGMENT_DOUBAN_FM = 2;
+	public static final int FRAGMENT_DOUBAN_FM = 0x20;
+	public static final int FRAGMeNT_DOUBAN_PLAYER = 0x21;
 
-	public static final int FRAGMENT_LOCAL_MUSIC = 3;
-	public static final int FRAGMENT_SPOTIFY = 4;
-	public static final int FRAGMENT_QQ = 5;
+	public static final int FRAGMENT_LOCAL_MUSIC = 0x30;
+	public static final int FRAGMENT_SPOTIFY = 0x40;
+	public static final int FRAGMENT_QQ = 0x50;
 
 	public static final int FRAGMENT_TEST = -1;
 
@@ -35,6 +37,9 @@ public class FragmentFactory {
 				case FRAGMENT_DOUBAN_FM:
 					//fragment = FMPlayerFragment.newInstance();
 					fragment = DouBanMainFragment.newInstance();
+					break;
+				case FRAGMeNT_DOUBAN_PLAYER:
+					fragment = FMPlayerFragment.newInstance();
 					break;
 				case FRAGMENT_SPOTIFY:
 					fragment = TestFragment.newInstance(null, null);

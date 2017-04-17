@@ -1,5 +1,6 @@
 package com.union.fmdouban.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 
 import com.liblistview.widget.PinnedHeaderExpandableListView;
@@ -158,27 +159,11 @@ public class DouBanChannelListFragment extends BaseFragment implements View.OnCl
 
 
     @Override
-    public void onChannelClick(String channelId) {
-        ((BaseActivity)mActivity).replaceContainerFragment(FMPlayerFragment.newInstance(), true);
-
-        douBanService.playList(DoubanParamsGen.genGetPlayListParams(channelId))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<PlayerPage>() {
-                    @Override
-                    public void onNext(PlayerPage playerPage) {
-                        LogUtils.i(TAG, "onNext ==== ");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        LogUtils.i(TAG, "onError ==== ");
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        LogUtils.i(TAG, "onComplete ==== ");
-                    }
-                });
+    public void onChannelClick(ChannelsPage.Channel channel) {
+        BaseFragment fragment = FMPlayerFragment.newInstance();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("channel", channel);
+        fragment.setArguments(bundle);
+        ((BaseActivity)mActivity).replaceContainerFragment(fragment, true);
     }
 }

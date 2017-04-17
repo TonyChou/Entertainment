@@ -1,6 +1,7 @@
 package com.union.fmdouban.play;
 
-import com.union.fmdouban.api.bean.FMRichChannel;
+
+import com.tulips.douban.model.ChannelsPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class FMController {
      * 切换频道
      * @param channel
      */
-    public static void switchChannel(FMRichChannel channel) {
+    public static void switchChannel(ChannelsPage.Channel channel) {
         synchronized (fmchangedListeners) {
             for (FMChannelChangedListener listener : fmchangedListeners) {
                 listener.changeFMChannel(channel);
@@ -54,6 +55,6 @@ public class FMController {
 
 
     public interface FMChannelChangedListener{
-        public void changeFMChannel(FMRichChannel channel);
+        public void changeFMChannel(ChannelsPage.Channel channel);
     }
 }

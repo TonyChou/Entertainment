@@ -8,11 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatTextView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -23,17 +20,14 @@ import com.facebook.rebound.SpringSystem;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
-import com.union.commonlib.cache.CacheManager;
+import com.tulips.douban.model.ChannelsPage;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
 import com.union.commonlib.ui.anim.FaceBookRebound;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.view.TintUtils;
+import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
-import com.union.fmdouban.api.ExecuteResult;
-import com.union.fmdouban.api.FMApi;
-import com.union.fmdouban.api.FMCallBack;
-import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.service.PlayerController;
@@ -57,6 +51,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     private List<Spring> springMap = new ArrayList<Spring>();
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
+    private ChannelsPage.Channel channel;
 
     Handler handler = new Handler() {
         @Override
@@ -73,6 +68,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initChannel();
         mPlayerController = PlayerController.getInstance();
         mSpringSystem = SpringSystem.create();
         mAnimCallback = new AnimCallBack();
@@ -80,10 +76,25 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         FMController.registerFMChannelListener(this);
     }
 
+    private void initChannel() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            channel = (ChannelsPage.Channel)bundle.getSerializable("channel");
+        }
+    }
+
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_player_layout;
+    }
+
+    @Override
+    protected void loadData() {
+        super.loadData();
+        if (channel != null) {
+            //switchChannel(channel);
+        }
     }
 
     @Override
@@ -113,17 +124,6 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         }
     }
 
-
-    private void loadChannel() {
-        FMApi.getInstance().getFmChannels(new FMCallBack() {
-            @Override
-            public void onRequestResult(ExecuteResult result) {
-                Message msg = handler.obtainMessage(REFRESH_CHANNEL_INFO);
-                msg.obj = result;
-                msg.sendToTarget();
-            }
-        });
-    }
 
 
 
@@ -170,13 +170,15 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         return super.onBackPress();
     }
 
-    public boolean switchChannel(FMRichChannel channel) {
+    public void switchChannel(ChannelsPage.Channel channel) {
+        if (channel == null) {
+            LogUtils.i(TAG, "Channel is null ----");
+        }
         getPlayerService().switchChannel(channel);
-        return true;
     }
 
     @Override
-    public void changeFMChannel(FMRichChannel channel) {
+    public void changeFMChannel(ChannelsPage.Channel channel) {
         switchChannel(channel);
     }
 
@@ -202,6 +204,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPlayerService = ((FMPlayerService.LocalBinder) service).getPlayerService();
             mPlayerService.setControllerListener(mPlayerController); //设置播放监听
+            switchChannel(channel);
         }
 
         @Override
@@ -209,6 +212,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
             mPlayerService = null;
         }
     };
+
 
 
 }
