@@ -59,7 +59,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:textColor="@color/text_white"
+            android:textColor="@color/player_song_name_color"
             android:textSize="@dimen/song_name_size" />
 
         <TextView
@@ -72,7 +72,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:textColor="@color/text_white"
+            android:textColor="@color/player_channel_name_color"
             android:textSize="@dimen/channel_name_size" />
 
         <LinearLayout

@@ -30,7 +30,7 @@ import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.service.FMPlayerService;
-import com.union.fmdouban.service.PlayerController;
+import com.union.fmdouban.service.PlayerUIController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     private final int REFRESH_CHANNEL_INFO = 0x000012;
     private static final Interpolator sDecelerator = new DecelerateInterpolator();
 
-    private PlayerController mPlayerController;
+    private PlayerUIController mPlayerController;
     private View mControllerView;
     View mShowHideButton;
     ImageView mCoverImage;
@@ -69,7 +69,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initChannel();
-        mPlayerController = PlayerController.getInstance();
+        mPlayerController = PlayerUIController.getInstance();
         mSpringSystem = SpringSystem.create();
         mAnimCallback = new AnimCallBack();
         bindPlayerService();

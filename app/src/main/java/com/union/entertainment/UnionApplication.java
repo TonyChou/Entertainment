@@ -2,10 +2,8 @@ package com.union.entertainment;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import com.union.commonlib.multidex.MultiDex;
-import com.union.fmdouban.api.data.ChannelLoader;
 
 /**
  * Created by zhouxiaming on 2016/4/7.

@@ -2,7 +2,6 @@ package com.union.fmdouban.service;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -28,12 +27,12 @@ import com.union.fmdouban.ui.lyric.widget.LyricView;
  * Created by zhouxiaming on 2016/3/14.
  */
 
-public class PlayerController implements View.OnClickListener, PlayerControllerListener {
-    private String TAG = PlayerController.class.getSimpleName();
+public class PlayerUIController implements View.OnClickListener, PlayerControllerListener {
+    private String TAG = PlayerUIController.class.getSimpleName();
 
 
     private View mControlPanelView;
-    private static PlayerController instance;
+    private static PlayerUIController instance;
     private View mPreButton, mPlayButton, mNextButton;
     private View mCoverBgMask;
     ImageView mCover;
@@ -46,13 +45,13 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     private boolean mCoverAnimIsRun = false;
     private TextView mChannelNameView, mSongNameView;
 
-    private PlayerController() {
+    private PlayerUIController() {
 
     }
 
-    public static synchronized PlayerController getInstance() {
+    public static synchronized PlayerUIController getInstance() {
         if (instance == null) {
-            instance = new PlayerController();
+            instance = new PlayerUIController();
         }
 
         return instance;
@@ -122,7 +121,7 @@ public class PlayerController implements View.OnClickListener, PlayerControllerL
     }
 
     private void setSongName(PlayerPage.DouBanSong song) {
-        if (song== null) {
+        if (song == null) {
             mSongNameView.setVisibility(View.INVISIBLE);
         } else {
             mSongNameView.setVisibility(View.VISIBLE);

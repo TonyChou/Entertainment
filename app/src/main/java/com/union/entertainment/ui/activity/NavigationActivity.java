@@ -114,14 +114,15 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
         if (f != mCurrentFragment) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            if (mCurrentFragment != null && mCurrentFragment.isAdded()) {
-                transaction.hide(mCurrentFragment);
-            }
-            if ( !f.isAdded()) {
-                transaction.add(R.id.frame_content, f, f.getClass().toString()).commit();
-            } else {
-                transaction.show(f).commit();
-            }
+//            if (mCurrentFragment != null && mCurrentFragment.isAdded()) {
+//                transaction.hide(mCurrentFragment);
+//            }
+//            if ( !f.isAdded()) {
+//                transaction.add(R.id.frame_content, f, f.getClass().toString()).commit();
+//            } else {
+//                transaction.show(f).commit();
+//            }
+            transaction.replace(R.id.frame_content, f, f.getClass().toString()).commit();
 
             mCurrentFragment = f;
         }

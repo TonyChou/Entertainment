@@ -117,4 +117,9 @@ public abstract class BaseFragment extends Fragment {
             ((BaseActivity) mActivity).syncToolBarStatus(actionBarPage);
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 }

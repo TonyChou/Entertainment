@@ -6,5 +6,7 @@
     <color name="listview_group_text_color">#FF9800</color>
     <color name="text_white">#ffffff</color>
     <color name="text_black">#000000</color>
+    <color name="player_channel_name_color">#43A047</color>
+    <color name="player_song_name_color">#81C784</color>
     <color name="douban_circle_button_bg_color">#DCA5D6A7</color>
 </resources>

@@ -56,11 +56,12 @@ public class BaseActivity extends AppCompatActivity {
         try {
             // setmPayBaseFragment(mPayBaseFragment);
             android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            if (fragment.isAdded()) {
-                transaction.show(fragment);
-            } else {
-                transaction.add(containerId, fragment, fragment.getClass().toString());
-            }
+//            if (fragment.isAdded()) {
+//                transaction.show(fragment);
+//            } else {
+//                transaction.add(containerId, fragment, fragment.getClass().toString());
+//            }
+            transaction.replace(containerId, fragment, fragment.getClass().toString());
             if (isAddToBackStack) {
                 transaction.addToBackStack(fragment.getClass().toString());
             }
