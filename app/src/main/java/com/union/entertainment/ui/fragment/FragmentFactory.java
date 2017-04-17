@@ -2,8 +2,6 @@ package com.union.entertainment.ui.fragment;
 
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.fmdouban.ui.fragment.DouBanMainFragment;
-import com.union.fmdouban.ui.fragment.DoubanFMFragment;
-import com.union.fmdouban.ui.fragment.FMChannelsFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +37,7 @@ public class FragmentFactory {
 					fragment = DouBanMainFragment.newInstance();
 					break;
 				case FRAGMENT_SPOTIFY:
-					fragment = FMChannelsFragment.newInstance();
+					fragment = TestFragment.newInstance(null, null);
 					break;
 				default:
 					fragment = TestFragment.newInstance(null, null);

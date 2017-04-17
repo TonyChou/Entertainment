@@ -184,7 +184,11 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
         refreshLayout.setRefreshing(false);
     }
 
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        getLoaderManager().destroyLoader(LoaderToken.PhotosQuery);
+    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
@@ -196,6 +200,6 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getLoaderManager().destroyLoader(LoaderToken.PhotosQuery);
+
     }
 }

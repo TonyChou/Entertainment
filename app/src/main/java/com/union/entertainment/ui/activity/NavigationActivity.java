@@ -206,6 +206,9 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
+        }  else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            return;
         } else if (mCurrentFragment != null && !mCurrentFragment.isHidden()){
             if (!mCurrentFragment.onBackPress()) {
                 return;
@@ -245,5 +248,16 @@ public class NavigationActivity extends BaseActivity implements DrawerLayout.Dra
     public void syncToolBarStatus(ActionBarPage actionBarPage) {
         super.syncToolBarStatus(actionBarPage);
         mToolBarHelper.syncToolBarStatus(actionBarPage);
+    }
+
+    @Override
+    public void replaceContainerFragment(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
+        super.replaceContainerFragment(containerId, fragment, isAddToBackStack);
+    }
+
+    @Override
+    public void replaceContainerFragment(BaseFragment fragment, boolean isAddToBackStack) {
+        super.replaceContainerFragment(fragment, isAddToBackStack);
+        replaceContainerFragment(R.id.frame_content, fragment, isAddToBackStack);
     }
 }

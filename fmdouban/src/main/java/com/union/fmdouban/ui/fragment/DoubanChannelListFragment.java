@@ -9,6 +9,7 @@ import com.tulips.douban.service.DoubanParamsGen;
 import com.tulips.douban.service.DoubanService;
 import com.tulips.douban.service.DoubanUrl;
 import com.union.commonlib.ui.ActionBarPage;
+import com.union.commonlib.ui.activity.BaseActivity;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.commonlib.ui.view.CircularProgress;
 import com.union.commonlib.ui.view.RefreshHeaderView;
@@ -29,15 +30,15 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zhouxiaming on 2017/4/12.
  */
 
-public class DoubanFMFragment extends BaseFragment implements View.OnClickListener, RefreshHeaderView.RefreshListener, ChannelGroupAdapter.OnChannelClickListener {
+public class DouBanChannelListFragment extends BaseFragment implements View.OnClickListener, RefreshHeaderView.RefreshListener, ChannelGroupAdapter.OnChannelClickListener {
     private PinnedHeaderExpandableListView mListView;
     private DoubanService douBanService;
     private ChannelGroupAdapter mAdapter;
     private RefreshHeaderView mHeaderView;
     private CircularProgress mLoadingBar;
     private View mEmptyView;
-    public static DoubanFMFragment newInstance() {
-        DoubanFMFragment fragment = new DoubanFMFragment();
+    public static DouBanChannelListFragment newInstance() {
+        DouBanChannelListFragment fragment = new DouBanChannelListFragment();
         return fragment;
     }
 
@@ -158,6 +159,8 @@ public class DoubanFMFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onChannelClick(String channelId) {
+        ((BaseActivity)mActivity).replaceContainerFragment(FMPlayerFragment.newInstance(), true);
+
         douBanService.playList(DoubanParamsGen.genGetPlayListParams(channelId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

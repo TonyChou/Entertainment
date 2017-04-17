@@ -37,7 +37,6 @@ import com.union.fmdouban.api.bean.FMRichChannel;
 import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.service.PlayerController;
-import com.union.fmdouban.ui.activity.FMChannelSelectActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,16 +57,10 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     private List<Spring> springMap = new ArrayList<Spring>();
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
-    FMChannelsFragment mChannelsFragment;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-//            int waht = msg.what;
-//            if (waht == REFRESH_CHANNEL_INFO) {
-//                ExecuteResult result = (ExecuteResult)msg.obj;
-//                renderChannelsOnUiThread(result);
-//            }
         }
     };
 
@@ -106,51 +99,6 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     }
 
 
-    private void showChannelsList() {
-        Intent intent = new Intent(getActivity(), FMChannelSelectActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     *显示频道选择面板
-     */
-    private void showOrHideChannelsFragment() {
-//        if (mChannelsFragment == null) {
-//            mChannelsFragment = FMChannelsFragment.newInstance();
-//            mChannelsFragment.setChannelSelectedListener(this);
-//        }
-//        FragmentTransaction transaction = this.getChildFragmentManager().beginTransaction();
-//
-//        if (mChannelsFragment.isVisible()) {
-//            hideFragment(transaction);
-//        } else {
-//            if ( !mChannelsFragment.isAdded()) {
-//                transaction.add(R.id.fragment_container, mChannelsFragment).commit();
-//                mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
-//            } else {
-//                showFragment(transaction);
-//            }
-//        }
-        showChannelsList();
-    }
-
-    private void showFragment(final FragmentTransaction transaction) {
-        transaction.show(mChannelsFragment).commit();
-        mChannelsFragment.showWithAnimation();
-        mShowHideButton.setBackgroundResource(R.drawable.circle_blue_shape);
-    }
-
-    private void hideFragment(final FragmentTransaction transaction) {
-        mChannelsFragment.hideWithAnimation();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                transaction.hide(mChannelsFragment).commit();
-                mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
-            }
-        }, 300);
-
-    }
 
     @Override
     public void onResume() {
@@ -214,24 +162,16 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
 
         mPlayerController.release();
         getActivity().unbindService(connection);
-        CacheManager cacheManager = new CacheManager(this.getActivity());
-        cacheManager.clearPicassoCache();
-        cacheManager.clearVolleyCache();
         FMController.removeFMChannelListener(this);
     }
 
     @Override
     public boolean onBackPress() {
-        if (mChannelsFragment != null && !mChannelsFragment.isHidden()) {
-            showOrHideChannelsFragment();
-            return false;
-        }
         return super.onBackPress();
     }
 
     public boolean switchChannel(FMRichChannel channel) {
         getPlayerService().switchChannel(channel);
-        showOrHideChannelsFragment(); 
         return true;
     }
 
@@ -245,7 +185,6 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         public void animationEnd(View v) {
             if (v == mShowHideButton) {
                 //showOrHideChannelsPanel();
-                showOrHideChannelsFragment();
             }
         }
     }

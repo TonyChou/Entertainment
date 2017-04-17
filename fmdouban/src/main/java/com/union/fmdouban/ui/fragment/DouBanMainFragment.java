@@ -1,9 +1,11 @@
 package com.union.fmdouban.ui.fragment;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 
+import com.union.commonlib.cache.CacheManager;
 import com.union.commonlib.ui.ActionBarPage;
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.fmdouban.R;
@@ -42,4 +44,19 @@ public class DouBanMainFragment extends BaseFragment {
         syncToolBarStatus(ActionBarPage.DOUBAN_FM_MAIN_PAGE);
         ViewCompat.setFitsSystemWindows(mTabLayout, true);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        CacheManager cacheManager = new CacheManager(this.getActivity());
+        cacheManager.clearPicassoCache();
+        cacheManager.clearVolleyCache();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+
 }

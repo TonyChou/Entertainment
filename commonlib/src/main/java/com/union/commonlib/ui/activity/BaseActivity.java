@@ -49,14 +49,18 @@ public class BaseActivity extends AppCompatActivity {
      * @param fragment your's fragment
      * @param isAddToBackStack is add to fragment back stack
      */
-    public void replaceContainerFragmemt(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
+    public void replaceContainerFragment(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
         if (null == fragment) {
             return;
         }
         try {
             // setmPayBaseFragment(mPayBaseFragment);
             android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(containerId, fragment, fragment.getClass().toString());
+            if (fragment.isAdded()) {
+                transaction.show(fragment);
+            } else {
+                transaction.add(containerId, fragment, fragment.getClass().toString());
+            }
             if (isAddToBackStack) {
                 transaction.addToBackStack(fragment.getClass().toString());
             }
@@ -64,6 +68,10 @@ public class BaseActivity extends AppCompatActivity {
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
+    }
+
+    public void replaceContainerFragment(BaseFragment fragment, boolean isAddToBackStack) {
+
     }
 
     /**

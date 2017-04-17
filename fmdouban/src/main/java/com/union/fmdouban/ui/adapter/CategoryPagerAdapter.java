@@ -3,12 +3,11 @@ package com.union.fmdouban.ui.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
 import com.union.commonlib.ui.fragment.BaseFragment;
 import com.union.fmdouban.CategoryType;
-import com.union.fmdouban.ui.fragment.DoubanFMFragment;
+import com.union.fmdouban.ui.fragment.DouBanChannelListFragment;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -25,7 +24,7 @@ public class CategoryPagerAdapter extends FragmentPagerAdapter {
         EnumSet<CategoryType> enumSet = EnumSet.allOf(CategoryType.class);
         for (CategoryType type : enumSet) {
             categoryTypes.add(type);
-            BaseFragment fragment = DoubanFMFragment.newInstance();
+            BaseFragment fragment = DouBanChannelListFragment.newInstance();
             fragmentList.add(fragment);
         }
     }
