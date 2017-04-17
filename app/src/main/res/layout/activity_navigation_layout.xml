@@ -36,7 +36,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/white"
-        android:fitsSystemWindows="true"
         android:textColorSecondary="#000099"
         android:theme="@style/MenuTextStyle"
         app:headerLayout="@layout/navigation_header"
