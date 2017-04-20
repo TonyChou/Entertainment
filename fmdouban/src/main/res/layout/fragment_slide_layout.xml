@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.union.commonlib.ui.view.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/slide_layout_panel"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="bottom"
+    app:InitialState="expanded"
+    app:PanelHeight="@dimen/slide_panel_height"
+    app:ParallaxOffset="0.0dip"
+    app:ShadowHeight="4.0dip">
+
+    <FrameLayout
+        android:id="@+id/up_fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+    <FrameLayout
+        android:id="@+id/down_fragment"
+        android:layout_marginTop="@dimen/tab_title_height"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+</com.union.commonlib.ui.view.slidinguppanel.SlidingUpPanelLayout>

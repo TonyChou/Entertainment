@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 
 import com.facebook.rebound.BaseSpringSystem;
-import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringSystem;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
@@ -23,17 +21,12 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tulips.douban.model.ChannelsPage;
 import com.union.commonlib.ui.anim.AnimCallbackImp;
 import com.union.commonlib.ui.anim.AnimListener;
-import com.union.commonlib.ui.anim.FaceBookRebound;
 import com.union.commonlib.ui.fragment.BaseFragment;
-import com.union.commonlib.ui.view.TintUtils;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
 import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.service.FMPlayerService;
 import com.union.fmdouban.service.PlayerUIController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by zhouxiaming on 2016/3/14.
@@ -45,10 +38,10 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
 
     private PlayerUIController mPlayerController;
     private View mControllerView;
-    View mShowHideButton;
+
     ImageView mCoverImage;
     private BaseSpringSystem mSpringSystem;
-    private List<Spring> springMap = new ArrayList<Spring>();
+
     AnimCallBack mAnimCallback;
     FMPlayerService mPlayerService;
     private ChannelsPage.Channel channel;
@@ -101,12 +94,9 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     protected void initView() {
         super.initView();
         mCoverImage = (ImageView) mRootView.findViewById(R.id.cover);
-        mControllerView = mRootView.findViewById(R.id.player_panel);
-        mPlayerController.init(this, mControllerView);
-        mShowHideButton = mRootView.findViewById(R.id.foot_button);
-        addOnTouchSpringAnimation(mShowHideButton);
+        mControllerView = mRootView.findViewById(R.id.player_layout);
+        mPlayerController.init(this, mControllerView, mSpringSystem);
 
-        TintUtils.setBackgroundTint(this.getActivity(), (AppCompatTextView) mShowHideButton.findViewById(R.id.button_icon), R.color.white);
     }
 
 
@@ -116,13 +106,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         super.onResume();
     }
 
-    private void addOnTouchSpringAnimation(View... v) {
-        for (View view : v) {
-            Spring spring = mSpringSystem.createSpring();
-            springMap.add(spring);
-            FaceBookRebound.addSpringAnimation(view, spring, mAnimCallback);
-        }
-    }
+
 
 
 
@@ -146,21 +130,24 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
                         ViewPropertyAnimator.animate(mControllerView).alpha(1);
                     }
                 });
-        mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
+       // mShowHideButton.setBackgroundResource(R.drawable.circle_light_yellow_shape);
+    }
+
+    public void onPanelSlide(View view, float slideOffset) {
+        mPlayerController.onPanelSlide(view, slideOffset);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (Spring spring : springMap) {
-            spring.removeAllListeners();
-        }
+
+        mPlayerController.release();
         if (mSpringSystem != null) {
             mSpringSystem.removeAllListeners();
             mSpringSystem = null;
         }
 
-        mPlayerController.release();
+
         getActivity().unbindService(connection);
         FMController.removeFMChannelListener(this);
     }
@@ -173,6 +160,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     public void switchChannel(ChannelsPage.Channel channel) {
         if (channel == null) {
             LogUtils.i(TAG, "Channel is null ----");
+            return;
         }
         getPlayerService().switchChannel(channel);
     }
@@ -185,9 +173,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     class AnimCallBack extends AnimCallbackImp {
         @Override
         public void animationEnd(View v) {
-            if (v == mShowHideButton) {
-                //showOrHideChannelsPanel();
-            }
+
         }
     }
 

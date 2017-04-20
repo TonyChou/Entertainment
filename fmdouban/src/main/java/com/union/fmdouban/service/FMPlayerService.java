@@ -43,7 +43,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     private static List<PlayerPage.DouBanSong> songCache = new ArrayList<PlayerPage.DouBanSong>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
     private final int PLAYLIST_LOADED_RESULT = PROGRESS_UPDATE + 1; //歌曲加载结果
-    private final int CHANGE_CHANNEL_FAILED = PLAYLIST_LOADED_RESULT + 1; //切换频道失败
+    private final int SONGINFO_LOAD_FAILED = PLAYLIST_LOADED_RESULT + 1; //歌曲信息加载失败
     private String TAG = "FMMediaPlayer";
     private static FMMediaPlayer mPlayer;
     private PlayerListener playerListener;
@@ -56,6 +56,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     private boolean isTimerStarted = false;
     PlayerControllerListener controllerListener;
     private DoubanService douBanService;
+    private int SONG_LOAD_RETRY_TIMES = 3;
     Queue<PlayerPage.DouBanSong> mPlayList = new LinkedList<PlayerPage.DouBanSong>();
 
 
@@ -71,7 +72,7 @@ public class FMPlayerService extends Service implements PlayerListener {
         mCurrentPLayState = PlayState.STOP;
         refreshView(StateFrom.FINISH);
         stopProgressTimer();
-        loadSongInfoFromServer();
+        loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class FMPlayerService extends Service implements PlayerListener {
                 sendProgressCallback(progress);
             } else if (what == PLAYLIST_LOADED_RESULT) {
                 handleSongResult((PlayerPage)msg.obj);
-            } else if (what == CHANGE_CHANNEL_FAILED) {
+            } else if (what == SONGINFO_LOAD_FAILED) {
                 Toast.makeText(mContext, R.string.change_channel_failed, Toast.LENGTH_SHORT).show();
             }
         }
@@ -210,7 +211,7 @@ public class FMPlayerService extends Service implements PlayerListener {
             if (song != null) {
                 play(song.url);
             } else if (getCurrentChannel() != null) {
-                loadSongInfoFromServer();
+                loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
             } else {
                 mCurrentPLayState = PlayState.NONE;
             }
@@ -263,7 +264,7 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void playNext() {
         mCurrentPLayState = PlayState.NONE;
         stop();
-        loadSongInfoFromServer();
+        loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
     }
 
 
@@ -300,13 +301,13 @@ public class FMPlayerService extends Service implements PlayerListener {
         mPlayList.clear();
         mCurrentPLayState = PlayState.NONE;
         mCurrentChannel = channel;
-        loadSongInfoFromServer();
+        loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
     }
 
     /**
      * 加载歌曲信息
      */
-    private void loadSongInfoFromServer() {
+    private void loadSongInfoFromServer(final int retryTimes) {
         if (mCurrentChannel == null) {
             return;
         }
@@ -325,8 +326,14 @@ public class FMPlayerService extends Service implements PlayerListener {
                     @Override
                     public void onError(Throwable e) {
                         LogUtils.i(TAG, "onError ==== ");
-                        Message msg = handler.obtainMessage(CHANGE_CHANNEL_FAILED);
-                        msg.sendToTarget();
+                        if (retryTimes == 0) {
+                            Message msg = handler.obtainMessage(SONGINFO_LOAD_FAILED);
+                            msg.sendToTarget();
+                        } else {
+                            int newRetryTimes = retryTimes - 1;
+                            loadSongInfoFromServer(newRetryTimes);
+                        }
+
                     }
 
                     @Override
@@ -366,7 +373,7 @@ public class FMPlayerService extends Service implements PlayerListener {
 
             mPlayList.addAll(result.songList);
             if (!addTOCacheAndPlay()) {
-                loadSongInfoFromServer();
+                loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
             }
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.load_song_failed), Toast.LENGTH_SHORT).show();

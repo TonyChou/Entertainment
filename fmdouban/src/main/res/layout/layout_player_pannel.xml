@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:roundedImage="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/cover_and_progress"
+    <TextView
+        android:id="@+id/channel_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="25dip"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="hello"
+        android:textColor="@color/player_channel_name_color"
+        android:textSize="@dimen/channel_name_size"/>
+
+    <FrameLayout
+        android:id="@+id/cover_and_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/channel_name"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dip">
 
         <View
             android:id="@+id/cover_bg_mask"
@@ -39,85 +58,68 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/example"
                 roundedImage:riv_border_color="@color/yellow"
-                roundedImage:riv_border_width="4dip" />
+                roundedImage:riv_border_width="4dip"/>
         </com.union.commonlib.ui.view.CircleProgressBar>
     </FrameLayout>
 
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/song_name"
+        android:layout_below="@+id/cover_and_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textColor="@color/player_song_name_color"
+        android:textSize="@dimen/song_name_size"/>
 
-        <TextView
-            android:id="@+id/song_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/control_buttons"
+        android:layout_below="@+id/song_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/player_button_height"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="30dip"
+
+        android:gravity="center_vertical">
+
+
+        <include
+            android:id="@+id/play"
+            layout="@layout/button_circle_bg"
+            android:layout_width="@dimen/circle_button_height"
+            android:layout_height="@dimen/circle_button_height"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:singleLine="true"
-            android:textColor="@color/player_song_name_color"
-            android:textSize="@dimen/song_name_size" />
+            android:layout_marginLeft="@dimen/player_button_margin"
+            android:layout_marginRight="@dimen/player_button_margin"/>
 
-        <TextView
-            android:id="@+id/channel_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <include
+            android:id="@+id/pre"
+            layout="@layout/button_circle_bg"
+            android:layout_width="@dimen/circle_button_height"
+            android:layout_height="@dimen/circle_button_height"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:singleLine="true"
-            android:textColor="@color/player_channel_name_color"
-            android:textSize="@dimen/channel_name_size" />
+            android:layout_toLeftOf="@+id/play"/>
 
-        <LinearLayout
-            android:id="@+id/control_buttons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="10dip"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:id="@+id/pre"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/player_button_height"
-                android:layout_weight="1.0"
-                android:gravity="center">
-
-                <include layout="@layout/button_circle_bg" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/play"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/player_button_height"
-                android:layout_weight="1.0"
-                android:gravity="center">
-
-                <include layout="@layout/button_circle_bg" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/next"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/player_button_height"
-                android:layout_weight="1.0"
-                android:gravity="center">
-
-                <include layout="@layout/button_circle_bg" />
-            </RelativeLayout>
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-</LinearLayout>
+        <include
+            android:id="@+id/next"
+            layout="@layout/button_circle_bg"
+            android:layout_width="@dimen/circle_button_height"
+            android:layout_height="@dimen/circle_button_height"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/play"/>
+    </RelativeLayout>
+    <include
+        android:id="@+id/fav_button"
+        layout="@layout/button_circle_bg"
+        android:layout_width="@dimen/circle_button_height"
+        android:layout_height="@dimen/circle_button_height"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|right"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentRight="true"/>
+</RelativeLayout>

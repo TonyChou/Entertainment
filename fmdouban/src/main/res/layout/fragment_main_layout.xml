@@ -12,7 +12,7 @@
         android:id="@+id/tab_category"
         style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/tab_title_height"
         android:layout_alignParentTop="true"
         android:fitsSystemWindows="true"
         app:tabMode="fixed"

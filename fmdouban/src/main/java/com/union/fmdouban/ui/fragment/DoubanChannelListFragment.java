@@ -16,6 +16,7 @@ import com.union.commonlib.ui.view.CircularProgress;
 import com.union.commonlib.ui.view.RefreshHeaderView;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.R;
+import com.union.fmdouban.play.FMController;
 import com.union.fmdouban.ui.adapter.ChannelGroupAdapter;
 import com.union.net.ApiClient;
 import com.union.net.RetrofitClient;
@@ -160,10 +161,6 @@ public class DouBanChannelListFragment extends BaseFragment implements View.OnCl
 
     @Override
     public void onChannelClick(ChannelsPage.Channel channel) {
-        BaseFragment fragment = FMPlayerFragment.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("channel", channel);
-        fragment.setArguments(bundle);
-        ((BaseActivity)mActivity).replaceContainerFragment(fragment, true);
+        FMController.switchChannel(channel);
     }
 }

@@ -5,4 +5,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="music_cover_width">200dip</dimen>
     <dimen name="music_cover_bg_mask_width">210dip</dimen>
+    <dimen name="slide_panel_height">50dip</dimen>
+    <dimen name="tab_title_height">48dip</dimen>
+    <dimen name="player_button_margin">50dip</dimen>
+    <dimen name="player_button_margin_10">10dip</dimen>
 </resources>
