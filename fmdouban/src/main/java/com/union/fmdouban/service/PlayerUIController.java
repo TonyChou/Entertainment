@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatTextView;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
@@ -67,6 +68,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
     private float mFavButtonsBeginX, mFavButtonsBeginY, mFavButtonsDx, mFavButtonsDy, mFavButtonsScaleDes;
     private List<Spring> springMap = new ArrayList<Spring>();
     private float BUTTON_TRANSLATION_DX = 100; //播放控制按钮X轴的偏移量
+    private int playerButtonSize, playerButtonMarginRight;
     private int playerButtonMargin;
     private PlayerUIController() {
 
@@ -147,6 +149,14 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
 
         slidePanelHeight = mActivity.getResources().getDimensionPixelSize(R.dimen.slide_panel_height);
         playerButtonMargin = mActivity.getResources().getDimensionPixelSize(R.dimen.player_button_margin_10);
+        playerButtonSize = mActivity.getResources().getDimensionPixelSize(R.dimen.circle_button_height);
+        playerButtonMarginRight = mActivity.getResources().getDimensionPixelSize(R.dimen.player_button_margin);
+        //控制按钮面板需要整体向右偏移的值
+        Display display = mActivity.getWindowManager().getDefaultDisplay();
+
+
+        final float controlButtonDxRight = (float) (display.getWidth() - playerButtonSize * 3 - playerButtonMarginRight * 2) / 2.0f;
+        final float controlButtonDxRightReal = controlButtonDxRight * (1.0f - slidePanelHeight / controlButtonDxRight);
         mProgressBarLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -176,7 +186,8 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
 
                 mControlButtonsScaleDes = (float) slidePanelHeight/ (float) height;
                 mControlButtonScaleWidth = (float)width *  mControlButtonsScaleDes;
-                mControlButtonsBeginX = x + ((float) width  - mControlButtonScaleWidth) / 2.0f;
+
+                mControlButtonsBeginX = x + ((float) width  - mControlButtonScaleWidth) / 2.0f + controlButtonDxRightReal;
                 mControlButtonsBeginY = y + ((float) height  - (float)slidePanelHeight) / 2.0f;
                 mControlButtonsDx = mControlButtonsBeginX;
                 mControlButtonsDy = mControlButtonsBeginY;
@@ -196,7 +207,9 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
                 float y = ViewCompat.getY(mFavButton);
                 LogUtils.i("veve", " mFavButton width " + width);
                 mFavButtonsScaleDes = ((float) slidePanelHeight - (float)playerButtonMargin)/ (float) height;
-                mFavButtonsBeginX = x + ((float) width - mControlButtonScaleWidth) / 2.0f;
+                //两个按钮分别位移了200和100，因此需要将位移的值加上
+                float dx = mControlButtonScaleWidth + BUTTON_TRANSLATION_DX * 3 + controlButtonDxRightReal + controlButtonDxRight;
+                mFavButtonsBeginX = x + ((float) width - dx) / 2.0f;
                 mFavButtonsBeginY = y + ((float) height  - (float)slidePanelHeight) / 2.0f;
                 mFavButtonsDx = mFavButtonsBeginX;
                 mFavButtonsDy = mFavButtonsBeginY;

@@ -83,7 +83,6 @@
         android:layout_height="@dimen/player_button_height"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="30dip"
-
         android:gravity="center_vertical">
 
 
