@@ -3,7 +3,7 @@
     package="com.union.fmdouban">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,7 +23,6 @@
         <!-- </intent-filter> -->
         <!-- </activity> -->
 
-        <service android:name=".service.FMPlayerService" />
 
         <activity
             android:name=".ui.activity.FMChannelSelectActivity"

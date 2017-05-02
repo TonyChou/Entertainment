@@ -5,7 +5,7 @@ package com.union.fmdouban.play;
  * Created by zhouxiaming on 2015/4/16.
  */
 
-public interface PlayerListener {
+public interface PlayerStatusListener {
     //播放出错
     public void onError(String errorMsg);
     //播放结束

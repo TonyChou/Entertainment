@@ -1,5 +1,7 @@
 package com.union.fmdouban.ui.fragment;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -24,6 +26,16 @@ public class DouBanSlideFragment extends BaseFragment {
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_slide_layout;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -53,6 +65,7 @@ public class DouBanSlideFragment extends BaseFragment {
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 LogUtils.i(TAG, "onPanelStateChanged previousState: " + previousState + " newState: " + newState);
             }
+
         });
 
         mSlideLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

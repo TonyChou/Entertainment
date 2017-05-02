@@ -57,8 +57,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Surf
     protected void onStop() {
         super.onStop();
 
-        mMediaPlayer.release();
-        mMediaPlayer = null;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
     private void initView() {

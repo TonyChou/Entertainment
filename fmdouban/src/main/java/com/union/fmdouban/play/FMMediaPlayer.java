@@ -1,13 +1,12 @@
 package com.union.fmdouban.play;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.Log;
 
 
 import com.union.commonlib.utils.LogUtils;
-
-import java.io.IOException;
 
 /**
  * Created by zhouxiaming on 2015/4/16.
@@ -16,15 +15,17 @@ import java.io.IOException;
 public class FMMediaPlayer implements IPlayer {
     private String TAG = "FMMediaPlayer";
     private static FMMediaPlayer instance;
-    private static PlayerListener playerListener;
+    private static PlayerStatusListener playerStatusListener;
     private MediaPlayer mediaPlayer;
-    private FMMediaPlayer() {
+    private static Context context;
+    private FMMediaPlayer(Context context) {
+        context = context;
         mediaPlayer = new MediaPlayer();
         init();
     }
-    public synchronized static FMMediaPlayer getInstance() {
+    public synchronized static FMMediaPlayer getInstance(Context context) {
         if (instance == null) {
-            instance = new FMMediaPlayer();
+            instance = new FMMediaPlayer(context);
         }
         return instance;
     }
@@ -37,8 +38,8 @@ public class FMMediaPlayer implements IPlayer {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                if (playerListener != null) {
-                    playerListener.onFinish();
+                if (playerStatusListener != null) {
+                    playerStatusListener.onFinish();
                 }
             }
         });
@@ -48,8 +49,8 @@ public class FMMediaPlayer implements IPlayer {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 stop();
-                if (playerListener != null) {
-                    playerListener.onError("MediaPlayer is error!");
+                if (playerStatusListener != null) {
+                    playerStatusListener.onError("MediaPlayer is error!");
                 }
                 return false;
             }
@@ -58,8 +59,8 @@ public class FMMediaPlayer implements IPlayer {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                if (playerListener != null) {
-                    playerListener.onPrepared();
+                if (playerStatusListener != null) {
+                    playerStatusListener.onPrepared();
                 }
                 mediaPlayer.start();
             }
@@ -98,8 +99,8 @@ public class FMMediaPlayer implements IPlayer {
      * 设置监听
      * @param listener
      */
-    public void setPlayerListener(PlayerListener listener) {
-        this.playerListener = listener;
+    public void setPlayerListener(PlayerStatusListener listener) {
+        this.playerStatusListener = listener;
     }
 
 
@@ -115,13 +116,19 @@ public class FMMediaPlayer implements IPlayer {
             LogUtils.i(TAG, "playStream:  [streamType = " + streamType + " ]");
             resetPlayer();
             mediaPlayer.setAudioStreamType(streamType);
+            //mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    seekTo(mediaPlayer.getDuration() - 10000);
+//                }
+//            }, 5000);
 
-            //seekTo(mediaPlayer.getDuration() - 20000);
         } catch (Exception e) {
-            if (playerListener != null) {
-                playerListener.onError("Play IOException: " + url);
+            if (playerStatusListener != null) {
+                playerStatusListener.onError("Play IOException: " + url);
             }
             e.printStackTrace();
         }

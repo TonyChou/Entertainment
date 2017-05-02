@@ -9,4 +9,6 @@
     <color name="player_channel_name_color">#43A047</color>
     <color name="player_song_name_color">#81C784</color>
     <color name="douban_circle_button_bg_color">#DCA5D6A7</color>
+    <color name="fav_button_unselected_color">#BDBDBD</color>
+    <color name="fav_button_selected_color">@color/douban_colorPrimary</color>
 </resources>

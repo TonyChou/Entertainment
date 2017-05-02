@@ -111,14 +111,23 @@
             android:layout_centerHorizontal="true"
             android:layout_toRightOf="@+id/play"/>
     </RelativeLayout>
-    <include
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/fav_button"
-        layout="@layout/button_circle_bg"
         android:layout_width="@dimen/circle_button_height"
         android:layout_height="@dimen/circle_button_height"
         android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="bottom|right"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:background="@drawable/ic_favorite_black_48dp"/>
+    <TextView
+        android:id="@+id/error_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dip"
+        android:background="@color/transparent"
+        android:text="error"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone"/>
 </RelativeLayout>

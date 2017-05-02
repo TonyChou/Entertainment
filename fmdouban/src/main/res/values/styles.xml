@@ -31,4 +31,5 @@
         <item name="android:textColor">@color/text_white</item>
         <item name="textAllCaps">true</item>
     </style>
+
 </resources>

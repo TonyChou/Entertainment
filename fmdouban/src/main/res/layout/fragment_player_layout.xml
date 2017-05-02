@@ -21,4 +21,31 @@
         android:layout_below="@id/player_controller_view"
         android:layout_marginBottom="15dip"
         android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/bottom_title_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom|center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/bottom_channel_name_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:maxLines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textColor="@color/player_channel_name_color"
+            android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/bottom_song_name_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:maxLines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textSize="12sp"
+            android:textColor="@color/player_song_name_color"/>
+    </LinearLayout>
+
 </FrameLayout>

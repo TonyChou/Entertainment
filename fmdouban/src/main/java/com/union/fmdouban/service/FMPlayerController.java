@@ -1,12 +1,9 @@
 package com.union.fmdouban.service;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Binder;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.widget.Toast;
 
@@ -18,11 +15,12 @@ import com.tulips.douban.service.DoubanUrl;
 import com.union.commonlib.utils.LogUtils;
 import com.union.fmdouban.Constant;
 import com.union.fmdouban.R;
-import com.union.fmdouban.play.FMMediaPlayer;
 import com.union.fmdouban.play.PlayerControllerListener;
-import com.union.fmdouban.play.PlayerListener;
+import com.union.fmdouban.play.PlayerStatusListener;
 import com.union.net.ApiClient;
 import com.union.net.RetrofitClient;
+import com.union.player.IMediaPlayerCallBack;
+import com.union.player.PlayerUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -39,15 +37,12 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zhouxiaming on 2015/4/16.
  */
 
-public class FMPlayerService extends Service implements PlayerListener {
+public class FMPlayerController implements PlayerStatusListener {
     private static List<PlayerPage.DouBanSong> songCache = new ArrayList<PlayerPage.DouBanSong>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
     private final int PLAYLIST_LOADED_RESULT = PROGRESS_UPDATE + 1; //歌曲加载结果
     private final int SONGINFO_LOAD_FAILED = PLAYLIST_LOADED_RESULT + 1; //歌曲信息加载失败
-    private String TAG = "FMMediaPlayer";
-    private static FMMediaPlayer mPlayer;
-    private PlayerListener playerListener;
-    private final IBinder mBinder = new LocalBinder();
+    private String TAG = "FMPlayerController";
     private static ChannelsPage.Channel mCurrentChannel;
     private static PlayState mCurrentPLayState = PlayState.NONE;
     private static int mSongIndex = 0;
@@ -99,12 +94,14 @@ public class FMPlayerService extends Service implements PlayerListener {
         ERROR,
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mContext = this.getApplicationContext();
-        mPlayer = FMMediaPlayer.getInstance();
-        mPlayer.setPlayerListener(this);
+
+
+    public FMPlayerController(Context context) {
+        mContext = context;
+        //mPlayerService.setPlayerListener(this);
+        RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
+        douBanService = mApiClient.createApi(DoubanService.class);
+        PlayerUtils.setCallBack(callBack);
     }
 
     Handler handler = new Handler() {
@@ -118,33 +115,12 @@ public class FMPlayerService extends Service implements PlayerListener {
                 handleSongResult((PlayerPage)msg.obj);
             } else if (what == SONGINFO_LOAD_FAILED) {
                 Toast.makeText(mContext, R.string.change_channel_failed, Toast.LENGTH_SHORT).show();
+                controllerListener.showErrorInfo((String)msg.obj);
             }
         }
     };
 
-    public FMPlayerService() {
 
-    }
-
-    public class LocalBinder extends Binder {
-        public FMPlayerService getPlayerService() {
-            return FMPlayerService.this;
-        }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        if (douBanService == null) {
-            RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
-            douBanService = mApiClient.createApi(DoubanService.class);
-        }
-        return mBinder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
-    }
 
     /**
      * 再次进入播放界面，需要恢复一下界面状态
@@ -154,7 +130,6 @@ public class FMPlayerService extends Service implements PlayerListener {
     public void setControllerListener(PlayerControllerListener controllerListener) {
         this.controllerListener = controllerListener;
         refreshView(StateFrom.NONE);
-        controllerListener.loadCover();
     }
 
     public void sendProgressCallback(int progress) {
@@ -165,30 +140,46 @@ public class FMPlayerService extends Service implements PlayerListener {
 
 
     public void play(String url) {
-        stopProgressTimer();
-        sendProgressCallback(0);
-        mPlayer.play(url);
-        mCurrentPLayState = PlayState.PLAYING;
-        if (controllerListener != null) {
-            controllerListener.loadCover();
+        if (PlayerUtils.play(url)) {
+            stopProgressTimer();
+            sendProgressCallback(0);
+
+            mCurrentPLayState = PlayState.PLAYING;
+            refreshView(StateFrom.PLAY);
+            if (controllerListener != null) {
+                controllerListener.loadCover();
+            }
+        } else {
+            setStatusNone();
         }
     }
 
 
     public void pause() {
-        mPlayer.pause();
-        mCurrentPLayState = PlayState.PAUSE;
-        refreshView(StateFrom.PAUSE);
+        if (PlayerUtils.pause()) {
+            mCurrentPLayState = PlayState.PAUSE;
+            refreshView(StateFrom.PAUSE);
+        } else {
+            setStatusNone();
+        }
     }
 
     public void resume() {
-        mPlayer.resume();
-        mCurrentPLayState = PlayState.PLAYING;
-        refreshView(StateFrom.RESUME);
+        if (PlayerUtils.resume()) {
+            mCurrentPLayState = PlayState.PLAYING;
+            refreshView(StateFrom.RESUME);
+        } else {
+            setStatusNone();
+        }
     }
 
     public void stop() {
-        mPlayer.stop();
+        PlayerUtils.stop();
+        mCurrentPLayState = PlayState.NONE;
+        refreshView(StateFrom.STOP);
+    }
+
+    private void setStatusNone() {
         mCurrentPLayState = PlayState.NONE;
         refreshView(StateFrom.STOP);
     }
@@ -230,34 +221,32 @@ public class FMPlayerService extends Service implements PlayerListener {
 
 
     public int getCurrentPosition() {
-        if (mPlayer != null) {
-            return mPlayer.getCurrentPosition();
-        } else {
-            return 0;
+        int position = PlayerUtils.getCurrentPosition();
+        if (position == -1) {
+            setStatusNone();
         }
-
+        return position;
     }
 
 
     public int getDuration() {
-        if (mPlayer != null) {
-            return mPlayer.getDuration();
-        } else {
-            return 0;
+        int duration = PlayerUtils.getDuration();
+        if (duration == -1) {
+            setStatusNone();
         }
+        return duration;
     }
 
 
     public void seekTo(int position) {
-        LogUtils.i(TAG, "seekTo: " + position);
-        mPlayer.seekTo(position);
+        if (!PlayerUtils.seekTo(position)) {
+            setStatusNone();
+        }
     }
 
 
     public void release() {
-        if (mPlayer != null) {
-            mPlayer.release();
-        }
+
     }
 
 
@@ -280,12 +269,8 @@ public class FMPlayerService extends Service implements PlayerListener {
     }
 
 
-    public static boolean isPlaying() {
-        if (mPlayer == null) {
-            return false;
-        } else {
-            return mPlayer.isPlaying();
-        }
+    public boolean isPlaying() {
+        return PlayerUtils.isPlaying();
     }
 
     /**
@@ -325,9 +310,10 @@ public class FMPlayerService extends Service implements PlayerListener {
 
                     @Override
                     public void onError(Throwable e) {
-                        LogUtils.i(TAG, "onError ==== ");
+                        LogUtils.e(TAG, "onError ==== " + e);
                         if (retryTimes == 0) {
                             Message msg = handler.obtainMessage(SONGINFO_LOAD_FAILED);
+                            msg.obj = e.getMessage();
                             msg.sendToTarget();
                         } else {
                             int newRetryTimes = retryTimes - 1;
@@ -435,4 +421,28 @@ public class FMPlayerService extends Service implements PlayerListener {
         }, 0, 300);
     }
 
+    IMediaPlayerCallBack callBack = new IMediaPlayerCallBack.Stub() {
+
+        @Override
+        public void onError(String errorMsg) throws RemoteException {
+
+        }
+
+        @Override
+        public void onFinish() throws RemoteException {
+
+        }
+    };
+
+    private boolean isServiceAlive() {
+        boolean isAlive = false;
+        if (PlayerUtils.isServiceAlive()) {
+            isAlive = true;
+        }
+
+        if (!isAlive) {
+            setStatusNone();
+        }
+        return isAlive;
+    }
 }
