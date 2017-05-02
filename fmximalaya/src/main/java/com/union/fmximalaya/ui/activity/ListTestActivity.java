@@ -33,7 +33,6 @@ public class ListTestActivity extends AppCompatActivity {
         mAdapter = new ChannelListAdapter(this, ItemData.genItemData());
         mRecycleView.setHasFixedSize(true);
         mRecycleView.setHasFixedSize(true);
-        Log.i("veve", "============== ");
         mRecycleView.setAdapter(mAdapter);
     }
 }

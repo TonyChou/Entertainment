@@ -57,22 +57,17 @@ public class DouBanSlideFragment extends BaseFragment {
         mSlideLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                LogUtils.i(TAG, "onPanelSlide slideOffset: " + slideOffset);
                 ((FMPlayerFragment)mPlayerFragment).onPanelSlide(panel, slideOffset);
             }
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 LogUtils.i(TAG, "onPanelStateChanged previousState: " + previousState + " newState: " + newState);
+                if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED || newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    ((DouBanMainFragment)mMainFragment).onPanelStateChanged(newState);
+                }
             }
 
-        });
-
-        mSlideLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                LogUtils.i(TAG, "mSlideLayout onGlobalLayout: " + mSlideLayout.getHeight());
-            }
         });
     }
 }

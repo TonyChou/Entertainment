@@ -37,7 +37,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zhouxiaming on 2015/4/16.
  */
 
-public class FMPlayerController implements PlayerStatusListener {
+public class FMPlayerController {
     private static List<PlayerPage.DouBanSong> songCache = new ArrayList<PlayerPage.DouBanSong>();
     private final int PROGRESS_UPDATE = 0x000011; //进度条更新
     private final int PLAYLIST_LOADED_RESULT = PROGRESS_UPDATE + 1; //歌曲加载结果
@@ -55,27 +55,6 @@ public class FMPlayerController implements PlayerStatusListener {
     Queue<PlayerPage.DouBanSong> mPlayList = new LinkedList<PlayerPage.DouBanSong>();
 
 
-    @Override
-    public void onError(String errorMsg) {
-        mCurrentPLayState = PlayState.NONE;
-        stopProgressTimer();
-        refreshView(StateFrom.ERROR);
-    }
-
-    @Override
-    public void onFinish() {
-        mCurrentPLayState = PlayState.STOP;
-        refreshView(StateFrom.FINISH);
-        stopProgressTimer();
-        loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
-    }
-
-    @Override
-    public void onPrepared() {
-        mCurrentPLayState = PlayState.PLAYING;
-        startProgressTimer();
-        refreshView(StateFrom.PLAY);
-    }
 
     public enum PlayState {
         NONE,
@@ -101,7 +80,15 @@ public class FMPlayerController implements PlayerStatusListener {
         //mPlayerService.setPlayerListener(this);
         RetrofitClient mApiClient = ApiClient.getDoubanAPiClient(DoubanUrl.API_HOST);
         douBanService = mApiClient.createApi(DoubanService.class);
+    }
+
+    public void setCallBack() {
         PlayerUtils.setCallBack(callBack);
+        if (PlayerUtils.isPlaying()) {
+            mCurrentPLayState = PlayState.PLAYING;
+            refreshView(StateFrom.PLAY);
+            startProgressTimer();
+        }
     }
 
     Handler handler = new Handler() {
@@ -243,12 +230,6 @@ public class FMPlayerController implements PlayerStatusListener {
             setStatusNone();
         }
     }
-
-
-    public void release() {
-
-    }
-
 
     public void playNext() {
         mCurrentPLayState = PlayState.NONE;
@@ -403,6 +384,7 @@ public class FMPlayerController implements PlayerStatusListener {
         mProgressTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                LogUtils.i(TAG, "progress == " + this.hashCode());
                 if (!isPlaying() || getDuration() == 0) {
                     SystemClock.sleep(1000);
                     return;
@@ -414,6 +396,7 @@ public class FMPlayerController implements PlayerStatusListener {
                 int position = getCurrentPosition();
                 int duration = getDuration();
                 int progress = (int) ((double) position / duration * 1000);
+
                 Message msg = handler.obtainMessage(PROGRESS_UPDATE);
                 msg.arg1 = progress;
                 msg.sendToTarget();
@@ -425,14 +408,30 @@ public class FMPlayerController implements PlayerStatusListener {
 
         @Override
         public void onError(String errorMsg) throws RemoteException {
-
+            mCurrentPLayState = PlayState.NONE;
+            stopProgressTimer();
+            refreshView(StateFrom.ERROR);
         }
 
         @Override
         public void onFinish() throws RemoteException {
-
+            mCurrentPLayState = PlayState.STOP;
+            refreshView(StateFrom.FINISH);
+            stopProgressTimer();
+            loadSongInfoFromServer(SONG_LOAD_RETRY_TIMES);
         }
+        @Override
+        public void onPrepared() throws RemoteException {
+            mCurrentPLayState = PlayState.PLAYING;
+            startProgressTimer();
+            refreshView(StateFrom.PLAY);
+        }
+
     };
+
+    public void release() {
+        stopProgressTimer();
+    }
 
     private boolean isServiceAlive() {
         boolean isAlive = false;

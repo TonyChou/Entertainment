@@ -1,8 +1,12 @@
 package com.union.fmdouban.ui.fragment;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -46,10 +50,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            int what = msg.what;
-            if (what == UPDATE_SLIDE_LAYOUT) {
-                updateSlidePanelLayout();
-            }
+
         }
     };
 
@@ -64,12 +65,12 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initChannel();
-        mToken = PlayerUtils.bindToService(mActivity);
         mPlayerController = PlayerUIController.getInstance();
         mSpringSystem = SpringSystem.create();
         mAnimCallback = new AnimCallBack();
         FMController.registerFMChannelListener(this);
         mPlayerService = new FMPlayerController(mActivity.getApplicationContext());
+        mToken = PlayerUtils.bindToService(mActivity, connection);
     }
 
 
@@ -105,16 +106,30 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     }
 
     private void updateSlidePanelLayout() {
+        LogUtils.i(TAG, "updateSlidePanelLayout: " + Thread.currentThread());
         if (mPlayerController.VIEW_LOAD_FLAG == mPlayerController.VIEW_LOAD_FINISHED) {
-            mPlayerController.initSlidePanelState();
-            handler.removeMessages(UPDATE_SLIDE_LAYOUT);
+            //UI线程执行
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mPlayerController.initSlidePanelState();
+                }
+            }, 100);
+            getWorkHandler().removeMessages(UPDATE_SLIDE_LAYOUT);
         } else {
-            Message message = handler.obtainMessage(UPDATE_SLIDE_LAYOUT);
+            Message message = getWorkHandler().obtainMessage(UPDATE_SLIDE_LAYOUT);
             message.sendToTarget();
         }
     }
 
-
+    @Override
+    protected void handleWorkThreadMessage(Message msg) {
+        int what = msg.what;
+        if (what == UPDATE_SLIDE_LAYOUT) {
+            SystemClock.sleep(50);
+            updateSlidePanelLayout();
+        }
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -165,6 +180,7 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
         super.onDestroy();
 
         mPlayerController.release();
+        mPlayerService.release();
         if (mSpringSystem != null) {
             mSpringSystem.removeAllListeners();
             mSpringSystem = null;
@@ -202,5 +218,17 @@ public class FMPlayerFragment extends BaseFragment implements FMController.FMCha
     public FMPlayerController getPlayerService() {
         return mPlayerService;
     }
+
+    ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mPlayerService.setCallBack();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
 }

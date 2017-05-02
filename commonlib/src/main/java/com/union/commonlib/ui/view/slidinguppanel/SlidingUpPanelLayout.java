@@ -1472,4 +1472,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
             ta.recycle();
         }
     }
+
+    public boolean collapsePanel() {
+        if ((this.mSlideState == PanelState.HIDDEN) || (this.mSlideState == PanelState.COLLAPSED)) {
+            return false;
+        }
+        return collapsePanel(this.mSlideableView, 0);
+    }
+
+    private boolean collapsePanel(View paramView, int paramInt)
+    {
+        return (this.mFirstLayout) || (smoothSlideTo(0.0F, paramInt));
+    }
 }

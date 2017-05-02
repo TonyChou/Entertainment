@@ -8,4 +8,6 @@ interface IMediaPlayerCallBack {
      void onError(String errorMsg);
      //播放结束
      void onFinish();
+     //播放已经准备好了
+     void onPrepared();
 }

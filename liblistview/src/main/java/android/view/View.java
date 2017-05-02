@@ -212,7 +212,6 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
 
 	public View(Context context) {
-		Log.i("veve", "=========1");
 		throw new RuntimeException("Stub!");
 	}
 
@@ -222,7 +221,6 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 	}
 
 	public View(Context context, AttributeSet attrs, int defStyle) {
-		Log.i("veve", "=========3");
 		throw new RuntimeException("Stub!");
 	}
 

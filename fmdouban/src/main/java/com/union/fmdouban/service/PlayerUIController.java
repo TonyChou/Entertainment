@@ -2,14 +2,19 @@ package com.union.fmdouban.service;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -39,12 +44,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.content.Context.WINDOW_SERVICE;
+
 /**
  * Created by zhouxiaming on 2016/3/14.
  */
 
 public class PlayerUIController implements View.OnClickListener, PlayerControllerListener {
-    private String TAG = "FMPlayerFragment";
+    private String TAG = "PlayerUIController";
 
 
     private View mControlPanelView;
@@ -262,7 +269,6 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
         //cover 图片动画
         float coverTranslationX = slideOffset * mProgressBarLayoutDx - mProgressBarLayoutBeginX;
         float coverTranslationY = slideOffset * mProgressBarLayoutDy - mProgressBarLayoutBeginY;
-        LogUtils.i(TAG, "translationX = " + coverTranslationX + "   slideOffset = " + slideOffset + "  " + " translationY = " + coverTranslationY);
         ViewCompat.setTranslationX(mProgressBarLayout, coverTranslationX);
         ViewCompat.setTranslationY(mProgressBarLayout, coverTranslationY);
         float coverScale = slideOffset * (1.0f - mProgressBarLayoutScaleDes)  + mProgressBarLayoutScaleDes;
@@ -308,10 +314,29 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
         int j = (i - this.mBottomTitleView.getHeight()) / 2;
         int topTabBarHeight = mActivity.getResources().getDimensionPixelSize(R.dimen.tab_title_height);
         float dx = i * (1.0F - slideOffset);
-        float dy = - (display.getHeight() - topTabBarHeight - this.mBottomTitleView.getHeight() - j) * (1.0F - slideOffset);
+        float dy = - (getScreenHeight() - topTabBarHeight - getStatusBarHeight(mActivity) - this.mBottomTitleView.getHeight() - j) * (1.0F - slideOffset);
+        Point rect = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            display.getSize(rect);
+        }
         ViewCompat.setTranslationX(mBottomTitleView, dx);
         ViewCompat.setTranslationY(mBottomTitleView, dy);
         ViewCompat.setAlpha(mBottomTitleView, 1.0f - slideOffset); //展开的时候不显示底部
+    }
+    public int getScreenHeight()  {
+        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
+
+        ((WindowManager)mActivity.getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getMetrics(localDisplayMetrics);
+        return localDisplayMetrics.heightPixels;
+    }
+    public static int getStatusBarHeight(Context paramContext)
+    {
+        int i = paramContext.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int j = 0;
+        if (i > 0) {
+            j = paramContext.getResources().getDimensionPixelSize(i);
+        }
+        return j;
     }
 
     private void addListener() {

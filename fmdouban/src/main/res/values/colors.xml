@@ -11,4 +11,5 @@
     <color name="douban_circle_button_bg_color">#DCA5D6A7</color>
     <color name="fav_button_unselected_color">#BDBDBD</color>
     <color name="fav_button_selected_color">@color/douban_colorPrimary</color>
+    <color name="slide_panel_mask">#10E0E0E0</color>
 </resources>

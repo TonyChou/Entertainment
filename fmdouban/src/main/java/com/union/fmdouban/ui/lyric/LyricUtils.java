@@ -39,7 +39,6 @@ public class LyricUtils {
         Lyric lyric = new Lyric();
         String[] lines = lyricStr.split("\\r\\n");
         for (String line : lines) {
-            Log.i("veve", "===: " + line);
             parseLine(line, lyric);
         }
         Collections.sort(lyric.sentenceList, new Lyric.SentenceComparator());

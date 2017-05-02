@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.union.commonlib.utils.LogUtils;
 
@@ -22,11 +25,16 @@ import java.util.List;
  */
 
 public class MediaPlayBackService extends Service {
+    private static final int RELEASE_WAKELOCK = 2;
+    private static final int FOCUSCHANGE = 4;
+    private static final int FADEDOWN = 5;
+    private static final int FADEUP = 6;
     private static String TAG = "MediaPlayBackService";
     private AudioManager mAudioManager;
     private PowerManager.WakeLock mWakeLock;
     private LocalMediaPlayer mPlayer;
     private IMediaPlayerCallBack mCallBack;
+    private boolean mPausedByTransientLossOfFocus = false;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -49,13 +57,84 @@ public class MediaPlayBackService extends Service {
         return mBinder;
     }
 
+    private Handler mMediaplayerHandler = new Handler() {
+        float mCurrentVolume = 1.0f;
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case FADEDOWN:
+                    mCurrentVolume -= .05f;
+                    if (mCurrentVolume > .2f) {
+                        mMediaplayerHandler.sendEmptyMessageDelayed(FADEDOWN, 10);
+                    } else {
+                        mCurrentVolume = .2f;
+                    }
+                    mPlayer.setVolume(mCurrentVolume);
+                    break;
+                case FADEUP:
+                    mCurrentVolume += .01f;
+                    if (mCurrentVolume < 1.0f) {
+                        mMediaplayerHandler.sendEmptyMessageDelayed(FADEUP, 10);
+                    } else {
+                        mCurrentVolume = 1.0f;
+                    }
+                    mPlayer.setVolume(mCurrentVolume);
+                    break;
+                case RELEASE_WAKELOCK:
+                    mWakeLock.release();
+                    break;
+
+                case FOCUSCHANGE:
+                    // This code is here so we can better synchronize it with the code that
+                    // handles fade-in
+                    switch (msg.arg1) {
+                        case AudioManager.AUDIOFOCUS_LOSS:
+                            LogUtils.i(TAG, "AudioFocus: received AUDIOFOCUS_LOSS");
+                            if (isPlaying()) {
+                                mPausedByTransientLossOfFocus = false;
+                            }
+                            pause();
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                            mMediaplayerHandler.removeMessages(FADEUP);
+                            mMediaplayerHandler.sendEmptyMessage(FADEDOWN);
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                            LogUtils.i(TAG, "AudioFocus: received AUDIOFOCUS_LOSS_TRANSIENT");
+                            if (isPlaying()) {
+                                mPausedByTransientLossOfFocus = true;
+                            }
+                            pause();
+                            break;
+                        case AudioManager.AUDIOFOCUS_GAIN:
+                            LogUtils.i(TAG, "AudioFocus: received AUDIOFOCUS_GAIN");
+                            if (!isPlaying() && mPausedByTransientLossOfFocus) {
+                                mPausedByTransientLossOfFocus = false;
+                                mCurrentVolume = 0f;
+                                mPlayer.setVolume(mCurrentVolume);
+                                mPlayer.start(); // also queues a fade-in
+                            } else {
+                                mMediaplayerHandler.removeMessages(FADEDOWN);
+                                mMediaplayerHandler.sendEmptyMessage(FADEUP);
+                            }
+                            break;
+                        default:
+                            LogUtils.i(TAG, "Unknown audio focus change code");
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
+
     /**
      * 播放音乐
      * @param url
      */
     private void play(String url) {
-        mAudioManager.requestAudioFocus(
-                mAudioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        mAudioManager.requestAudioFocus(mAudioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         mPlayer.play(url);
     }
 
@@ -112,6 +191,7 @@ public class MediaPlayBackService extends Service {
         private IPlayerListener listener;
         public LocalMediaPlayer(Context context, IPlayerListener listener) {
             mediaPlayer = new MediaPlayer();
+            this.listener = listener;
             this.mContext = context;
             mediaPlayer.setWakeMode(mContext, PowerManager.PARTIAL_WAKE_LOCK);
             initListener();
@@ -180,6 +260,10 @@ public class MediaPlayBackService extends Service {
                     }
                 }
             });
+        }
+
+        public void setVolume(float vol) {
+            mediaPlayer.setVolume(vol, vol);
         }
 
         public void play(String url) {
@@ -312,7 +396,13 @@ public class MediaPlayBackService extends Service {
 
         @Override
         public void onPrepared(MediaPlayer mp) {
-
+            if (mCallBack != null) {
+                try {
+                    mCallBack.onPrepared();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         @Override

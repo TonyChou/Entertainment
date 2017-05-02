@@ -5,8 +5,8 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_category"
@@ -15,8 +15,8 @@
         android:layout_height="@dimen/tab_title_height"
         android:layout_alignParentTop="true"
         android:fitsSystemWindows="true"
-        app:tabMode="fixed"
-        app:tabGravity="fill"/>
+        app:tabGravity="fill"
+        app:tabMode="fixed"/>
 
 
     <android.support.v4.view.ViewPager
@@ -25,4 +25,11 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/tab_category"/>
+
+    <View
+        android:id="@+id/slide_panel_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/slide_panel_mask"
+        android:visibility="gone"/>
 </RelativeLayout>

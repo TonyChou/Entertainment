@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,6 +31,8 @@ public abstract class BaseFragment extends Fragment {
     protected String mParam1;
     protected String mParam2;
     protected Activity mActivity;
+    private HandlerThread mWorkThread;
+    private Handler mWorkHandler;
     public BaseFragment() {
         // Required empty public constructor
     }
@@ -62,6 +68,37 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
+    protected Handler getWorkHandler() {
+        if (mWorkThread == null) {
+            mWorkThread = new HandlerThread(String.format("Work Thread: %s", TAG));
+            mWorkThread.start();
+            mWorkHandler = new Handler(mWorkThread.getLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    handleWorkThreadMessage(msg);
+                }
+            };
+        }
+        return mWorkHandler;
+    }
+
+    protected void handleWorkThreadMessage(Message msg) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mWorkHandler != null) {
+            mWorkHandler.removeCallbacksAndMessages(null);
+            mWorkHandler = null;
+        }
+        if (mWorkThread != null) {
+            mWorkThread.quit();
+            mWorkThread = null;
+        }
+
+    }
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
