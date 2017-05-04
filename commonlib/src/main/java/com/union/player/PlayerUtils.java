@@ -204,4 +204,16 @@ public class PlayerUtils {
         }
         return false;
     }
+
+    public static boolean playMusic(MusicInfo musicInfo) {
+        if (isServiceAlive()) {
+            try {
+                sService.playMusic(musicInfo);
+                return true;
+            } catch (RemoteException e) {
+                return false;
+            }
+        }
+        return false;
+    }
 }

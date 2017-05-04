@@ -11,8 +11,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="list_item_text_size">18sp</dimen>
 
-    <dimen name="player_button_height">60.0dip</dimen>
-    <dimen name="circle_button_height">40.0dip</dimen>
+    <dimen name="player_button_height">65.0dip</dimen>
+    <dimen name="circle_button_height">45.0dip</dimen>
     <dimen name="channel_name_size">20sp</dimen>
     <dimen name="song_name_size">16sp</dimen>
 

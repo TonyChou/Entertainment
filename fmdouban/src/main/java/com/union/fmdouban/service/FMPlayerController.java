@@ -20,6 +20,8 @@ import com.union.fmdouban.play.PlayerStatusListener;
 import com.union.net.ApiClient;
 import com.union.net.RetrofitClient;
 import com.union.player.IMediaPlayerCallBack;
+import com.union.player.MusicInfo;
+import com.union.player.PlayerCommand;
 import com.union.player.PlayerUtils;
 
 import java.util.ArrayList;
@@ -325,10 +327,31 @@ public class FMPlayerController {
         if (song.url != null) { //有时候返回的Json里面不包含歌曲信息
             songCache.add(song);
             mSongIndex = songCache.size() - 1;
-            play(song.url);
+            playSong(song);
             return true;
         }
         return false;
+    }
+
+    private void playSong(PlayerPage.DouBanSong song) {
+        MusicInfo musicInfo = new MusicInfo();
+        musicInfo.setMusicCover(song.picture);
+        musicInfo.setMusicUrl(song.url);
+        musicInfo.setMusicId(song.sid);
+        musicInfo.setTrackName(getCurrentChannel().channelName);
+        musicInfo.setMusicTitle(song.title);
+        if (PlayerUtils.playMusic(musicInfo)) {
+            stopProgressTimer();
+            sendProgressCallback(0);
+
+            mCurrentPLayState = PlayState.PLAYING;
+            refreshView(StateFrom.PLAY);
+            if (controllerListener != null) {
+                controllerListener.loadCover();
+            }
+        } else {
+            setStatusNone();
+        }
     }
 
     /**
@@ -427,6 +450,18 @@ public class FMPlayerController {
             refreshView(StateFrom.PLAY);
         }
 
+        @Override
+        public void onPlayCommand(int action) throws RemoteException {
+            if (action == PlayerCommand.NEXT) {
+                playNext();
+            } else if (action == PlayerCommand.RESUME) {
+                mCurrentPLayState = PlayState.PLAYING;
+                refreshView(StateFrom.PLAY);
+            } else if (action == PlayerCommand.PAUSE) {
+                mCurrentPLayState = PlayState.PAUSE;
+                refreshView(StateFrom.PAUSE);
+            }
+        }
     };
 
     public void release() {

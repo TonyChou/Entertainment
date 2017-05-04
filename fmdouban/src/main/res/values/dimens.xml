@@ -9,4 +9,5 @@
     <dimen name="tab_title_height">48dip</dimen>
     <dimen name="player_button_margin">50dip</dimen>
     <dimen name="player_button_margin_10">10dip</dimen>
+
 </resources>

@@ -11,15 +11,15 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="list_item_text_size">18sp</dimen>
 
-    <dimen name="player_button_height">60.0dip</dimen>
-    <dimen name="circle_button_height">40.0dip</dimen>
+    <dimen name="player_button_height">70.0dip</dimen>
+    <dimen name="circle_button_height">45.0dip</dimen>
     <dimen name="channel_name_size">20sp</dimen>
     <dimen name="song_name_size">16sp</dimen>
 
     <dimen name="button_height">45dip</dimen>
     <dimen name="listview_header_height">45dip</dimen>
     <dimen name="listview_footer_height">45dip</dimen>
-    <dimen name="notification_cover_size">60dip</dimen>
-    <dimen name="notification_button_size">45dip</dimen>
+    <dimen name="notification_cover_size">50dip</dimen>
+    <dimen name="notification_button_size">40dip</dimen>
 
 </resources>

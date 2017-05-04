@@ -114,13 +114,13 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
         mControlButtons = mControlPanelView.findViewById(R.id.control_buttons);
         mPreButton = mControlPanelView.findViewById(R.id.pre);
         mPreIcon = (AppCompatTextView)mPreButton.findViewById(R.id.button_icon);
-        mPreIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+        mPreIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_36dp);
         ViewHelper.setRotation(mPreIcon, 180f);
         mPlayButton = mControlPanelView.findViewById(R.id.play);
         mPlayIcon = (AppCompatTextView)mPlayButton.findViewById(R.id.button_icon);
         mNextButton = mControlPanelView.findViewById(R.id.next);
         mNextIcon = (AppCompatTextView)mNextButton.findViewById(R.id.button_icon);
-        mNextIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+        mNextIcon.setBackgroundResource(R.drawable.ic_play_arrow_black_36dp);
         mChannelNameView = (TextView) mControlPanelView.findViewById(R.id.channel_name);
         mSongNameView = (TextView) mControlPanelView.findViewById(R.id.song_name);
 
@@ -132,7 +132,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
         mCoverRotateAnimation.setInterpolator(new LinearInterpolator());
         mFavButton = mControlPanelView.findViewById(R.id.fav_button);
         mFavIcon = (AppCompatTextView) mControlPanelView.findViewById(R.id.fav_button);
-        mFavIcon.setBackgroundResource(R.drawable.ic_favorite_black_48dp);
+        mFavIcon.setBackgroundResource(R.drawable.ic_favorite_black_36dp);
         mErrorPanel = (TextView) mControlPanelView.findViewById(R.id.error_panel);
 
         mBottomTitleView = mControlPanelView.findViewById(R.id.bottom_title_view);
@@ -230,6 +230,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
                 float x = ViewCompat.getX(mControlButtons);
                 float y = ViewCompat.getY(mControlButtons);
 
+
                 mControlButtonsScaleDes = (float) slidePanelHeight/ (float) height;
                 mControlButtonScaleWidth = (float)width *  mControlButtonsScaleDes;
 
@@ -252,10 +253,14 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
                 int height = mFavButton.getHeight();
                 float x = ViewCompat.getX(mFavButton);
                 float y = ViewCompat.getY(mFavButton);
-                mFavButtonsScaleDes = ((float) slidePanelHeight - (float)playerButtonMargin)/ (float) height;
-                float dx = mControlButtonScaleWidth + favButtonMarginRight * mFavButtonsScaleDes / 2.0f;
+                //缩放到最小的时候让FavBtn和PreBtn重叠
+                float preBtnX = ViewCompat.getX(mPreButton); //原始位置
+                float aaa = mControlButtons.getWidth() * mControlButtonsScaleDes;
+                float preBtnEndX = preBtnX + (1.0f - mControlButtonsScaleDes) * mControlButtons.getWidth() + BUTTON_TRANSLATION_DX * 2.0f; //缩放后终点位置
+                mFavButtonsScaleDes = ((float) slidePanelHeight - (float)playerButtonMargin) / (float) height;
+                float dx = x - preBtnEndX ; //favBtn需要偏移的位置
                 mFavButtonsScaleDes = mControlButtonsScaleDes; //保证按钮缩放之后大小一致
-                mFavButtonsBeginX = x + ((float) width) / 2.0f- dx;
+                mFavButtonsBeginX = dx;
                 mFavButtonsBeginY = y + ((float) height  - (float)slidePanelHeight) / 2.0f;
                 mFavButtonsDx = mFavButtonsBeginX;
                 mFavButtonsDy = mFavButtonsBeginY;
@@ -293,7 +298,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
         float controlButtonScale = slideOffset * (1.0f - mControlButtonsScaleDes)  + mControlButtonsScaleDes;
         ViewCompat.setScaleX(mControlButtons, controlButtonScale);
         ViewCompat.setScaleY(mControlButtons, controlButtonScale);
-        ViewCompat.setAlpha(mPreButton, slideOffset);
+        //ViewCompat.setAlpha(mPreButton, slideOffset);
 
         //收藏按钮动画
         float favButtonTranslationX = slideOffset * mFavButtonsDx - mFavButtonsBeginX;
@@ -314,7 +319,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
         int j = (i - this.mBottomTitleView.getHeight()) / 2;
         int topTabBarHeight = mActivity.getResources().getDimensionPixelSize(R.dimen.tab_title_height);
         float dx = i * (1.0F - slideOffset);
-        float dy = - (getScreenHeight() - topTabBarHeight - getStatusBarHeight(mActivity) - this.mBottomTitleView.getHeight() - j) * (1.0F - slideOffset);
+        float dy = - (mSlideLayout.getMeasuredHeight() - topTabBarHeight - this.mBottomTitleView.getHeight() - j) * (1.0F - slideOffset);
         Point rect = new Point();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             display.getSize(rect);
@@ -399,7 +404,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
 
     private void refreshViews(FMPlayerController.PlayState state, FMPlayerController.StateFrom stateFrom) {
         if (state == FMPlayerController.PlayState.PLAYING) {
-            mPlayIcon.setBackgroundResource(R.drawable.ic_pause_circle_outline_black_48dp);
+            mPlayIcon.setBackgroundResource(R.drawable.ic_pause_circle_outline_black_36dp);
             mCoverBgMask.startAnimation(mCoverBgMaskAnimation);
             if (!mCoverAnimIsRun) {
                 mCover.startAnimation(mCoverRotateAnimation);
@@ -409,7 +414,7 @@ public class PlayerUIController implements View.OnClickListener, PlayerControlle
                 mLyricView.resume();
             }
         } else {
-            mPlayIcon.setBackgroundResource(R.drawable.ic_play_circle_outline_black_48dp);
+            mPlayIcon.setBackgroundResource(R.drawable.ic_play_circle_outline_black_36dp);
             mCoverBgMaskAnimation.cancel();
             mCoverBgMask.clearAnimation();
 

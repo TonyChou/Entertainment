@@ -10,4 +10,6 @@ interface IMediaPlayerCallBack {
      void onFinish();
      //播放已经准备好了
      void onPrepared();
+     //通知栏播放控制
+     void onPlayCommand(int action);
 }

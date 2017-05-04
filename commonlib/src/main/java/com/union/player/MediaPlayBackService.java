@@ -1,19 +1,27 @@
 package com.union.player;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.app.NotificationCompat;
+import android.widget.ImageView;
+import android.widget.RemoteViews;
 
+import com.squareup.picasso.Picasso;
+import com.union.commonlib.R;
 import com.union.commonlib.utils.LogUtils;
 
 import java.io.IOException;
@@ -25,24 +33,35 @@ import java.util.List;
  */
 
 public class MediaPlayBackService extends Service {
+    public static String PLAY_OR_PAUSE_ACTION = "com.union.player.play_or_pause";
+    public static String PAUSE_ACTION = "com.union.player.pause";
+    public static String NEXT_ACTION = "com.union.player.next";
     private static final int RELEASE_WAKELOCK = 2;
     private static final int FOCUSCHANGE = 4;
     private static final int FADEDOWN = 5;
     private static final int FADEUP = 6;
+    public static final int PLAYBACKSERVICE_STATUS = 1;
     private static String TAG = "MediaPlayBackService";
     private AudioManager mAudioManager;
     private PowerManager.WakeLock mWakeLock;
-    private LocalMediaPlayer mPlayer;
+
+    private static LocalMediaPlayer mPlayer;
     private IMediaPlayerCallBack mCallBack;
     private boolean mPausedByTransientLossOfFocus = false;
+    private ImageView mCover;
+    private static MusicInfo mCurrentMusicInfo;
+    private static Context mContext;
+    private NotificationCompat.Builder mNotificationBuilder;
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = this.getApplicationContext();
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, this.getClass().getName());
         mWakeLock.setReferenceCounted(false);
         mPlayer = new LocalMediaPlayer(this, playerListener);
+        mNotificationBuilder = new NotificationCompat.Builder(mContext);
     }
 
     @Override
@@ -55,6 +74,49 @@ public class MediaPlayBackService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            handleIntent(intent);
+        }
+        return START_STICKY;
+    }
+
+    /**
+     * 处理Notification 控制按钮事件
+     * @param intent
+     */
+    private void handleIntent(Intent intent) {
+        String action = intent.getAction();
+        LogUtils.i(TAG, "handleIntent action: " + action);
+        if (action == null || mCallBack == null) {
+            return;
+        }
+
+        if (PLAY_OR_PAUSE_ACTION.equals(action)) {
+            if (isPlaying()) {
+                pause();
+                sendPlayerCommand(PlayerCommand.PAUSE);
+            } else {
+                resume();
+                sendPlayerCommand(PlayerCommand.RESUME);
+            }
+        } else if (NEXT_ACTION.equals(action)) {
+            sendPlayerCommand(PlayerCommand.NEXT);
+        }
+    }
+
+    private void sendPlayerCommand(int action) {
+        if (mCallBack == null) {
+            return;
+        }
+        try {
+            mCallBack.onPlayCommand(action);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private Handler mMediaplayerHandler = new Handler() {
@@ -136,6 +198,7 @@ public class MediaPlayBackService extends Service {
     private void play(String url) {
         mAudioManager.requestAudioFocus(mAudioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         mPlayer.play(url);
+        //updateNotification();
     }
 
     /**
@@ -146,7 +209,7 @@ public class MediaPlayBackService extends Service {
         //TODO
     }
 
-    private boolean isPlaying() {
+    private static boolean isPlaying() {
         return mPlayer.isPlaying();
     }
 
@@ -158,6 +221,7 @@ public class MediaPlayBackService extends Service {
 
     private void pause() {
         mPlayer.pause();
+        updateNotification();
     }
 
     private long duration() {
@@ -178,6 +242,11 @@ public class MediaPlayBackService extends Service {
 
     private void resume() {
         mPlayer.start();
+        updateNotification();
+    }
+    private void playMusic(MusicInfo music) {
+        mCurrentMusicInfo = music;
+        mPlayer.playMusic(mCurrentMusicInfo);
     }
 
     private void setCallBack(IMediaPlayerCallBack callBack) {
@@ -189,10 +258,13 @@ public class MediaPlayBackService extends Service {
         private MediaPlayer mediaPlayer;
         private Context mContext;
         private IPlayerListener listener;
+        private WifiManager.WifiLock mWifiLock;
         public LocalMediaPlayer(Context context, IPlayerListener listener) {
             mediaPlayer = new MediaPlayer();
             this.listener = listener;
             this.mContext = context;
+            mWifiLock = ((WifiManager) context.getSystemService(WIFI_SERVICE)).createWifiLock(WifiManager.WIFI_MODE_FULL, this.getClass().getName());
+            mWifiLock.setReferenceCounted(false);
             mediaPlayer.setWakeMode(mContext, PowerManager.PARTIAL_WAKE_LOCK);
             initListener();
         }
@@ -222,10 +294,11 @@ public class MediaPlayBackService extends Service {
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
+                    acquireWifiLock();
+                    mediaPlayer.start();
                     if (listener != null) {
                         listener.onPrepared(mp);
                     }
-                    mediaPlayer.start();
                 }
             });
 
@@ -268,11 +341,13 @@ public class MediaPlayBackService extends Service {
 
         public void play(String url) {
             try {
+                acquireWifiLock();
                 mediaPlayer.reset();
                 mediaPlayer.setDataSource(url);
                 mediaPlayer.setWakeMode(mContext, PowerManager.PARTIAL_WAKE_LOCK);
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.prepareAsync();
+
             } catch (IOException e) {
                 e.printStackTrace();
                 if (listener != null) {
@@ -287,6 +362,7 @@ public class MediaPlayBackService extends Service {
 
         public void pause() {
             mediaPlayer.pause();
+            releaseWifiLock();
         }
 
         public long duration() {
@@ -304,14 +380,36 @@ public class MediaPlayBackService extends Service {
 
         public void stop() {
             mediaPlayer.stop();
+            releaseWifiLock();
         }
 
         public void release() {
             mediaPlayer.release();
+            releaseWifiLock();
         }
 
         public void start() {
+            acquireWifiLock();
             mediaPlayer.start();
+        }
+
+        private void acquireWifiLock() {
+            if (!mWifiLock.isHeld()) {
+                mWifiLock.acquire();
+            }
+        }
+
+        private void releaseWifiLock() {
+            if (mWifiLock.isHeld()) {
+                mWifiLock.release();
+            }
+        }
+
+        public void playMusic(MusicInfo mCurrentMusicInfo) {
+            String url = mCurrentMusicInfo.getMusicUrl();
+            if (url != null) {
+                play(url);
+            }
         }
     }
 
@@ -382,8 +480,14 @@ public class MediaPlayBackService extends Service {
             mService.get().setCallBack(callBack);
         }
 
+        @Override
+        public void playMusic(MusicInfo music) {
+            mService.get().playMusic(music);
+        }
+
 
     }
+
 
 
 
@@ -403,6 +507,7 @@ public class MediaPlayBackService extends Service {
                     e.printStackTrace();
                 }
             }
+            updateNotification();
         }
 
         @Override
@@ -439,12 +544,55 @@ public class MediaPlayBackService extends Service {
         }
     };
 
+
+
+
     private AudioManager.OnAudioFocusChangeListener mAudioFocusListener = new AudioManager.OnAudioFocusChangeListener() {
         public void onAudioFocusChange(int focusChange) {
             //mMediaplayerHandler.obtainMessage(FOCUSCHANGE, focusChange, 0).sendToTarget();
         }
     };
 
+    private void updateNotification() {
+        RemoteViews mRemoteViews = new RemoteViews(getPackageName(), R.layout.player_statusbar_layout);
+        mRemoteViews.setImageViewResource(R.id.cover, R.drawable.example);
+        Notification notification = new Notification();
+        notification.contentView = mRemoteViews;
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.icon = R.drawable.example;
+        notification.contentIntent =
+                PendingIntent.getActivity(this, 0, new Intent("com.android.music.PLAYBACK_VIEWER")
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        0);
+        if (mRemoteViews != null && mCurrentMusicInfo != null && mCurrentMusicInfo.getMusicCover() != null) {
+            Picasso.with(mContext).load(mCurrentMusicInfo.getMusicCover())
+                    .config(Bitmap.Config.ARGB_8888)
+                    .into(mRemoteViews, R.id.cover, PLAYBACKSERVICE_STATUS, notification);
+        }
 
+        if (mRemoteViews != null && mCurrentMusicInfo != null && mCurrentMusicInfo.getTrackName() != null && mCurrentMusicInfo.getMusicTitle() != null) {
+            mRemoteViews.setTextViewText(R.id.trackname, mCurrentMusicInfo.getTrackName());
+            mRemoteViews.setTextViewText(R.id.artistalbum, mCurrentMusicInfo.getMusicTitle());
+        }
 
+        if (isPlaying()) {
+            mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_pause_circle_outline_black_36dp);
+        } else {
+            mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_play_circle_outline_black_36dp);
+        }
+
+        ComponentName componentName = new ComponentName(this, MediaPlayBackService.class);
+
+        Intent nextIntent = new Intent(NEXT_ACTION);
+        nextIntent.setComponent(componentName);
+        PendingIntent nextPendingIntent= PendingIntent.getService(this, R.id.btn_next, nextIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mRemoteViews.setOnClickPendingIntent(R.id.btn_next, nextPendingIntent);
+
+        Intent pauseOrPlayIntent = new Intent(PLAY_OR_PAUSE_ACTION);
+        pauseOrPlayIntent.setComponent(componentName);
+        PendingIntent pauseOrPlayPendingIntent= PendingIntent.getService(this, R.id.btn_play, pauseOrPlayIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mRemoteViews.setOnClickPendingIntent(R.id.btn_play, pauseOrPlayPendingIntent);
+
+        startForeground(PLAYBACKSERVICE_STATUS, notification);
+    }
 }

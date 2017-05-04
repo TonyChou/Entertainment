@@ -83,6 +83,7 @@
         android:layout_height="@dimen/player_button_height"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="30dip"
+        android:background="#746744"
         android:gravity="center_vertical">
 
 
@@ -120,7 +121,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/ic_favorite_black_48dp"/>
+        android:background="@drawable/ic_favorite_black_36dp"/>
     <TextView
         android:id="@+id/error_panel"
         android:layout_width="match_parent"
