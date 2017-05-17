@@ -63,6 +63,7 @@ public class GalleryFragment extends BaseFragment implements SwipeRefreshLayout.
 
 
     private void loadPicture() {
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 getLoaderManager().restartLoader(LoaderToken.PhotosQuery, null, this);
